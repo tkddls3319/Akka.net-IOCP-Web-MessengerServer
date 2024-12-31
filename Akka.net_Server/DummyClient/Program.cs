@@ -16,9 +16,9 @@ namespace DummyClient
 
             string hostName = Dns.GetHostName();
             IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
-            IPAddress ipAddr = ipEntry.AddressList[3];
+            IPAddress ipAddr = ipEntry.AddressList[1];
 
-            ClientActors.ActorOf(Props.Create(() => new TelnetClient(ipAddr.ToString(), 9999)), "ClientActors");
+            ClientActors.ActorOf(Props.Create(() => new TelnetClient(ipAddr.ToString(), 8888)), "ClientActors");
 
             ClientActors.WhenTerminated.Wait();
         }

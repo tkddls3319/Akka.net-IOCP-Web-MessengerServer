@@ -24,6 +24,7 @@ namespace DummyClient
             {
                 Console.WriteLine("Connected to {0}", connected.RemoteAddress);
                 Sender.Tell(new Tcp.Register(Self));
+                Sender.Tell(Tcp.Write.Create(ByteString.FromString("ㅎㅇㅎㅇ" + "\n")));
                 ReadConsoleAsync();
                 Become(Connected(Sender));
             }
@@ -41,6 +42,9 @@ namespace DummyClient
                 if (message is Tcp.Received received)  // data received from network
                 {
                     Console.WriteLine(Encoding.ASCII.GetString(received.Data.ToArray()));
+
+                    Sender.Tell(Tcp.Write.Create(received.Data));
+
                 }
                 else if (message is string s)   // data received from console
                 {

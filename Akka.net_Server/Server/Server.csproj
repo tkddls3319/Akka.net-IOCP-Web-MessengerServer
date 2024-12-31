@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.5.30" />
+    <PackageReference Include="Akka.Cluster" Version="1.5.30" />
   </ItemGroup>
 
 </Project>
