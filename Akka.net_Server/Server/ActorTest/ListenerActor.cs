@@ -9,7 +9,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace Server
 {
     // Listener Actor
@@ -45,7 +44,6 @@ namespace Server
                 Console.WriteLine(err);
             }
         }
-
         void AcceptCompleted(object sender, SocketAsyncEventArgs args)
         {
             if (args.SocketError == SocketError.Success)

@@ -55,7 +55,6 @@ namespace Server.ServerCore
                 catch (Exception err)
                 {
                     Console.WriteLine(err);
-                    Context.Parent.Tell(new SocketErrorMessage(_sendArgs.SocketError));
                     Context.Stop(Self);
 
                 }
@@ -84,7 +83,7 @@ namespace Server.ServerCore
                 }
                 else
                 {
-                    Context.Parent.Tell(new SocketErrorMessage(_sendArgs.SocketError));
+                    //Context.Parent.Tell(new SocketErrorMessage(_sendArgs.SocketError));
                     Context.Stop(Self);
                 }
             }

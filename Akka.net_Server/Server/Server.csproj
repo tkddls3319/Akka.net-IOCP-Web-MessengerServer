@@ -10,6 +10,11 @@
   <ItemGroup>
     <PackageReference Include="Akka" Version="1.5.30" />
     <PackageReference Include="Akka.Cluster" Version="1.5.30" />
+    <PackageReference Include="Google.Protobuf" Version="3.29.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>
 
 </Project>
