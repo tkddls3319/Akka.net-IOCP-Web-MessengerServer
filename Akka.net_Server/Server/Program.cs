@@ -23,20 +23,20 @@ namespace Server
             var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor()), "RoomManagerActor");
             var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), "SessionManagerActor");
 
-            sessionManager.Tell(new RoomManagerActor.SetSessionManager(roomManager));
-            roomManager.Tell(new SessionManagerActor.SetRoomManagerActor(sessionManager));
+            sessionManager.Tell(new SessionManagerActor.SetRoomManagerActor(roomManager));
+            roomManager.Tell(new RoomManagerActor.SetSessionManager(sessionManager));
 
             string hostName = Dns.GetHostName();
-
             IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
             IPAddress ipAddr = ipEntry.AddressList[1];
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
 
             Console.WriteLine("==========Server OPEN==========");
             Console.WriteLine("Listener....");
-            _listener.Init(endPoint, (e) =>
+
+            _listener.Init(endPoint, (socket) =>
             {
-                sessionManager.Tell(new SessionManagerActor.GenerateSession(e));
+                sessionManager.Tell(new SessionManagerActor.GenerateSession(socket));
             });
 
 

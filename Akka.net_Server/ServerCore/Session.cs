@@ -200,7 +200,6 @@ public abstract class Session
         if (Interlocked.Exchange(ref _connected, 1) == 1)
             return;
 
-        Console.WriteLine("disconnect");
         OnDisconnected(_socket.RemoteEndPoint);
         _socket.Shutdown(SocketShutdown.Both);  
         _socket.Close();

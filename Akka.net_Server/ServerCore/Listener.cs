@@ -58,6 +58,7 @@ public class Listener
     {
         if (args.SocketError == SocketError.Success)
         {
+            
             _sessionFacktory.Invoke(args.AcceptSocket);
             //Session session = _sessionFacktory.Invoke();
             //session.Start(args.AcceptSocket);
@@ -65,7 +66,8 @@ public class Listener
         }
         else
         {
-            Console.WriteLine("AcceptCopleted err");
+            Console.WriteLine("AcceptCompleted Err");
         }
+        RegisterAccept(args);
     }
 }

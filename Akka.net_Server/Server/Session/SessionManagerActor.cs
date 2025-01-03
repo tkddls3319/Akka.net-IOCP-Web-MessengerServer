@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    public class SessionManagerActor : ReceiveActor
+    public class SessionManagerActor : ReceiveActor, IWithTimers
     {
         #region message
-        public class SetRoomManagerActor 
+        public class SetRoomManagerActor
         {
             public IActorRef RoomManager { get; }
             public SetRoomManagerActor(IActorRef roomManager) => RoomManager = roomManager;
         }
-        public class GenerateSession 
+        public class GenerateSession
         {
             public Socket SessionSocket { get; set; }
             public GenerateSession(Socket sessionSocekt)
@@ -36,26 +36,54 @@ namespace Server
             public RemoveSession(ClientSession session) => Session = session;
         }
         public class GetAllSessions { }
+        public class FlushSendAll { }
+
+        // 타이머 키와 메시지
+        private sealed class TimerKey
+        {
+            public static readonly TimerKey Instance = new();
+            private TimerKey() { }
+        }
+        private sealed class TimerMessage
+        {
+            public static readonly TimerMessage Instance = new();
+            private TimerMessage() { }
+        }
+        // 타이머 설정
         #endregion
 
-        IActorRef _roomManagerActor;
+        #region Actor
+        IActorRef _roomManager;
+        public ITimerScheduler Timers { get; set; } = null!;
+        #endregion
+
         int _sessionID = 0;
         Dictionary<int, ClientSession> _sessions = new Dictionary<int, ClientSession>();
 
         public SessionManagerActor()
         {
-            Receive<SetRoomManagerActor>(msg => _roomManagerActor = msg.RoomManager);
+            Receive<SetRoomManagerActor>(msg => _roomManager = msg.RoomManager);
 
             Receive<GenerateSession>(msg => GenerateSessionHandle(msg));
             Receive<FindSession>(msg => FindSessionHandle(msg));
             Receive<RemoveSession>(msg => RemoveSessionHandle(msg));
             Receive<GetAllSessions>(_ => GetAllSessionsHandle());
+
+            // 초기화: 타이머 시작
+            Timers.StartPeriodicTimer(
+                key: TimerKey.Instance,
+                msg: TimerMessage.Instance,
+                initialDelay: TimeSpan.FromMilliseconds(100),  // 초기 지연 시간
+                interval: TimeSpan.FromMilliseconds(100));    // 주기적 실행 간격
+
+            // 타이머 메시지 처리
+            Receive<TimerMessage>(_ => FlushAllSessions());
         }
 
         // 세션 생성
         private void GenerateSessionHandle(GenerateSession msg)
         {
-            var clientSession = new ClientSession();
+            var clientSession = new ClientSession(_roomManager);
             clientSession.SessionID = ++_sessionID;
             _sessions.Add(clientSession.SessionID, clientSession);
 
@@ -73,10 +101,8 @@ namespace Server
         // 세션 제거
         private void RemoveSessionHandle(RemoveSession msg)
         {
-            if (msg.Session != null)
-            {
-                _sessions.Remove(msg.Session.SessionID);
-            }
+            _sessions.Remove(msg.Session.SessionID);
+            Console.WriteLine(_sessions.Count);
         }
 
         // 모든 세션 조회
@@ -85,5 +111,13 @@ namespace Server
             var allSessions = _sessions.Values.ToList();
             Sender.Tell(allSessions); // 세션 목록 반환
         }
+        private void FlushAllSessions()
+        {
+            foreach (var session in _sessions.Values)
+            {
+                session.FlushSend();
+            }
+        }
+
     }
 }
