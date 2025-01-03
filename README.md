@@ -1,4 +1,4 @@
-# Akka.netServer
+# Akka.net + IOCP Server
  Akka.net과 IOCP를 합친 Chatting Server를 개발 중 이며 어떻게 설계를 해야할지 고민을 해보고 있습니다.
 
 이 서버는 Akka.NET과 IOCP(Input/Output Completion Port)를 기반으로 설계된 고성능 네트워크 서버입니다. 
