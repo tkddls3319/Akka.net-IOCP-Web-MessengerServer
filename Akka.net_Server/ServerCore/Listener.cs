@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Akka.Actor;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -11,13 +13,22 @@ namespace ServerCore;
 
 public class Listener
 {
-    Socket _listener;
-    event Func<Session> _sessionFacktory;
-
-    public void Init(IPEndPoint endPoint, Func<Session> sessionFacktory)
+    public class GenerateSession
     {
-        _listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        public Socket SessionSocket { get; set; }
+        public GenerateSession(Socket sessionSocekt)
+        {
+            SessionSocket = sessionSocekt;
+        }
+    }
+    Socket _listener;
+    event Action<Socket> _sessionFacktory;
+
+    public void Init(IPEndPoint endPoint, Action<Socket> sessionFacktory)
+    {
         _sessionFacktory = sessionFacktory;
+
+        _listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         _listener.Bind(endPoint);
         _listener.Listen(1000);
 
@@ -47,14 +58,14 @@ public class Listener
     {
         if (args.SocketError == SocketError.Success)
         {
-            Session session = _sessionFacktory.Invoke();
-            session.Start(args.AcceptSocket);
-            session.OnConnected(args.AcceptSocket.RemoteEndPoint);
+            _sessionFacktory.Invoke(args.AcceptSocket);
+            //Session session = _sessionFacktory.Invoke();
+            //session.Start(args.AcceptSocket);
+            //session.OnConnected(args.AcceptSocket.RemoteEndPoint);
         }
         else
         {
             Console.WriteLine("AcceptCopleted err");
         }
-
     }
 }

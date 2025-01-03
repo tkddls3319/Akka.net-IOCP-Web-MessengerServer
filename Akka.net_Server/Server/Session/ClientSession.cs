@@ -72,14 +72,18 @@ namespace Server
         }
         public override void OnConnected(EndPoint endPoint)
         {
-            _roomManager.Tell(new RoomManagerActor.AddClient(this));
-            Console.WriteLine($"OnConnected - IP : {endPoint}, SessionId : {SessionID}");
+            if (Room == null)
+            {
+                _roomManager.Tell(new RoomManagerActor.AddClient(this));
+                Console.WriteLine($"OnConnected - IP : {endPoint}, SessionId : {SessionID}");
+            }
         }
         public override void OnDisconnected(EndPoint endPoint)
         {
-            if(Room != null)
+            if (Room != null)
             {
-                Room.
+                Room.Tell(new RoomManagerActor.RemoveRoom(SessionID));
+                Console.WriteLine($"{SessionID} Disconnected");
             }
         }
         public override void OnRecvedPacket(ArraySegment<byte> buffer)

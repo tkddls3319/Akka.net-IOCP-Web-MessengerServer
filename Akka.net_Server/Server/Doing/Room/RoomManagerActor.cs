@@ -12,6 +12,11 @@ namespace Server
     public class RoomManagerActor : ReceiveActor
     {
         #region Message
+        public class SetSessionManager
+        {
+            public IActorRef SessionManager { get; }
+            public SetSessionManager(IActorRef sessionManager) => SessionManager = sessionManager;
+        }
         public class AddRoom
         {
             public AddRoom() { }
@@ -34,11 +39,14 @@ namespace Server
         }
         #endregion
 
+        IActorRef _sessionManagerActor;
         Dictionary<int, IActorRef> _rooms = new Dictionary<int, IActorRef>();
         int _roomCount = 0;
 
         public RoomManagerActor()
         {
+            Receive<SetSessionManager>(msg => _sessionManagerActor = msg.SessionManager);
+
             Receive<AddRoom>(msg => AddHandler());
             Receive<RemoveRoom>(msg => RemoveHandler(msg.RoomId));
             Receive<AddClient>(msg => AddClientToRoomHandler(msg.Session));

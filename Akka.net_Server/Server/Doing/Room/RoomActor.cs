@@ -61,7 +61,7 @@ namespace Server
                 return;
 
             _clients[session.SessionID] = session;
-            session.Room = ;
+            session.Room = Self;
             Console.WriteLine($"Client with SessionID {session.SessionID} added to Room {RoomID}.");
         }
         private void LeaveClientHandler(int clientId)
@@ -70,7 +70,9 @@ namespace Server
             if (_clients.Remove(clientId, out client) == false)
                 return;
 
-            client.Room = Self;
+            
+
+            client.Room = null;
 
             Console.WriteLine($"Client Leave {clientId}");
             //{
