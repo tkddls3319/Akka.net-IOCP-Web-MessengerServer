@@ -34,6 +34,9 @@ namespace Server
             Console.WriteLine("==========Server OPEN==========");
             Console.WriteLine("Listener....");
 
+            ThreadPool.GetMaxThreads(out int workerThreads, out int completionPortThreads);
+            Console.WriteLine($"Max Worker Threads: {workerThreads}, Max IOCP Threads: {completionPortThreads}");
+
             _listener.Init(endPoint, (socket) =>
             {
                 sessionManager.Tell(new SessionManagerActor.GenerateSession(socket));

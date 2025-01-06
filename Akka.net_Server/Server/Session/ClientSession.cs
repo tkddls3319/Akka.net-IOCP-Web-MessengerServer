@@ -66,14 +66,14 @@ namespace Server
         }
         public override void OnConnected(EndPoint endPoint)
         {
-            //Console.WriteLine($"OnConnected - IP : {endPoint}, SessionId : {SessionID}");
+            Console.WriteLine($"Client OnConnected - IP : {endPoint}, SessionId : {SessionID}");
         }
         public override void OnDisconnected(EndPoint endPoint)
         {
             if (Room != null)
             {
                 Room.Tell(new RoomActor.LeaveClient(SessionID));
-                //Console.WriteLine($"{SessionID} Disconnected");
+                Console.WriteLine($"Client Disconnected -  IP : {endPoint}, SessionId : {SessionID}");
             }
         }
         public override void OnRecvedPacket(ArraySegment<byte> buffer)

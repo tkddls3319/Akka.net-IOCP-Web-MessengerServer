@@ -80,7 +80,7 @@ namespace Server
             _roomCount++;
             var roomActor = Context.ActorOf(Props.Create(() => new RoomActor(Self, _sessionManager, _roomCount)), $"{_roomCount}");
             _rooms[_roomCount] = roomActor;
-            Console.WriteLine($"Room {_roomCount} created.");
+            Console.WriteLine($"Room Created Id : {_roomCount}");
         }
         private void RemoveRoomHandler(int roomid)
         {
@@ -88,7 +88,7 @@ namespace Server
             {
                 Context.Stop(roomActor);
                 _rooms.Remove(roomid);
-                Console.WriteLine($"Room {roomid} removed. ");
+                Console.WriteLine($"Room Remove Id : {_roomCount}");
             }
             else
             {

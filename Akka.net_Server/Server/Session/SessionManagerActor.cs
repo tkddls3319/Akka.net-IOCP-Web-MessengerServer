@@ -102,7 +102,6 @@ namespace Server
         private void RemoveSessionHandle(RemoveSession msg)
         {
             _sessions.Remove(msg.Session.SessionID);
-            Console.WriteLine(_sessions.Count);
         }
 
         // 모든 세션 조회
@@ -118,6 +117,5 @@ namespace Server
                 session.FlushSend();
             }
         }
-
     }
 }

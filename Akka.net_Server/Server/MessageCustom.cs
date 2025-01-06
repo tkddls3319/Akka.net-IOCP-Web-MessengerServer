@@ -9,7 +9,6 @@ namespace Server
     public class MessageCustom<T>
     {
         public T Item1 { get; }
-
         public MessageCustom(T t1)
         {
             Item1 = t1;
@@ -19,7 +18,6 @@ namespace Server
     {
         public T1 Item1 { get; }
         public T2 Item2 { get; }
-
         public MessageCustom(T1 t1, T2 t2)
         {
             Item1 = t1;
@@ -44,7 +42,6 @@ namespace Server
         public T2 Item2 { get; }
         public T3 Item3 { get; }
         public T4 Item4 { get; }
-
         public MessageCustom(T1 t1, T2 t2, T3 t3, T4 t4)
         {
             Item1 = t1;

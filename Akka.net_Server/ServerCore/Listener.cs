@@ -58,11 +58,7 @@ public class Listener
     {
         if (args.SocketError == SocketError.Success)
         {
-            
             _sessionFacktory.Invoke(args.AcceptSocket);
-            //Session session = _sessionFacktory.Invoke();
-            //session.Start(args.AcceptSocket);
-            //session.OnConnected(args.AcceptSocket.RemoteEndPoint);
         }
         else
         {

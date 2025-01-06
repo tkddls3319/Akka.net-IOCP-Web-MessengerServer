@@ -13,20 +13,16 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_Chat s_chat = (S_Chat)packet;
 
-
-        Console.WriteLine(s_chat.Chat);
+        Console.WriteLine($"S_ChatHandler - ObjectID : {s_chat.ObjectId} Chat : {s_chat.Chat}");
     }
     public static void S_EnterServerHandler(PacketSession session, IMessage packet)
     {
         ServerSession clientSession = (ServerSession)session;
         S_EnterServer s_enter = (S_EnterServer)packet;
 
-        C_Chat chat_ = new C_Chat()
-        {
-            Chat = "클라이언트 접속1 클라이언트 접속2 클라이언트 접속3 클라이언트 접속4 클라이언트 접속5 클라이언트 접속6\n"
-        };
-        clientSession.Send(chat_);
-        Console.WriteLine($"S_EnterServerHandler{s_enter.Client.ObjectId}");
+        clientSession.MakeInputThread();
+
+        Console.WriteLine($"S_EnterServerHandler - Object ID : {s_enter.Client.ObjectId}");
     }
 
     public static void S_LeaveServerHandler(PacketSession session, IMessage packet)
@@ -39,14 +35,12 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_Spawn s_spawn = (S_Spawn)packet;
 
-
         //Console.WriteLine(s_spawn);
     }
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
     {
         ServerSession clientSession = (ServerSession)session;
         S_Despawn s_dspawn = (S_Despawn)packet;
-
 
         //Console.WriteLine(s_dspawn.ObjectIds);
     }

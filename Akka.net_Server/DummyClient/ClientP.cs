@@ -18,7 +18,10 @@ namespace DummyClient
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
 
             Connector connector = new Connector();
-            connector.Connect(endPoint, () => { return new ServerSession(); });
+            connector.Connect(endPoint, () => { return new ServerSession(); }, false);
+
+            while (true) { }
         }
+
     }
 }

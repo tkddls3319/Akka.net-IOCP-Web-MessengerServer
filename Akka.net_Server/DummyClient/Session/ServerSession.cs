@@ -14,7 +14,6 @@ namespace DummyClient
     {
         public void Send(IMessage packet)
         {
-
             string packetName = packet.Descriptor.Name.Replace("_", string.Empty);
             PacketID packetID = (PacketID)Enum.Parse(typeof(PacketID), packetName);
 
@@ -28,8 +27,31 @@ namespace DummyClient
             Send(new ArraySegment<byte>(sendBuffer));
         }
 
+        public void MakeInputThread()
+        {
+            Thread t1 = new Thread(() =>
+            {
+                while (true)
+                {
+                    Update();
+                }
+            });
+
+            t1.Name = "InputThread";
+            t1.Start();
+        }
+        public void Update()
+        {
+            string input = Console.ReadLine();
+
+            C_Chat packet = new C_Chat();
+            packet.Chat = input;
+            Send(packet);
+        }
+
         public override void OnConnected(EndPoint endPoint)
         {
+            Console.WriteLine($"Server Connected {endPoint}");
             Send(new C_EnterServer());
         }
 

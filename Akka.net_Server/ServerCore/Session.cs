@@ -40,7 +40,7 @@ public abstract class Session
     Socket _socket;
     SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
     SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
-    RecvBuffer _recvBuffer = new RecvBuffer(1024);
+    RecvBuffer _recvBuffer = new RecvBuffer(65535);
 
     Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
     List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();

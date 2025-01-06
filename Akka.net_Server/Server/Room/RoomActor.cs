@@ -3,6 +3,8 @@
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
 
+using ServerCore;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -102,7 +104,7 @@ namespace Server
                 }
             }
 
-            Console.WriteLine($"Client with SessionID {session.SessionID} added to Room {RoomID}.");
+            Console.WriteLine($"Room{RoomID} Enter Client ID : {session.SessionID}");
         }
         private void LeaveClientHandler(int clientId)
         {
@@ -128,7 +130,7 @@ namespace Server
             if (_clients.Count == 0)
                 _roomManger.Tell(new RoomManagerActor.RemoveRoom(RoomID));
 
-            Console.WriteLine($"Client Leave {clientId}");
+            Console.WriteLine($"Room{RoomID} Leave Client ID : {clientId}");
         }
         public void ChatHandle(ClientSession player, C_Chat chatPacket)
         {

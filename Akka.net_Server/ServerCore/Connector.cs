@@ -10,20 +10,30 @@ namespace ServerCore
     {
         Func<Session> _sessionFactory;
 
-        public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory, int count = 500)
+        public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory, bool multiTest = true, int count = 500)
         {
-            for (int i = 0; i < count; i++)
+            if(multiTest)
             {
-                Socket socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                _sessionFactory = sessionFactory;
-
-                SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-                args.Completed += OnConnectCompleted;
-                args.RemoteEndPoint = endPoint;
-                args.UserToken = socket;
-
-                RegisterConnect(args);
+                for (int i = 0; i < count; i++)
+                  Connect(endPoint, sessionFactory);
             }
+            else
+            {
+                Connect(endPoint, sessionFactory);
+            }
+        }
+
+        void Connect(IPEndPoint endPoint, Func<Session> sessionFactory)
+        {
+            Socket socket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            _sessionFactory = sessionFactory;
+
+            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
+            args.Completed += OnConnectCompleted;
+            args.RemoteEndPoint = endPoint;
+            args.UserToken = socket;
+
+            RegisterConnect(args);
         }
 
         void RegisterConnect(SocketAsyncEventArgs args)
