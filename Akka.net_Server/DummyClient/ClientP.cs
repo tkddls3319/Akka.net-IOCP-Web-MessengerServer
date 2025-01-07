@@ -22,6 +22,5 @@ namespace DummyClient
 
             while (true) { }
         }
-
     }
 }

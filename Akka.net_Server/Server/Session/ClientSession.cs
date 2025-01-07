@@ -36,7 +36,6 @@ namespace Server
             Array.Copy(BitConverter.GetBytes((ushort)(packetID)), 0, sendBuffer, sizeof(ushort), sizeof(ushort));
             Array.Copy(packet.ToByteArray(), 0, sendBuffer, 4, size);
 
-
             //Console.WriteLine($"SEND - Packet : {packet.Descriptor.Name}, SessionId : {SessionID}");
             lock (_lock)
             {

@@ -18,7 +18,27 @@ namespace Server
         public static ActorSystem ServerActorSystem;
         static void Main(string[] args)
         {
-            ServerActorSystem = ActorSystem.Create("ServerActorSystem");
+            //ServerActorSystem = ActorSystem.Create("ServerActorSystem");
+
+            #region cluster
+            // XML에서 HOCON 설정 읽기
+            var section = (AkkaConfigurationSection)ConfigurationManager.GetSection("akka");
+            var config = section.AkkaConfig;
+            ServerActorSystem = ActorSystem.Create("ClusterSystem", config);
+
+            var backendAddress = Address.Parse("akka.tcp://ClusterSystem@localhost:5001");
+            var backend = ServerActorSystem.ActorSelection($"{backendAddress}/user/BackendActor").Anchor;
+
+            var frontend = ServerActorSystem.ActorOf(Props.Create(() => new FrontendActor(backend)), "FrontendActor");
+
+            // 클라이언트 요청 시뮬레이션
+            for (int i = 1; i <= 5; i++)
+            {
+                frontend.Tell($"Request {i}");
+                Thread.Sleep(500); // 지연 시간
+            }
+
+            #endregion
 
             var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor()), "RoomManagerActor");
             var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), "SessionManagerActor");
