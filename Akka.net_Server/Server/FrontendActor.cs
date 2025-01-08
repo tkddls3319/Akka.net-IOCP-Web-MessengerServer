@@ -1,8 +1,12 @@
 ﻿using Akka.Actor;
 
+using Google.Protobuf;
+using Google.Protobuf.Protocol;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,28 +14,28 @@ namespace Server
 {
     public class FrontendActor : ReceiveActor
     {
-        private IActorRef _backend;
-
-        public FrontendActor(IActorRef backend)
+        public class ClusterMessage
         {
-            _backend = backend;
+            public string Message { get; }
+            public ClusterMessage(string message) => Message = message;
+        }
+        public FrontendActor()
+        {
+
+            Receive<byte[]>(message =>
+            {
+               IMessage packet =  MessageHelper.DeserializeWithType(message);
+
+                C_Chat chat = (C_Chat)packet;
+                Sender.Tell(MessageHelper.SerializeWithType(new C_Chat() { Chat = "서버메세지" }));
+                Console.WriteLine($"{chat.Chat}");
+            });
 
             Receive<string>(message =>
             {
                 Console.WriteLine($"[Frontend] Received request: {message}");
-                _backend.Tell($"Processed: {message}");
-            });
-
-            Receive<BackendResponse>(response =>
-            {
-                Console.WriteLine($"[Frontend] Response from Backend: {response.Message}");
+                Sender.Tell($"Processed: {message}");
             });
         }
-    }
-
-    public class BackendResponse
-    {
-        public string Message { get; }
-        public BackendResponse(string message) => Message = message;
     }
 }

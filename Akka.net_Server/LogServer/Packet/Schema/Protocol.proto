@@ -1,0 +1,49 @@
+syntax = "proto3";
+
+package Protocol;
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "Google.Protobuf.Protocol";
+
+enum PacketID {
+  C_ENTER_SERVER =0;
+  S_ENTER_SERVER =1;
+
+  S_LEAVE_SERVER = 2;
+  
+  S_SPAWN = 3;
+  S_DESPAWN = 4;
+  
+  C_CHAT = 5;
+  S_CHAT = 6;
+}
+message C_EnterServer{
+  ClientInfo client =1;
+}
+
+message S_EnterServer{
+  ClientInfo client =1;
+}
+
+message S_LeaveServer{
+}
+
+message S_Spawn {
+ repeated int32 objectIds = 1;
+}
+
+message S_Despawn {
+ repeated int32 objectIds = 1;
+}
+
+message C_Chat{
+  string chat = 1;
+}
+
+message S_Chat{
+	int32 objectId =1;
+  string chat = 2;
+}
+
+message ClientInfo{
+	int32 objectId =1;
+}

@@ -3,6 +3,7 @@ using Google.Protobuf.Protocol;
 using ServerCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 class PacketManager
 {
@@ -28,8 +29,7 @@ class PacketManager
 		_onRecv.Add((ushort)PacketID.CChat, MakePacket<C_Chat>);
 		_handler.Add((ushort)PacketID.CChat, PacketHandler.C_ChatHandler);
 	}
-
-	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
+    public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
 		ushort count = 0;
 
