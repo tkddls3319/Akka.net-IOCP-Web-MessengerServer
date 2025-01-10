@@ -7,7 +7,7 @@ using ServerCore;
 
 namespace DummyClient
 {
-    internal class ClientP
+    public class ClientP
     {
         static void Main(string[] args)
         {

@@ -4,14 +4,14 @@ using System.Net.Sockets;
 using System.Text;
 
 using Akka.Actor;
-using Akka.Cluster;
 using Akka.Configuration;
 using Akka.Configuration.Hocon;
 using Akka.Event;
+using Akka.Routing;
 
 using ServerCore;
 
-namespace Server
+namespace Akka.Server
 {
     public class Program
     {
@@ -21,7 +21,7 @@ namespace Server
         {
 
             #region cluster
-             var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
+            var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
             ServerActorSystem = ActorSystem.Create("ClusterSystem", config);
 
             var frontend = ServerActorSystem.ActorOf(Props.Create(() => new FrontendActor()), "Frontend");
@@ -29,9 +29,20 @@ namespace Server
             var backendAddress = Address.Parse("akka.tcp://ClusterSystem@localhost:5001");
             var backend = ServerActorSystem.ActorSelection($"{backendAddress}/user/Backend").Anchor;
 
-            var cluster = Cluster.Get(ServerActorSystem);
+            var cluster = Cluster.Cluster.Get(ServerActorSystem);
             Console.WriteLine($"Cluster Members: {string.Join(", ", cluster.State.Members)}");
 
+
+            //var config = File.ReadAllText("app.conf");
+            //var conf = ConfigurationFactory.ParseString(config).BoostrapApplication(new AppBootstrapConfig(false, true));
+
+            //var actorSystem = ActorSystem.Create("AkkaTrader", conf);
+
+            //var tradeRouter = actorSystem.ActorOf(
+            //    Props.Empty.WithRouter(new ClusterRouterGroup(
+            //        new ConsistentHashingGroup(new[] { "/user/orderbooks" },
+            //            TradeEventConsistentHashMapping.TradeEventMapping),
+            //        new ClusterRouterGroupSettings(10000, new[] { "/user/orderbooks" }, true, useRole: "trade-processor"))), "tradesRouter");
             // 클라이언트 요청 시뮬레이션
             //for (int i = 1; i <= 5; i++)
             //{
@@ -40,8 +51,8 @@ namespace Server
             //}
             #endregion
 
-            //var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor()), "RoomManagerActor");
-            //var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), "SessionManagerActor");
+            //var roomManager = Akka.ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor()), "RoomManagerActor");
+            //var sessionManager = Akka.ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), "SessionManagerActor");
 
             //sessionManager.Tell(new SessionManagerActor.SetRoomManagerActor(roomManager));
             //roomManager.Tell(new RoomManagerActor.SetSessionManager(sessionManager));
@@ -51,7 +62,7 @@ namespace Server
             //IPAddress ipAddr = ipEntry.AddressList[1];
             //IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
 
-            //Console.WriteLine("==========Server OPEN==========");
+            //Console.WriteLine("==========Akka.Server OPEN==========");
             //Console.WriteLine("Listener....");
 
             //ThreadPool.GetMaxThreads(out int workerThreads, out int completionPortThreads);

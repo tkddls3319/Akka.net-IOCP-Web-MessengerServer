@@ -5,9 +5,9 @@ using Akka.Configuration.Hocon;
 
 using System.Configuration;
 
-namespace LogServer
+namespace Akka.LogAkka.Server
 {
-    internal class Program
+    public class Program
     {
         static ActorSystem ServerActorSystem;
         static void Main(string[] args)

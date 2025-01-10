@@ -5,10 +5,10 @@ import "google/protobuf/timestamp.proto";
 option csharp_namespace = "Google.Protobuf.Protocol";
 
 enum PacketID {
-  C_ENTER_SERVER =0;
-  S_ENTER_SERVER =1;
+  C_ENTER_Akka.Server =0;
+  S_ENTER_Akka.Server =1;
 
-  S_LEAVE_SERVER = 2;
+  S_LEAVE_Akka.Server = 2;
   
   S_SPAWN = 3;
   S_DESPAWN = 4;
@@ -16,15 +16,15 @@ enum PacketID {
   C_CHAT = 5;
   S_CHAT = 6;
 }
-message C_EnterServer{
+message C_EnterAkka.Server{
   ClientInfo client =1;
 }
 
-message S_EnterServer{
+message S_EnterAkka.Server{
   ClientInfo client =1;
 }
 
-message S_LeaveServer{
+message S_LeaveAkka.Server{
 }
 
 message S_Spawn {

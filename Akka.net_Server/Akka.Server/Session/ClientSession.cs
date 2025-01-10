@@ -1,13 +1,10 @@
 ﻿using Akka.Actor;
-
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
-
 using ServerCore;
-
 using System.Net;
 
-namespace Server
+namespace Akka.Server
 {
     public partial class ClientSession : PacketSession
     {
