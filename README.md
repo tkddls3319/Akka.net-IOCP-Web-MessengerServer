@@ -14,9 +14,13 @@ Listener와 Session 클래스는 클라이언트와의 데이터 송수신, 연�
 클라이언트 세션 관리와 방 관리를 독립적인 액터로 설계하여 시스템의 확장성과 유지보수성을 강화해보려고 여러가지를 시도 중 입니다.
 
 Akka.net 기본 설명 블로그
+
 https://usingsystem.tistory.com/545
+
 https://usingsystem.tistory.com/547
+
 https://usingsystem.tistory.com/548
+
 https://usingsystem.tistory.com/549
 
 # Akka.Server 프로젝트
@@ -27,6 +31,38 @@ Akka를 활용한 서버 개발.
 HOCON 설정으로 Akka Cluster 구성.
 Akka Remote를 사용한 원격 액터 간 통신.
 통신 방식: IOCP 서버를 통해 클라이언트와 TCP/IP 소켓 통신.
+
+# 프로젝트 설명
+
+1. Akka.Server
+
+역할: 클러스터의 중심 역할을 담당하는 Seed-Node.로 DummyClient와 소켓통신을 하며 채팅서버 역할 수행. Akka.LogServer 노드에 채팅 기록을 전달
+
+구현 내용: IOCP 서버를 통해 DummyClient와 TCP/IP 소켓 통신. Google Protobuf를 사용하여 데이터를 직렬화 및 역직렬화.
+
+2. Akka.LogServer
+
+역할: Akka.Server에서 보내는 채팅 기록을 관리 및 처리 담당 서버.
+
+구현 내용: Akka를 활용하여 로그 수집 및 저장 로직 구현.
+
+3. Akka.Protocol.Shared
+
+역할: 공통 Protobuf 정의를 공유하기 위한 라이브러리.
+
+구현 내용: Protocol.cs를 포함하며, 모든 프로젝트에서 참조하여 사용.
+
+4. DummyClient
+
+역할: 채팅 클라이언트 역할.
+
+구현 내용: Akka.Server와 비동기적으로 TCP 통신 수행. 
+
+5. ServerCore
+
+역할: Akka.Server와 DummyClient 간의 소켓 통신을 위한 기본 라이브러리.
+
+구현 내용: IOCP 기반의 TCP 통신 로직 구현.
 
 # Akka 직렬화에 대한 고찰
 1. Google Protobuf와 사용자 설정 프로토콜
@@ -48,19 +84,4 @@ SerializerWithStringManifest를 사용하는 사례:
 특정 타입의 커스텀 직렬화가 필요한 경우(예: DateTimeOffset, decimal 등).
 DTO 설계 원칙 준수: 데이터와 로직 분리를 위해 사용.
 
-# 프로젝트 설명
-1. Akka.Server
-역할: 클러스터의 중심 역할을 담당하는 Seed-Node.
-구현 내용: IOCP 서버를 통해 DummyClient와 TCP/IP 소켓 통신. Google Protobuf를 사용하여 데이터를 직렬화 및 역직렬화.
-2. Akka.LogServer
-역할: 로그 관리 및 처리 담당 서버.
-구현 내용: Akka를 활용하여 로그 수집 및 저장 로직 구현.
-3. Akka.Protocol.Shared
-역할: 공통 Protobuf 정의를 공유하기 위한 라이브러리.
-구현 내용: Protocol.cs를 포함하며, 모든 프로젝트에서 참조하여 사용.
-4. DummyClient
-역할: 클라이언트 역할.
-구현 내용: Akka.Server와 비동기적으로 TCP 통신 수행.
-5. ServerCore
-역할: Akka.Server와 DummyClient 간의 소켓 통신을 위한 기본 라이브러리.
-구현 내용: IOCP 기반의 TCP 통신 로직 구현.
+
