@@ -54,6 +54,12 @@ namespace Akka.Server
             Receive<RemoveRoom>(msg => RemoveRoomHandler(msg.RoomId));
             Receive<AddClient>(msg => AddClientToRoomHandler(msg.Session));
         }
+        protected override void PreStart()
+        {
+            base.PreStart();
+
+            AddRoomHandler();
+        }
         private void AddClientToRoomHandler(ClientSession session)
         {
             var roomResults = _rooms.Values.Select(room =>

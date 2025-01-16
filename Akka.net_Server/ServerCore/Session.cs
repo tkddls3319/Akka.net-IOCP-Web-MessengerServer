@@ -25,12 +25,12 @@ public abstract class PacketSession : Session
             if (buffer.Count < dataSize)
                 break;
 
-            OnRecvedPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));  
+            OnRecvedPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, dataSize));
             processLen += dataSize;
 
             buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + dataSize, buffer.Count - dataSize);
         }
-            return processLen;
+        return processLen;
     }
     public abstract void OnRecvedPacket(ArraySegment<byte> buffer);
 }
@@ -50,7 +50,7 @@ public abstract class Session
 
     public abstract void OnConnected(EndPoint endPoint);
     public abstract void OnDisconnected(EndPoint endPoint);
-    public abstract  int OnRecved(ArraySegment<byte> buffer);
+    public abstract int OnRecved(ArraySegment<byte> buffer);
     public abstract void OnSended(int numOfByte);
 
     public void Start(Socket socket)
@@ -61,7 +61,6 @@ public abstract class Session
         _sendArgs.Completed += SendArgs_Completed;
 
         RegisterRecv();
-
     }
     public void Send(List<ArraySegment<byte>> segmentBuffers)
     {
@@ -70,7 +69,7 @@ public abstract class Session
 
         lock (_lock)
         {
-            foreach (ArraySegment< byte > sendBuffer in segmentBuffers)
+            foreach (ArraySegment<byte> sendBuffer in segmentBuffers)
             {
                 _sendQueue.Enqueue(sendBuffer);
             }
@@ -83,7 +82,7 @@ public abstract class Session
         lock (_lock)
         {
             _sendQueue.Enqueue(segmentBuffer);
-            if(_pendingList.Count == 0)
+            if (_pendingList.Count == 0)
                 RegisterSend();
         }
     }
@@ -106,28 +105,27 @@ public abstract class Session
         {
             Console.WriteLine(err);
         }
-
     }
     private void RecvArgs_Completed(object? sender, SocketAsyncEventArgs args)
     {
-        if(_recvArgs.SocketError == SocketError.Success && _recvArgs.BytesTransferred > 0)
+        if (_recvArgs.SocketError == SocketError.Success && _recvArgs.BytesTransferred > 0)
         {
             try
             {
-                if(_recvBuffer.OnWrite(_recvArgs.BytesTransferred) == false)
+                if (_recvBuffer.OnWrite(_recvArgs.BytesTransferred) == false)
                 {
                     DisConnect();
                     return;
                 }
 
                 int processLen = OnRecved(_recvBuffer.ReadSegment);
-                if(_recvBuffer.DataSize < processLen)
+                if (_recvBuffer.DataSize < processLen)
                 {
                     DisConnect();
                     return;
                 }
 
-                if(_recvBuffer.OnRead(processLen) == false)
+                if (_recvBuffer.OnRead(processLen) == false)
                 {
                     DisConnect();
                     return;
@@ -201,7 +199,7 @@ public abstract class Session
             return;
 
         OnDisconnected(_socket.RemoteEndPoint);
-        _socket.Shutdown(SocketShutdown.Both);  
+        _socket.Shutdown(SocketShutdown.Both);
         _socket.Close();
         _sendQueue.Clear();
         _pendingList.Clear();

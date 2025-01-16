@@ -59,11 +59,12 @@ namespace Akka.Server
 
         protected override void PreStart()
         {
-            //Console.WriteLine($"Room {RoomID} started.");
+            base.PreStart();
         }
+
         protected override void PostStop()
         {
-            //Console.WriteLine($"Room {RoomID} stopped.");
+            base.PostStop();
         }
         private void EnterClientHandler(EnterClient client)
         {
@@ -105,6 +106,7 @@ namespace Akka.Server
             }
 
             Console.WriteLine($"Room{RoomID} Enter Client ID : {session.SessionID}");
+            //_clusterLogServer.Tell(new C_Chat() { Chat = $"Room{RoomID} Enter Client ID : {session.SessionID}" });
         }
         private void LeaveClientHandler(int clientId)
         {
@@ -148,6 +150,9 @@ namespace Akka.Server
                 ObjectId = id,
                 Chat = chatPacket.Chat + "\n"
             };
+
+          ClusterActorManager.Instance.GetClusterActor(ClusterActorManager.DefineClusterName.LogManagerActor)
+                ?.Tell(severChatPacket);
 
             BroadCast(severChatPacket);
         }
