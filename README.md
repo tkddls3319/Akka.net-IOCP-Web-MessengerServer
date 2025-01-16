@@ -1,7 +1,7 @@
 # 프로젝트 테스트 방법
 ※ VisualStudio 빌드로 테스트 방법
 
-솔루션선택 -> 여러 시작 프로젝트 -> Akka.Server작업 시작, Akka.LogServer작업 시작, DummyClient작업 시작 -> F5번으로 시작 -> DummyClient에 키보드입력으로 채팅 전송 ( DummyClient.exe를 여러개 실행 하여 멀티 채팅테스트 가능합니다. )
+솔루션선택 -> 속성 -> 여러 시작 프로젝트 -> Akka.Server작업 시작, Akka.LogServer작업 시작, DummyClient작업 시작 -> F5번으로 시작 -> DummyClient에 키보드입력으로 채팅 전송 ( DummyClient.exe를 여러개 실행 하여 멀티 채팅테스트 가능합니다. )
 
 -> Akka.LogServer에 Debug폴더 안에서 로그 확인
 
