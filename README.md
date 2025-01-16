@@ -44,7 +44,7 @@ Akka Remote를 사용한 원격 액터 간 통신.
 
 역할: Akka.Server에서 보내는 채팅 기록을 관리 및 처리 담당 서버.
 
-구현 내용: Akka를 활용하여 로그 수집 및 저장 로직 구현.
+구현 내용: Akka를 활용하여 로그 수집 및 저장 로직 구현. 로그는 Serilog를 사용해서 기록록
 
 3. Akka.Protocol.Shared
 
