@@ -1,3 +1,12 @@
+# 프로젝트 테스트 방법
+※ VisualStudio 빌드로 테스트 방법
+
+솔루션선택 -> 여러 시작 프로젝트 -> Akka.Server작업 시작, Akka.LogServer작업 시작, DummyClient작업 시작 -> F5번으로 시작 -> DummyClient에 키보드입력으로 채팅 전송 ( DummyClient.exe를 여러개 실행 하여 멀티 채팅테스트 가능합니다. )
+
+-> Akka.LogServer에 Debug폴더 안에서 로그 확인
+
+Room안에는 클라이언트 5명만 들어올 수 있게 해놨습니다. 변경해서 테스트 하셔도 됩니다. RoomManagerActor안에 AddClientToRoomHandler에서 조정할 수 있습니다.
+
 # Akka.net + IOCP Server
  Akka.net과 IOCP를 합친 Chatting Server를 개발 중 이며 어떻게 설계를 해야할지 고민을 해보고 있습니다.
 
@@ -23,9 +32,6 @@ https://usingsystem.tistory.com/548
 
 https://usingsystem.tistory.com/549
 
-# Akka.Server 프로젝트
-데이터 송수신: Google Protobuf를 사용.
-
 # 프로젝트 목적
 Akka를 활용한 서버 개발.
 HOCON 설정으로 Akka Cluster 구성.
@@ -33,7 +39,6 @@ Akka Remote를 사용한 원격 액터 간 통신.
 통신 방식: IOCP 서버를 통해 클라이언트와 TCP/IP 소켓 통신.
 
 # 프로젝트 설명
-
 1. Akka.Server
 
 역할: 클러스터의 중심 역할을 담당하는 Seed-Node.로 DummyClient와 소켓통신을 하며 채팅서버 역할 수행. Akka.LogServer 노드에 채팅 기록을 전달
