@@ -1,12 +1,4 @@
-# 프로젝트 테스트 방법
-※ VisualStudio 빌드로 테스트 방법
-
-솔루션선택 -> 속성 -> 여러 시작 프로젝트 -> Akka.Server작업 시작, Akka.LogServer작업 시작, DummyClient작업 시작 -> F5번으로 시작 -> DummyClient에 키보드입력으로 채팅 전송 ( DummyClient.exe를 여러개 실행 하여 멀티 채팅테스트 가능합니다. )
-
--> Akka.LogServer에 Debug폴더 안에서 로그 확인
-
-Room안에는 클라이언트 5명만 들어올 수 있게 해놨습니다. 변경해서 테스트 하셔도 됩니다. RoomManagerActor안에 AddClientToRoomHandler에서 조정할 수 있습니다.
-
+🔥 **프로젝트 진행 중!** 🚀
 # Akka.net + IOCP Server
  Akka.net과 IOCP를 합친 Chatting Server를 개발 중 이며 어떻게 설계를 해야할지 고민을 해보고 있습니다.
 
@@ -22,15 +14,38 @@ Listener와 Session 클래스는 클라이언트와의 데이터 송수신, 연�
 클라이언트를 효율적으로 처리하기 위해 방(Room)을 동적으로 생성하고, 클라이언트 수에 따라 부하를 분산.
 클라이언트 세션 관리와 방 관리를 독립적인 액터로 설계하여 시스템의 확장성과 유지보수성을 강화해보려고 여러가지를 시도 중 입니다.
 
-Akka.net 기본 설명 블로그
+- Akka.net 기본 설명 블로그
+  - https://usingsystem.tistory.com/545
+  - https://usingsystem.tistory.com/547
+  - https://usingsystem.tistory.com/548
+  - https://usingsystem.tistory.com/549
 
-https://usingsystem.tistory.com/545
+# 프로젝트 테스트 방법
+### VisualStudio 빌드로 테스트 방법
 
-https://usingsystem.tistory.com/547
+솔루션선택 -> 속성 -> 여러 시작 프로젝트 -> Akka.Server작업 시작, Akka.LogServer작업 시작, DummyClient작업 시작 -> F5번으로 시작 -> DummyClient에 키보드입력으로 채팅 전송 ( DummyClient.exe를 여러개 실행 하여 멀티 채팅 가능 ) -> Akka.LogServer에 Debug폴더 안에서 로그 확인
 
-https://usingsystem.tistory.com/548
+Room안에는 클라이언트 5명만 들어올 수 있게 해놈. RoomManagerActor안에 AddClientToRoomHandler에서 조정 가능.
 
-https://usingsystem.tistory.com/549
+### Protobuf자동화 설명
+링크된 protobuf.proto, ClusterProtocol.proto수정하고 Akka.Server프로젝트를 빌드 하거나 Protobuf폴더 안에 GenProto.bat를 실행시키면 자동으로 생성된 패킷관련 파일이 관련 프로젝트로 이동
+
+[Protobuf폴더]
+- Akka.net_Server폴더안에 보면 Protobuf폴더 안에 protobuf관련 파일이 모두 있다.
+- protobuf.proto - 서버와 클라이언트간 송수신 패킷을 위해 사용
+- ClusterProtocol.proto - 클러스터간 송수신 패킷을 위해 사용
+- GenProto.bat
+  - protoc.exe를 실행시켜 protobuf.proto, ClusterProtocol.proto를 읽어 cs파일 생성.
+  - 생성 파일protobuf.cs를 DummyClient와 Akka.Server 프로젝트의 Packet파일로 복사.
+  - 생성 파일 ClusterProtocol.cs를 Akka.Protocol.Shared에 복사.
+  - PacketGenerator프로젝트를 실행시켜 ClientPacketManager.cs과 ServerPacketManager.cs를 만들어 DummyClient와 Akka.Server프로젝트의 Packet파일로 복사.
+
+[Akka.Server프로젝트]
+Akka.Server에 빌드 전 이벤트를 사용하여 Protobuf안에 GenProto.bat를 자동으로 실행시키게 자동화 해놈
+
+[PacketGenerator프로젝트]
+해당 프로젝트는 Protocol.proto를 읽어 ClientPacketManager.cs과 ServerPacketManager.cs 자동으로 만드는 프로젝트다.
+해당 프로젝트에 Protobuf폴더에 ClusterProtocol.proto와 Protocol.proto와 GenProto.bat이 링크되어있다. 
 
 # 프로젝트 목적
 Akka를 활용한 서버 개발.
