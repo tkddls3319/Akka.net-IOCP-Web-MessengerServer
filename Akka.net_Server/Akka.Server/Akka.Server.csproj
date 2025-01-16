@@ -29,4 +29,8 @@
     </None>
   </ItemGroup>
 
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="CALL $(SolutionDir)Protobuf\protoc-3.12.3-win64\bin\GenProto.bat" />
+  </Target>
+
 </Project>

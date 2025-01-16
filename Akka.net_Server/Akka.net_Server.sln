@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akka.Protocol.Shared", "Akk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akka.Server", "Akka.Server\Akka.Server.csproj", "{1365D98B-F806-47EA-8179-7B250E5A3FFA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PacketTool", "PacketTool", "{8CAB8AB1-949F-4743-955D-6E048361891F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketGenerator", "PacketGenerator\PacketGenerator.csproj", "{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +45,10 @@ Global
 		{1365D98B-F806-47EA-8179-7B250E5A3FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1365D98B-F806-47EA-8179-7B250E5A3FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1365D98B-F806-47EA-8179-7B250E5A3FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -48,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{ACE80DCB-B732-45F3-B489-CB803972E4C6} = {D6440C72-3CF8-4019-9807-4634006A17AB}
 		{D88BD28F-E581-4E6C-9AA6-7A7FA3015FB0} = {D6440C72-3CF8-4019-9807-4634006A17AB}
+		{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79} = {8CAB8AB1-949F-4743-955D-6E048361891F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {518F05CB-D23C-48DC-A999-2859A2BB9108}

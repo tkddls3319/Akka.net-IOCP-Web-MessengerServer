@@ -53,6 +53,10 @@ namespace Google.Protobuf.Protocol {
 
   }
   #region Enums
+  /// <summary>
+  ///
+  ///enum ID ¹üÀ§ 0 ~ 100
+  /// </summary>
   public enum PacketID {
     [pbr::OriginalName("C_ENTER_SERVER")] CEnterServer = 0,
     [pbr::OriginalName("S_ENTER_SERVER")] SEnterServer = 1,

@@ -22,7 +22,7 @@ public class PacketHandler
 
         clientSession.MakeInputThread();
 
-        Console.WriteLine($"S_EnterServerHandler - Object ID : {s_enter.Client.ObjectId}");
+        Console.WriteLine($"S_EnterServerHandler - Your Object ID : {s_enter.Client.ObjectId}");
     }
 
     public static void S_LeaveServerHandler(PacketSession session, IMessage packet)

@@ -12,10 +12,6 @@ namespace DummyClient
         static void Main(string[] args)
         {
             //서버 보다 빨리 켜져서 
-#if VISUALSTUDIO
-            Thread.Sleep(10000); // Visual Studio 환경에서만 동작
-#endif
-
             if (Environment.GetEnvironmentVariable("VisualStudioEdition") != null)
             {
                 Thread.Sleep(3000); // Visual Studio 환경에서만 동작

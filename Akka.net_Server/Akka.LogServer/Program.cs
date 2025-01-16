@@ -22,10 +22,6 @@ namespace Akka.LogAkka.Server
                 .WriteTo.File($"logs/chatLog.json", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             #endregion
-            //Log.Debug("This is a debug message."); // 기록됨
-            //Log.Information("Application started at {Time}", DateTime.Now);
-            //Log.Warning("Warning! Something might go wrong.");
-            //Log.Error("An error occurred: {ErrorCode}", 404);
 
             #region Cluster 활성화
             var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));

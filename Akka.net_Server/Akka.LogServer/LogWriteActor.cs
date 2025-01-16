@@ -18,8 +18,8 @@ namespace Akka.LogServer
         #region Message
         public class WriteMessage
         {
-         public   IActorRef Sender { get; }
-         public   IMessage Message { get; }
+            public IActorRef Sender { get; }
+            public IMessage Message { get; }
 
             public WriteMessage(IActorRef sender, IMessage message)
             {
@@ -34,6 +34,10 @@ namespace Akka.LogServer
             Receive<WriteMessage>(message =>
             {
                 Log.Logger.Debug($"{Self.Path} = {message.Message}");
+                //Log.Debug("This is a debug message."); // 기록됨
+                //Log.Information("Application started at {Time}", DateTime.Now);
+                //Log.Warning("Warning! Something might go wrong.");
+                //Log.Error("An error occurred: {ErrorCode}", 404);
             });
         }
     }
