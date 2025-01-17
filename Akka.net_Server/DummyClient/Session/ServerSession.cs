@@ -43,7 +43,6 @@ namespace DummyClient
         public void Update()
         {
             string input = Console.ReadLine();
-            Console.Write(">");
 
             C_Chat packet = new C_Chat();
             packet.Chat = input;
