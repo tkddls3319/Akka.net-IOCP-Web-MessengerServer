@@ -30,6 +30,8 @@ namespace Akka.LogAkka.Server
             var LogManagerActor = ServerActorSystem.ActorOf(Props.Create(() => new LogManagerActor()), "LogManagerActor");
             #endregion
 
+            Console.WriteLine("==========LogServer OPEN==========");
+            Console.WriteLine("로그 경로 : logs/chatLog.json");
             ServerActorSystem.WhenTerminated.Wait();
             Log.CloseAndFlush();
         }

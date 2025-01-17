@@ -43,6 +43,7 @@ namespace DummyClient
         public void Update()
         {
             string input = Console.ReadLine();
+            Console.Write(">");
 
             C_Chat packet = new C_Chat();
             packet.Chat = input;
@@ -51,7 +52,8 @@ namespace DummyClient
 
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine($"Server Connected {endPoint}");
+            Console.WriteLine("==========Server Connected==========");
+            Console.WriteLine($"Server EndPoint - {endPoint}");
             Send(new C_EnterServer());
         }
 

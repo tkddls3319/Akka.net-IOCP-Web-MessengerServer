@@ -1,5 +1,7 @@
 ﻿using Akka.Actor;
 
+using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,27 +14,27 @@ namespace Akka.Server
     public class RoomManagerActor : ReceiveActor
     {
         #region Message
-        public class SetSessionManager
+        public class MsgSetSessionManager
         {
             public IActorRef SessionManager { get; }
-            public SetSessionManager(IActorRef sessionManager) => SessionManager = sessionManager;
+            public MsgSetSessionManager(IActorRef sessionManager) => SessionManager = sessionManager;
         }
-        public class AddRoom
+        public class MsgAddRoom
         {
-            public AddRoom() { }
+            public MsgAddRoom() { }
         }
-        public class RemoveRoom
+        public class MsgRemoveRoom
         {
             public int RoomId { get; set; }
-            public RemoveRoom(int roomId)
+            public MsgRemoveRoom(int roomId)
             {
                 RoomId = roomId;
             }
         }
-        public class AddClient
+        public class MsgAddClient
         {
             public ClientSession Session { get; }
-            public AddClient(ClientSession session)
+            public MsgAddClient(ClientSession session)
             {
                 Session = session;
             }
@@ -46,13 +48,14 @@ namespace Akka.Server
         Dictionary<int, IActorRef> _rooms = new Dictionary<int, IActorRef>();
         int _roomCount = 0;
 
-        public RoomManagerActor()
+        public RoomManagerActor(IActorRef sessionManager)
         {
-            Receive<SetSessionManager>(msg => _sessionManager = msg.SessionManager);
+            _sessionManager = sessionManager;
+            Receive<MsgSetSessionManager>(msg => _sessionManager = msg.SessionManager);
 
-            Receive<AddRoom>(msg => AddRoomHandler());
-            Receive<RemoveRoom>(msg => RemoveRoomHandler(msg.RoomId));
-            Receive<AddClient>(msg => AddClientToRoomHandler(msg.Session));
+            Receive<MsgAddRoom>(msg => AddRoomHandler());
+            Receive<MsgRemoveRoom>(msg => RemoveRoomHandler(msg.RoomId));
+            Receive<MsgAddClient>(msg => AddClientToRoomHandler(msg.Session));
         }
         protected override void PreStart()
         {
@@ -64,21 +67,21 @@ namespace Akka.Server
         {
             var roomResults = _rooms.Values.Select(room =>
             {
-                var clientCount = room.Ask<int>(new RoomActor.GetClientCount()).Result;
+                var clientCount = room.Ask<int>(new RoomActor.MsgGetClientCount()).Result;
                 return new { Room = room, ClientCount = clientCount };
             }).ToArray();
 
             // 클라이언트 수가 5 이하인 첫 번째 룸 찾기
-            var selectedRoom = roomResults.FirstOrDefault(r => r.ClientCount < 5)?.Room;
+            var selectedRoom = roomResults.FirstOrDefault(r => r.ClientCount < Define.RoomMaxCount)?.Room;
 
             if (selectedRoom == null)
             {
                 AddRoomHandler(); // 새로운 룸 생성
-                _rooms[_roomCount].Tell(new RoomActor.EnterClient(session)); // 새로 생성한 룸에 클라이언트 추가
+                _rooms[_roomCount].Tell(new RoomActor.MsgEnterClient(session)); // 새로 생성한 룸에 클라이언트 추가
             }
             else
             {
-                selectedRoom.Tell(new RoomActor.EnterClient(session));
+                selectedRoom.Tell(new RoomActor.MsgEnterClient(session));
             }
         }
         void AddRoomHandler()
@@ -86,19 +89,20 @@ namespace Akka.Server
             _roomCount++;
             var roomActor = Context.ActorOf(Props.Create(() => new RoomActor(Self, _sessionManager, _roomCount)), $"{_roomCount}");
             _rooms[_roomCount] = roomActor;
-            Console.WriteLine($"Room Created Id : {_roomCount}");
+            Log.Logger.Information($"[RoomManager] Room{_roomCount} Created. Room Count : {_rooms.Count}");
         }
+        
         private void RemoveRoomHandler(int roomid)
         {
             if (_rooms.TryGetValue(roomid, out var roomActor))
             {
                 Context.Stop(roomActor);
                 _rooms.Remove(roomid);
-                Console.WriteLine($"Room Remove Id : {_roomCount}");
+                Log.Logger.Information($"[RoomManager] Room{roomid} Remove. Room Count : {_rooms.Count}");
             }
             else
             {
-                Console.WriteLine($"Room {roomid} does not exist.");
+                Log.Logger.Information($"[RoomManager] Room{roomid} does not exist.");
             }
         }
     }

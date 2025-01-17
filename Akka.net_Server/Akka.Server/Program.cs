@@ -11,6 +11,8 @@ using Akka.Routing;
 
 using Google.Protobuf.Protocol;
 
+using Serilog;
+
 using ServerCore;
 
 namespace Akka.Server
@@ -21,6 +23,13 @@ namespace Akka.Server
         public static ActorSystem ServerActorSystem;
         static void Main(string[] args)
         {
+            #region Logger 정의
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+            #endregion
+
             #region cluster
             var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
             ServerActorSystem = ActorSystem.Create("ClusterSystem", config);
@@ -28,18 +37,17 @@ namespace Akka.Server
 
             #region Actor
             var clusterListenerActor =  ServerActorSystem.ActorOf(Props.Create(() => new ClusterListenerActor()), "clusterListenerActor");
-            var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor()), "RoomManagerActor");
             var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), "SessionManagerActor");
+            var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor(sessionManager)), "RoomManagerActor");
 
-            sessionManager.Tell(new SessionManagerActor.SetRoomManagerActor(roomManager));
-            roomManager.Tell(new RoomManagerActor.SetSessionManager(sessionManager));
+            sessionManager.Tell(new SessionManagerActor.MsgSetRoomManagerActor(roomManager));
             #endregion
 
             #region IOCP Server Start
-            Console.WriteLine("==========Listener OPEN==========");
-            Console.WriteLine("Listener....");
+            Log.Logger.Information("==========Listener OPEN==========");
             ThreadPool.GetMaxThreads(out int workerThreads, out int completionPortThreads);
-            Console.WriteLine($"Max Worker Threads: {workerThreads}, Max IOCP Threads: {completionPortThreads}");
+            Log.Logger.Information($"Max Worker Threads: {workerThreads}, Max IOCP Threads: {completionPortThreads}");
+            Log.Logger.Information("Listener....");
 
             string hostName = Dns.GetHostName();
             IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
@@ -48,7 +56,7 @@ namespace Akka.Server
 
             _listener.Init(endPoint, (socket) =>
             {
-                sessionManager.Tell(new SessionManagerActor.GenerateSession(socket));
+                sessionManager.Tell(new SessionManagerActor.MsgGenerateSession(socket));
             });
             #endregion
             

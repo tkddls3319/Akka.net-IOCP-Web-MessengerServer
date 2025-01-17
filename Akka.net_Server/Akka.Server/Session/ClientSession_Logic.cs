@@ -14,7 +14,7 @@ namespace Akka.Server
         {
             if (Room == null)
             {
-                _roomManager.Tell(new RoomManagerActor.AddClient(this));
+                _roomManager.Tell(new RoomManagerActor.MsgAddClient(this));
             }
         }
     }

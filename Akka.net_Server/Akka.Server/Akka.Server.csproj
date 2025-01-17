@@ -12,6 +12,8 @@
     <PackageReference Include="Akka.Cluster" Version="1.5.34" />
     <PackageReference Include="Akka.Remote" Version="1.5.34" />
     <PackageReference Include="Google.Protobuf" Version="3.29.3" />
+    <PackageReference Include="Serilog" Version="4.2.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

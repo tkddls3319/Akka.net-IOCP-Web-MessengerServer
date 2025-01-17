@@ -3,6 +3,8 @@
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
 
+using Serilog;
+
 using ServerCore;
 
 using System;
@@ -16,19 +18,19 @@ namespace Akka.Server
     public class RoomActor : ReceiveActor
     {
         #region Message
-        public class GetClientCount { }
-        public class EnterClient
+        public class MsgGetClientCount { }
+        public class MsgEnterClient
         {
             public ClientSession Session { get; }
-            public EnterClient(ClientSession session)
+            public MsgEnterClient(ClientSession session)
             {
                 Session = session;
             }
         }
-        public class LeaveClient
+        public class MsgLeaveClient
         {
             public int ClientId { get; }
-            public LeaveClient(int clientId)
+            public MsgLeaveClient(int clientId)
             {
                 ClientId = clientId;
             }
@@ -50,23 +52,13 @@ namespace Akka.Server
 
             RoomID = roomNumber;
 
-            Receive<EnterClient>(msg => EnterClientHandler(msg));
-            Receive<GetClientCount>(_ => Sender.Tell(_clients.Count));
-            Receive<LeaveClient>(msg => LeaveClientHandler(msg.ClientId));
+            Receive<MsgEnterClient>(msg => EnterClientHandler(msg));
+            Receive<MsgGetClientCount>(_ => Sender.Tell(_clients.Count));
+            Receive<MsgLeaveClient>(msg => LeaveClientHandler(msg.ClientId));
 
             Receive<MessageCustom<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
         }
-
-        protected override void PreStart()
-        {
-            base.PreStart();
-        }
-
-        protected override void PostStop()
-        {
-            base.PostStop();
-        }
-        private void EnterClientHandler(EnterClient client)
+        private void EnterClientHandler(MsgEnterClient client)
         {
             if (client.Session == null)
                 return;
@@ -104,9 +96,7 @@ namespace Akka.Server
                         client.Session.Send(spawnPacket);
                 }
             }
-
-            Console.WriteLine($"Room{RoomID} Enter Client ID : {session.SessionID}");
-            //_clusterLogServer.Tell(new C_Chat() { Chat = $"Room{RoomID} Enter Client ID : {session.SessionID}" });
+            Log.Logger.Information($"[Room{RoomID}] Enter Client ID : {session.SessionID}");
         }
         private void LeaveClientHandler(int clientId)
         {
@@ -115,7 +105,7 @@ namespace Akka.Server
                 return;
 
             client.Room = null;
-            _sessionManager.Tell(new SessionManagerActor.RemoveSession(client));
+            _sessionManager.Tell(new SessionManagerActor.MsgRemoveSession(client));
 
             {
                 S_LeaveServer leavePacket = new S_LeaveServer();
@@ -130,9 +120,9 @@ namespace Akka.Server
             }
 
             if (_clients.Count == 0)
-                _roomManger.Tell(new RoomManagerActor.RemoveRoom(RoomID));
+                _roomManger.Tell(new RoomManagerActor.MsgRemoveRoom(RoomID));
 
-            Console.WriteLine($"Room{RoomID} Leave Client ID : {clientId}");
+            Log.Logger.Information($"[Room{RoomID}] Leave Client ID : {clientId}");
         }
         public void ChatHandle(ClientSession player, C_Chat chatPacket)
         {
@@ -151,8 +141,7 @@ namespace Akka.Server
                 Chat = chatPacket.Chat + "\n"
             };
 
-          ClusterActorManager.Instance.GetClusterActor(ClusterActorManager.DefineClusterName.LogManagerActor)
-                ?.Tell(severChatPacket);
+            ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(severChatPacket);
 
             BroadCast(severChatPacket);
         }

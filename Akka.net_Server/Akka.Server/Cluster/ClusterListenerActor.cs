@@ -1,6 +1,9 @@
 ﻿using Akka.Actor;
 using Akka.Cluster;
 using Google.Protobuf.Protocol;
+
+using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,36 +21,34 @@ namespace Akka.Server
             // 클러스터 이벤트 수신
             Receive<ClusterEvent.MemberJoined>(msg =>
             {
-                Console.WriteLine($"Node joined: {msg.Member}");
-
+                Log.Logger.Information($"[ClusterListener] Cluster Node Joined: {msg.Member}");
                 if (msg.Member.Roles.Any(role => role.Contains("logAkka")))
                 {
-                    var actorAddr = Address.Parse(ClusterActorManager.AddrLogManagerActor);
-                    ClusterActorManager.Instance.InitClusterActor(actorAddr, ClusterActorManager.DefineClusterName.LogManagerActor);
+                    var actorAddr = Address.Parse(Define.AddrLogManagerActor);
+                    ClusterActorManager.Instance.InitClusterActor(actorAddr, Define.ClusterType.LogManagerActor);
                 }
             });
 
             Receive<ClusterEvent.MemberUp>(msg =>
             {
-                Console.WriteLine($"Node is up: {msg.Member}");
+                Log.Logger.Information($"[ClusterListener] Cluster Node is Up : {msg.Member}");
             });
 
             Receive<ClusterEvent.MemberRemoved>(msg =>
             {
-                Console.WriteLine($"Node removed: {msg.Member}");
-
                 var cluster = Cluster.Cluster.Get(Context.System);
-                Console.WriteLine($"Cluster Members: {string.Join(", ", cluster.State.Members)}");
+                Log.Logger.Information($"[ClusterListener] Cluster Node Removed : {msg.Member}");
+                Log.Logger.Information($"[ClusterListener] Current Cluster Members: {string.Join(", ", cluster.State.Members)}");
 
                 if (msg.Member.Roles.Any(role => role.Contains("logAkka")))
                 {
-                    ClusterActorManager.Instance.RemoveClusterActor(ClusterActorManager.DefineClusterName.LogManagerActor);
+                    ClusterActorManager.Instance.RemoveClusterActor(Define.ClusterType.LogManagerActor);
                 }
             });
 
             Receive<ClusterEvent.LeaderChanged>(msg =>
             {
-                Console.WriteLine($"Leader changed: {msg.Leader}");
+                Log.Logger.Information($"[ClusterListener] Cluster Leader Changed: : {msg.Leader}");
             });
         }
 

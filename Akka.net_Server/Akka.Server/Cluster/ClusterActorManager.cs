@@ -2,23 +2,22 @@
 
 using Google.Protobuf.Protocol;
 
+using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using static Akka.Server.Define;
+
+
+
 namespace Akka.Server
 {
     public class ClusterActorManager
     {
-        #region Define Cluster Info 
-        public const string AddrLogManagerActor = "akka.tcp://ClusterSystem@localhost:5001";
-        public enum DefineClusterName
-        {
-            LogManagerActor,
-        }
-        #endregion
 
         #region Singleton
         static readonly object _lock = new();
@@ -29,7 +28,8 @@ namespace Akka.Server
 
         #region Cluster
         readonly ActorSystem _actorSystem;
-        private Dictionary<DefineClusterName, IActorRef> _clusterActors = new();
+
+        private Dictionary<ClusterType, IActorRef> _clusterActors = new();
         #endregion
 
         static void Init()
@@ -44,14 +44,14 @@ namespace Akka.Server
         }
 
         #region LogCluster
-        public void InitClusterActor(Address addr, DefineClusterName actorName)
+        public void InitClusterActor(Address addr, ClusterType actorName)
         {
             if (Cluster.Cluster.Get(_actorSystem).State.Members.Any(m => m.Address.ToString() == $"{addr}"))
                 SetClusterActor(addr, actorName);
             else
                 RemoveClusterActor(actorName);
         }
-        void SetClusterActor(Address addr, DefineClusterName actorName)
+        void SetClusterActor(Address addr, ClusterType actorName)
         {
             if (!_instance._clusterActors.ContainsKey(actorName))
             {
@@ -66,31 +66,32 @@ namespace Akka.Server
 
                         lock (_lock)
                         {
-                            if (_instance._clusterActors.TryAdd(actorName, actorRef) == false)
-                                Console.WriteLine("Init Cluster Actor ERR");
+                            if (_instance._clusterActors.TryAdd(actorName, actorRef))
+                                Log.Logger.Information($"[ClusterActorManager] Cluster actor '{actorName}' initialized successfully.");
                             else
-                                Console.WriteLine($"Cluster actor '{actorName}' initialized successfully.");
+                                Log.Logger.Error($"[ClusterActorManager] Cluster actor '{actorName}' initialized Unsuccessfully.");
+
                         }
                     }
                     catch (ActorNotFoundException err)
                     {
-                        Console.WriteLine($"Actor not found: {err.Message}");
+                        Log.Logger.Error($"[ClusterActorManager] Actor not found: {err.Message}");
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine($"Error initializing cluster actor '{actorName}': {ex.Message}");
+                        Log.Logger.Error($"[ClusterActorManager] Error initializing cluster actor '{actorName}': {ex.Message}");
                     }
                 });
             }
         }
-        public IActorRef GetClusterActor(DefineClusterName key)
+        public IActorRef GetClusterActor(ClusterType key)
         {
             lock (_lock)
             {
                 return _instance._clusterActors.TryGetValue(key, out var actorRef) ? actorRef : null;
             }
         }
-        public bool RemoveClusterActor(DefineClusterName key)
+        public bool RemoveClusterActor(ClusterType key)
         {
             lock (_lock)
             {

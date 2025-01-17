@@ -1,5 +1,7 @@
 ﻿using Akka.Actor;
 
+using Serilog;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,42 +14,42 @@ namespace Akka.Server
     public class SessionManagerActor : ReceiveActor, IWithTimers
     {
         #region message
-        public class SetRoomManagerActor
+        public class MsgSetRoomManagerActor
         {
             public IActorRef RoomManager { get; }
-            public SetRoomManagerActor(IActorRef roomManager) => RoomManager = roomManager;
+            public MsgSetRoomManagerActor(IActorRef roomManager) => RoomManager = roomManager;
         }
-        public class GenerateSession
+        public class MsgGenerateSession
         {
             public Socket SessionSocket { get; set; }
-            public GenerateSession(Socket sessionSocekt)
+            public MsgGenerateSession(Socket sessionSocekt)
             {
                 SessionSocket = sessionSocekt;
             }
         }
-        public class FindSession
+        public class MsgFindSession
         {
             public int SessionID { get; }
-            public FindSession(int sessionID) => SessionID = sessionID;
+            public MsgFindSession(int sessionID) => SessionID = sessionID;
         }
-        public class RemoveSession
+        public class MsgRemoveSession
         {
             public ClientSession Session { get; }
-            public RemoveSession(ClientSession session) => Session = session;
+            public MsgRemoveSession(ClientSession session) => Session = session;
         }
-        public class GetAllSessions { }
-        public class FlushSendAll { }
+        public class MsgGetAllSessions { }
+        public class MsgFlushSendAll { }
 
         // 타이머 키와 메시지
-        private sealed class TimerKey
+        private sealed class MsgTimerKey
         {
-            public static readonly TimerKey Instance = new();
-            private TimerKey() { }
+            public static readonly MsgTimerKey Instance = new();
+            private MsgTimerKey() { }
         }
-        private sealed class TimerMessage
+        private sealed class MsgTimerMessage
         {
-            public static readonly TimerMessage Instance = new();
-            private TimerMessage() { }
+            public static readonly MsgTimerMessage Instance = new();
+            private MsgTimerMessage() { }
         }
         // 타이머 설정
         #endregion
@@ -62,26 +64,26 @@ namespace Akka.Server
 
         public SessionManagerActor()
         {
-            Receive<SetRoomManagerActor>(msg => _roomManager = msg.RoomManager);
+            Receive<MsgSetRoomManagerActor>(msg => _roomManager = msg.RoomManager);
 
-            Receive<GenerateSession>(msg => GenerateSessionHandle(msg));
-            Receive<FindSession>(msg => FindSessionHandle(msg));
-            Receive<RemoveSession>(msg => RemoveSessionHandle(msg));
-            Receive<GetAllSessions>(_ => GetAllSessionsHandle());
+            Receive<MsgGenerateSession>(msg => GenerateSessionHandle(msg));
+            Receive<MsgFindSession>(msg => FindSessionHandle(msg));
+            Receive<MsgRemoveSession>(msg => RemoveSessionHandle(msg));
+            Receive<MsgGetAllSessions>(_ => GetAllSessionsHandle());
 
             // 초기화: 타이머 시작
             Timers.StartPeriodicTimer(
-                key: TimerKey.Instance,
-                msg: TimerMessage.Instance,
+                key: MsgTimerKey.Instance,
+                msg: MsgTimerMessage.Instance,
                 initialDelay: TimeSpan.FromMilliseconds(100),  // 초기 지연 시간
                 interval: TimeSpan.FromMilliseconds(100));    // 주기적 실행 간격
 
             // 타이머 메시지 처리
-            Receive<TimerMessage>(_ => FlushAllSessions());
+            Receive<MsgTimerMessage>(_ => FlushAllSessions());
         }
 
         // 세션 생성
-        private void GenerateSessionHandle(GenerateSession msg)
+        private void GenerateSessionHandle(MsgGenerateSession msg)
         {
             var clientSession = new ClientSession(_roomManager);
             clientSession.SessionID = ++_sessionID;
@@ -89,26 +91,34 @@ namespace Akka.Server
 
             clientSession.Start(msg.SessionSocket);
             clientSession.OnConnected(msg.SessionSocket.RemoteEndPoint);
+
+            Log.Logger.Information($"[SessionManager] Generate Session Comp Session Count : {GetAllSessions().Count()}");
         }
 
         // 세션 조회
-        private void FindSessionHandle(FindSession msg)
+        private void FindSessionHandle(MsgFindSession msg)
         {
             _sessions.TryGetValue(msg.SessionID, out var clientSession);
             Sender.Tell(clientSession); // 결과 반환
         }
 
         // 세션 제거
-        private void RemoveSessionHandle(RemoveSession msg)
+        private void RemoveSessionHandle(MsgRemoveSession msg)
         {
             _sessions.Remove(msg.Session.SessionID);
+            Log.Logger.Information($"[SessionManager] Remove Session Comp Session Count : {GetAllSessions().Count()}");
         }
 
         // 모든 세션 조회
         private void GetAllSessionsHandle()
         {
-            var allSessions = _sessions.Values.ToList();
+            var allSessions = GetAllSessions();
             Sender.Tell(allSessions); // 세션 목록 반환
+        }
+        private List<ClientSession> GetAllSessions()
+        {
+            var allSessions = _sessions.Values.ToList();
+            return allSessions;
         }
         private void FlushAllSessions()
         {

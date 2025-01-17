@@ -1,6 +1,9 @@
 ﻿using Akka.Actor;
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
+
+using Serilog;
+
 using ServerCore;
 using System.Net;
 
@@ -62,14 +65,14 @@ namespace Akka.Server
         }
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine($"Client OnConnected - IP : {endPoint}, SessionId : {SessionID}");
+            Log.Logger.Information($"[ClientSession] OnConnected - IP : {endPoint}, SessionId : {SessionID}");
         }
         public override void OnDisconnected(EndPoint endPoint)
         {
             if (Room != null)
             {
-                Room.Tell(new RoomActor.LeaveClient(SessionID));
-                Console.WriteLine($"Client Disconnected -  IP : {endPoint}, SessionId : {SessionID}");
+                Room.Tell(new RoomActor.MsgLeaveClient(SessionID));
+                Log.Logger.Information($"[ClientSession] Disconnected - IP : {endPoint}, SessionId : {SessionID}");
             }
         }
         public override void OnRecvedPacket(ArraySegment<byte> buffer)
