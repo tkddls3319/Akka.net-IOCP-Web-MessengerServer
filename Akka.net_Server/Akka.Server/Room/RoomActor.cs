@@ -44,6 +44,7 @@ namespace Akka.Server
 
         public int RoomID { get; set; }
         Dictionary<int, ClientSession> _clients = new Dictionary<int, ClientSession>();
+        int _clinetCount { get {  return _clients.Count; } }
 
         public RoomActor(IActorRef roomMangerActor, IActorRef sessionManagerActor, int roomNumber)
         {
@@ -55,7 +56,6 @@ namespace Akka.Server
             Receive<MsgEnterClient>(msg => EnterClientHandler(msg));
             Receive<MsgGetClientCount>(_ => Sender.Tell(_clients.Count));
             Receive<MsgLeaveClient>(msg => LeaveClientHandler(msg.ClientId));
-
             Receive<MessageCustom<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
         }
         private void EnterClientHandler(MsgEnterClient client)
@@ -71,14 +71,21 @@ namespace Akka.Server
             session.Room = Self;
 
             {
-                S_EnterServer enterPaket = new S_EnterServer() { Client = new ClientInfo() };
-                enterPaket.Client.ObjectId = session.SessionID;
+                S_EnterServer enterPaket = new S_EnterServer()
+                {
+                    Client = new ClientInfo()
+                    {
+                        ObjectId = session.SessionID,
+                        RoomID = RoomID,
+                        ClientCount = _clinetCount
+                    }
+                };
 
                 client.Session.Send(enterPaket);
             }
             {
                 S_Spawn spawnPacket = new S_Spawn();
-
+                spawnPacket.ClientCount = _clinetCount;
                 foreach (ClientSession p in _clients.Values)
                 {
                     if (client.Session != p)
@@ -89,11 +96,12 @@ namespace Akka.Server
             // 타인한테 정보 전송
             {
                 S_Spawn spawnPacket = new S_Spawn();
+                spawnPacket.ClientCount = _clinetCount;
                 spawnPacket.ObjectIds.Add(session.SessionID);
                 foreach (ClientSession p in _clients.Values)
                 {
                     if (client.Session != p)
-                        client.Session.Send(spawnPacket);
+                        p.Send(spawnPacket);
                 }
             }
             Log.Logger.Information($"[Room{RoomID}] Enter Client ID : {session.SessionID}");
@@ -115,7 +123,8 @@ namespace Akka.Server
             //타인에게 전달
             {
                 S_Despawn despawnPacket = new S_Despawn();
-                despawnPacket.ObjectIds.Add(clientId);
+                despawnPacket.ObjectId = clientId;
+                despawnPacket.ClientCount = _clinetCount;
                 BroadcastExceptSelf(clientId, despawnPacket);
             }
 
@@ -143,7 +152,7 @@ namespace Akka.Server
 
             ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(severChatPacket);
 
-            BroadCast(severChatPacket);
+            BroadcastExceptSelf(id, severChatPacket);
         }
 
         #region Util
