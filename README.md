@@ -4,6 +4,10 @@
 
 Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
 
+채팅 서버를 목표로 하지만 채팅을 일반적인 패킷으로 본다면 해당 서버를 베이스로 다양한 분야에서 사용할 수 있을 것 같음. 
+
+![image](https://github.com/user-attachments/assets/ddaf7061-51be-48ed-ad8e-f9495e9b847f)
+
 ---
 
 ## 프로젝트 개요
@@ -13,8 +17,11 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채�
 - **Akka.NET 기반 설계**: 
   - 액터 모델(Actor Model)을 활용한 비동기 메시지 기반 설계.
   - 클라이언트 연결과 방(Room) 관리 로직을 명확히 분리.
-  - 주요 액터: `SessionManagerActor`, `RoomManagerActor`, `RoomActor`.
 
+- **Cluster와 Router 설계**: 
+  - 채팅룸에서 발생하는 채팅을 Json으로 기록하는 Cluster를 설계.
+  - 채팅을 기록하거나 읽는 Actor를 Router로 설계하여 분산 처리.
+     
 - **IOCP 기반 네트워크 처리**: 
   - 비동기 소켓 통신으로 대량의 클라이언트 연결을 효율적으로 처리.
   - `Listener`와 `Session` 클래스를 통해 클라이언트의 데이터 송수신과 연결 해제 관리.
@@ -38,9 +45,10 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채�
 1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
 2. `Akka.Server`, `Akka.LogServer`, `DummyClient` 작업 시작으로 설정.
 3. F5 키를 눌러 실행.
-4. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
+4.  'DummyClient이 켜지면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
+5. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
    - `DummyClient.exe`를 여러 개 실행하면 멀티 채팅 테스트 가능.
-5. `Akka.LogServer`의 Debug 폴더에서 로그 확인.
+6. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
 
 #### 추가 설정
 - 방(Room) 안에는 클라이언트 5명만 입장 가능.
@@ -57,12 +65,13 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채�
   - `ClusterProtocol.proto`: 클러스터 간 송수신 패킷 정의.
 
 ### 자동화 설명
+- 기본적으로 Akka.Server를 빌드를 하면 자동으로 GenProto.bat를 실행시키게 만들어놈. ( 빌드 전 이벤트 적용 )
 - `GenProto.bat` 실행:
   1. `protobuf.proto`와 `ClusterProtocol.proto`를 읽어 .cs 파일 생성.
   2. 생성된 파일을 아래와 같이 복사:
      - `protobuf.cs`: `DummyClient`와 `Akka.Server` 프로젝트의 `Packet` 폴더.
      - `ClusterProtocol.cs`: `Akka.Protocol.Shared` 폴더.
-
+     
 ### PacketGenerator 프로젝트
 - 역할: `Protocol.proto`를 기반으로 `ClientPacketManager.cs`와 `ServerPacketManager.cs` 생성.
 - 파일 복사:
@@ -82,8 +91,9 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채�
 ### 2. Akka.LogServer
 - **역할**: 채팅 기록 관리 서버.
 - **기능**:
-  - `Akka.Server`에서 받은 채팅 기록 저장.
+  - `Akka.Server`에서 받은 채팅을 채팅룸 별로 .json으로 기록 저장.
   - Serilog를 사용해 로그 작성.
+  - 룸별로 채팅을 읽어 Server에 전달.
 
 ### 3. Akka.Protocol.Shared
 - **역할**: 공통 Protobuf 정의를 공유.
