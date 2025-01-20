@@ -1,8 +1,22 @@
 🔥 **프로젝트 진행 중!** 🚀
+## 개발 체크리스트
+- [x] IOCP 채팅 서버 
+- [x] Akka 채팅 서버
+- [x] Cluster LogServer
+- [x] Client 콘솔
+- [x] Protobuf패킷 자동화
+- [x] IOCP 라이브러리
+- [x] 채팅 룸별 로그 JSon으로 Serialize
+- [x] 채팅 룸별 로그 Deserialize
+- [ ] 채팅 시간 추가
+- [ ] 회원가입 (일단 로그로 처리)
+- [ ] 회원가입 디비
+- [ ] Web API Server(ASP.NET) 로그인용 Cluster
+- [ ] Client Unity
 
 # Akka.NET + IOCP Server
 
-Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
+Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
 
 추 후 기회가 된다면 클라이언트는 콘솔이 아닌 Unity나 머 WPF나 다른 걸로 개발해 볼 예정.
 
