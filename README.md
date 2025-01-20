@@ -4,6 +4,8 @@
 
 Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
 
+추 후 기회가 된다면 클라이언트는 콘솔이 아닌 Unity나 머 WPF나 다른 걸로 개발해 볼 예정.
+
 채팅 서버를 목표로 하지만 채팅을 일반적인 패킷으로 본다면 해당 서버를 베이스로 다양한 분야에서 사용할 수 있을 것 같음. 
 
 ![image](https://github.com/user-attachments/assets/ddaf7061-51be-48ed-ad8e-f9495e9b847f)
