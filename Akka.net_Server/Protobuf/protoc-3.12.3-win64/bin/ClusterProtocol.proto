@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package ClusterProtocol;
+import "google/protobuf/timestamp.proto";
+option csharp_namespace = "Google.Protobuf.ClusterProtocol";
+
+//SL = Server To Logserver
+//LS = Logserver To Server
+
+message SL_ChatWriteLog{
+	ChatObject Chat =1;
+}
+
+message SL_ChatReadLog
+{
+	int32 roomId = 1;
+}
+
+message LS_ChatReadLog
+{
+	repeated ChatObject chats=1;
+}
+
+message ChatObject
+{
+	int32 objectId =1;
+	int32 roomId = 2;
+	string chat = 3;
+}
