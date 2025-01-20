@@ -15,12 +15,10 @@ namespace Akka.LogAkka.Server
         static ActorSystem ServerActorSystem;
         static void Main(string[] args)
         {
-            #region Logger 정의
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console()
-                .WriteTo.File($"logs/chatLog.json", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
+            ConfigManager.LoadConfig();
+            
+            #region Serilog Logger 정의
+            SerilogManager.Init();//Log.Logger 정의
             #endregion
 
             #region Cluster 활성화
@@ -30,8 +28,8 @@ namespace Akka.LogAkka.Server
             var LogManagerActor = ServerActorSystem.ActorOf(Props.Create(() => new LogManagerActor()), "LogManagerActor");
             #endregion
 
-            Console.WriteLine("==========LogServer OPEN==========");
-            Console.WriteLine("로그 경로 : logs/chatLog.json");
+            Log.Logger.Information($"==========LogServer OPEN==========");
+            Log.Logger.Information("로그 경로 : Debuf/logs/xx.json");
             ServerActorSystem.WhenTerminated.Wait();
             Log.CloseAndFlush();
         }

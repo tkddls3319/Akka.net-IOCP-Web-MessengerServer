@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 
 using Google.Protobuf;
+using Google.Protobuf.ClusterProtocol;
 using Google.Protobuf.Protocol;
 
 using Serilog;
@@ -83,6 +84,7 @@ namespace Akka.Server
 
                 client.Session.Send(enterPaket);
             }
+
             {
                 S_Spawn spawnPacket = new S_Spawn();
                 spawnPacket.ClientCount = _clinetCount;
@@ -104,6 +106,25 @@ namespace Akka.Server
                         p.Send(spawnPacket);
                 }
             }
+
+            //이전 채팅을 불러읽어 새로온 사용자에게 전달
+            {
+                var response = ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)
+                    ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
+                    {
+                        RoomId = this.RoomID
+                    }, TimeSpan.FromSeconds(3)).Result;
+
+                if(response.Chats != null)
+                {
+                    foreach (var item in response.Chats)
+                    {
+                        S_Chat chat = new S_Chat() { Chat = item.Chat, ObjectId = item.ObjectId };
+                        client.Session.Send(chat);
+                    }
+                }
+            }
+
             Log.Logger.Information($"[Room{RoomID}] Enter Client ID : {session.SessionID}");
         }
         private void LeaveClientHandler(int clientId)
@@ -138,8 +159,8 @@ namespace Akka.Server
             if (player == null)
                 return;
 
-            string chat = chatPacket.Chat;
             int id = player.SessionID;
+            string chat = chatPacket.Chat;
 
             if (string.IsNullOrEmpty(chat))
                 return;
@@ -147,11 +168,21 @@ namespace Akka.Server
             S_Chat severChatPacket = new S_Chat()
             {
                 ObjectId = id,
-                Chat = chatPacket.Chat + "\n"
+                Chat = chat + "\n"
             };
 
-            ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(severChatPacket);
+            #region Cluster
+            SL_ChatWriteLog logPacket = new()
+            { 
+                Chat = new ChatObject() {
+                    ObjectId = id,
+                    RoomId = RoomID,
+                    Chat = chat,
+                }   
+            };
+            ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(logPacket);
 
+            #endregion
             BroadcastExceptSelf(id, severChatPacket);
         }
 
