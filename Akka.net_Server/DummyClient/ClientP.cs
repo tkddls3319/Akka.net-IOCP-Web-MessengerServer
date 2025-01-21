@@ -21,6 +21,7 @@ namespace DummyClient
 
             IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
             IPAddress ipAddr = ipEntry.AddressList[1];
+
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
 
             Connector connector = new Connector();

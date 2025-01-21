@@ -15,4 +15,11 @@
     <None Include="..\Protobuf\protoc-3.12.3-win64\bin\Protocol.proto" Link="Protobuf\Protocol.proto" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>

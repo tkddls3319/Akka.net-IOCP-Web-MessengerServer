@@ -16,6 +16,6 @@ namespace Akka.Server
         }
         #endregion
 
-        public const int RoomMaxCount = 5;
+        public const int RoomMaxCount = 100;
     }
 }
