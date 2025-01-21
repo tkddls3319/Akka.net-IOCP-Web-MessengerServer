@@ -46,8 +46,9 @@ message C_Chat{
 }
 
 message S_Chat{
-	int32 objectId =1;
-  string chat = 2;
+ int32 objectId =1;
+ string chat = 2;
+ google.protobuf.Timestamp time =3;
 }
 
 message ClientInfo{

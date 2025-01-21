@@ -22,7 +22,7 @@ namespace Akka.LogServer
           .MinimumLevel.Debug()
           .WriteTo.Console()
           .CreateLogger();
-            //Log.Debug("This is a debug message."); // 기록됨
+            //Log.Debug("This is a debug message.");
             //Log.Information("Application started at {Time}", DateTime.Now);
             //Log.Warning("Warning! Something might go wrong.");
             //Log.Error("An error occurred: {ErrorCode}", 404);

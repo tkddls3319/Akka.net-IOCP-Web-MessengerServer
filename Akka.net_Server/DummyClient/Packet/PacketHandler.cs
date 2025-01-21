@@ -1,4 +1,6 @@
-﻿using DummyClient;
+﻿using Akka.IO;
+
+using DummyClient;
 
 using Google.Protobuf;
 using Google.Protobuf.Protocol;
@@ -16,8 +18,10 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_Chat s_chat = (S_Chat)packet;
 
-        Console.WriteLine($"\t\t\t{s_chat.ObjectId}번 유저");
-        Console.WriteLine($"\t\t\tChat : {s_chat.Chat}");
+        string message = s_chat.Chat.TrimEnd('\n', ' ');
+
+        Console.WriteLine($"\t\t\t[{s_chat.ObjectId}번 유저]");
+        Console.WriteLine($"\t\t\t[{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} : {message}]\n");
     }
     public static void S_EnterServerHandler(PacketSession session, IMessage packet)
     {

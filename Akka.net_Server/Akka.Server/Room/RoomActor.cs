@@ -108,7 +108,7 @@ namespace Akka.Server
                 }
             }
 
-            //이전 채팅을 불러읽어 새로온 사용자에게 전달
+            //이전 모든 채팅을 읽어 새로온 사용자에게 전달
             {
                 var response = ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)
                     ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
@@ -120,7 +120,12 @@ namespace Akka.Server
                 {
                     foreach (var item in response.Chats)
                     {
-                        S_Chat chat = new S_Chat() { Chat = item.Chat, ObjectId = item.ObjectId };
+                        S_Chat chat = new S_Chat() 
+                        {
+                            Chat = item.Chat,
+                            ObjectId = item.ObjectId,
+                            Time = item.Time 
+                        };
                         client.Session.Send(chat);
                     }
                 }
@@ -169,17 +174,19 @@ namespace Akka.Server
             S_Chat severChatPacket = new S_Chat()
             {
                 ObjectId = id,
-                Chat = chat + "\n"
+                Chat = chat + "\n",
+                Time = Timestamp.FromDateTime(DateTime.UtcNow)
+
             };
 
             #region Cluster
             SL_ChatWriteLog logPacket = new()
             { 
                 Chat = new ChatObject() {
-                    ObjectId = id,
+                    ObjectId = severChatPacket.ObjectId,
                     RoomId = RoomID,
-                    Chat = chat,
-                    Time = Timestamp.FromDateTime(DateTime.UtcNow)
+                    Chat = severChatPacket.Chat,
+                    Time = severChatPacket.Time
                 }   
             };
 

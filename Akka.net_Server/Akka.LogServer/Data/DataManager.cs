@@ -7,7 +7,7 @@ namespace Akka.LogServer
 {
     public class DataManager
     {
-        public static void LogData()
+        public static void Init()
         {
             //최초 로드하고 싶은게 있다면
         }
@@ -87,115 +87,5 @@ namespace Akka.LogServer
 
             return sb.Append("]}").ToString();
         }
-
-        // 공통 JSON 로드 메서드
-        //private static string ReadAndFormatJson(string path, bool wrapWithObject, string objectName = null)
-        //{
-        //    string filePath = $"{ConfigManager.Config.logPath}/{path}.json";
-
-        //    if (!File.Exists(filePath))
-        //        return string.Empty;
-
-        //    string text;
-        //    using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-        //    using (StreamReader reader = new StreamReader(fs))
-        //    {
-        //        text = reader.ReadToEnd();
-        //    }
-
-        //    string pattern = @"\{[^}]+\}";
-        //    MatchCollection matches = Regex.Matches(text, pattern);
-
-        //    StringBuilder sb = new StringBuilder();
-
-        //    if (wrapWithObject)
-        //    {
-        //        sb.Append($"{{\"{objectName}\":[");
-        //    }
-        //    else
-        //    {
-        //        sb.Append("[");
-        //    }
-
-        //    for (int i = 0; i < matches.Count; i++)
-        //    {
-        //        sb.Append(matches[i].Value);
-        //        if (i < matches.Count - 1)
-        //        {
-        //            sb.Append(",");
-        //        }
-        //    }
-
-        // string jsonFromFile=   sb.Append(wrapWithObject ? "]}" : "]").ToString();
-
-
-        //    return jsonFromFile;
-        //}
-
-
-        //static List<T> LoadJson<T>(string path) 
-        //{
-        //    string pattern = @"\{[^}]+\}";
-
-        //    string text = File.ReadAllText($"{ConfigManager.Config.logPath}/{path}.json");
-        //    MatchCollection matches = Regex.Matches(text, pattern);
-
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append($"[");
-
-        //    for (int i = 0; i < matches.Count; i++)
-        //    {
-        //        sb.Append(matches[i].Value);
-        //        if (i < matches.Count - 1)
-        //        {
-        //            sb.Append(",");
-        //        }
-        //    }
-
-        //    sb.Append("]");
-        //    string jsonArray = sb.ToString();
-
-        //    try
-        //    {
-        //        var a = JsonConvert.DeserializeObject<List<T>>(jsonArray);
-
-        //        return null;
-        //    }
-        //    catch (JsonException ex)
-        //    {
-        //        throw new Exception("JSON parsing error: " + ex.Message);
-        //    }
-        //}
-        //static Loader LoadJson<Loader>(string path) where Loader : ILoader
-        //{
-        //    string pattern = @"\{[^}]+\}";
-
-        //    string text = File.ReadAllText($"{ConfigManager.Config.logPath}/{path}.json");
-        //    MatchCollection matches = Regex.Matches(text, pattern);
-
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append($"{{\"{typeof(Loader).Name}s\":[");
-
-        //    for (int i = 0; i < matches.Count; i++)
-        //    {
-        //        sb.Append(matches[i].Value);
-        //        if (i < matches.Count - 1)
-        //        {
-        //            sb.Append(",");
-        //        }
-        //    }
-
-        //    sb.Append("]}");
-        //    string jsonArray = sb.ToString();
-
-        //    try
-        //    {
-        //        return JsonConvert.DeserializeObject<Loader>(jsonArray);
-        //    }
-        //    catch (JsonException ex)
-        //    {
-        //        throw new Exception("JSON parsing error: " + ex.Message);
-        //    }
-        //}
     }
 }
