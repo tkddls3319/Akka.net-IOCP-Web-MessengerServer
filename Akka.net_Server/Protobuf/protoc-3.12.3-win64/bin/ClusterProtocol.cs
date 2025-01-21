@@ -29,16 +29,17 @@ namespace Google.Protobuf.ClusterProtocol {
             "b2cSKQoEQ2hhdBgBIAEoCzIbLkNsdXN0ZXJQcm90b2NvbC5DaGF0T2JqZWN0",
             "IiAKDlNMX0NoYXRSZWFkTG9nEg4KBnJvb21JZBgBIAEoBSI8Cg5MU19DaGF0",
             "UmVhZExvZxIqCgVjaGF0cxgBIAMoCzIbLkNsdXN0ZXJQcm90b2NvbC5DaGF0",
-            "T2JqZWN0IjwKCkNoYXRPYmplY3QSEAoIb2JqZWN0SWQYASABKAUSDgoGcm9v",
-            "bUlkGAIgASgFEgwKBGNoYXQYAyABKAlCIqoCH0dvb2dsZS5Qcm90b2J1Zi5D",
-            "bHVzdGVyUHJvdG9jb2xiBnByb3RvMw=="));
+            "T2JqZWN0ImYKCkNoYXRPYmplY3QSEAoIb2JqZWN0SWQYASABKAUSDgoGcm9v",
+            "bUlkGAIgASgFEgwKBGNoYXQYAyABKAkSKAoEdGltZRgEIAEoCzIaLmdvb2ds",
+            "ZS5wcm90b2J1Zi5UaW1lc3RhbXBCIqoCH0dvb2dsZS5Qcm90b2J1Zi5DbHVz",
+            "dGVyUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SL_ChatWriteLog), global::Google.Protobuf.ClusterProtocol.SL_ChatWriteLog.Parser, new[]{ "Chat" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SL_ChatReadLog), global::Google.Protobuf.ClusterProtocol.SL_ChatReadLog.Parser, new[]{ "RoomId" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.LS_ChatReadLog), global::Google.Protobuf.ClusterProtocol.LS_ChatReadLog.Parser, new[]{ "Chats" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.ChatObject), global::Google.Protobuf.ClusterProtocol.ChatObject.Parser, new[]{ "ObjectId", "RoomId", "Chat" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.ChatObject), global::Google.Protobuf.ClusterProtocol.ChatObject.Parser, new[]{ "ObjectId", "RoomId", "Chat", "Time" }, null, null, null, null)
           }));
     }
     #endregion
@@ -458,6 +459,7 @@ namespace Google.Protobuf.ClusterProtocol {
       objectId_ = other.objectId_;
       roomId_ = other.roomId_;
       chat_ = other.chat_;
+      time_ = other.time_ != null ? other.time_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -499,6 +501,17 @@ namespace Google.Protobuf.ClusterProtocol {
       }
     }
 
+    /// <summary>Field number for the "time" field.</summary>
+    public const int TimeFieldNumber = 4;
+    private global::Google.Protobuf.WellKnownTypes.Timestamp time_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Google.Protobuf.WellKnownTypes.Timestamp Time {
+      get { return time_; }
+      set {
+        time_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as ChatObject);
@@ -515,6 +528,7 @@ namespace Google.Protobuf.ClusterProtocol {
       if (ObjectId != other.ObjectId) return false;
       if (RoomId != other.RoomId) return false;
       if (Chat != other.Chat) return false;
+      if (!object.Equals(Time, other.Time)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -524,6 +538,7 @@ namespace Google.Protobuf.ClusterProtocol {
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
       if (RoomId != 0) hash ^= RoomId.GetHashCode();
       if (Chat.Length != 0) hash ^= Chat.GetHashCode();
+      if (time_ != null) hash ^= Time.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -549,6 +564,10 @@ namespace Google.Protobuf.ClusterProtocol {
         output.WriteRawTag(26);
         output.WriteString(Chat);
       }
+      if (time_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Time);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -565,6 +584,9 @@ namespace Google.Protobuf.ClusterProtocol {
       }
       if (Chat.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Chat);
+      }
+      if (time_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Time);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -585,6 +607,12 @@ namespace Google.Protobuf.ClusterProtocol {
       }
       if (other.Chat.Length != 0) {
         Chat = other.Chat;
+      }
+      if (other.time_ != null) {
+        if (time_ == null) {
+          Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+        }
+        Time.MergeFrom(other.Time);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -607,6 +635,13 @@ namespace Google.Protobuf.ClusterProtocol {
           }
           case 26: {
             Chat = input.ReadString();
+            break;
+          }
+          case 34: {
+            if (time_ == null) {
+              Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
+            }
+            input.ReadMessage(Time);
             break;
           }
         }

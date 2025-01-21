@@ -3,6 +3,7 @@
 using Google.Protobuf;
 using Google.Protobuf.ClusterProtocol;
 using Google.Protobuf.Protocol;
+using Google.Protobuf.WellKnownTypes;
 
 using Serilog;
 
@@ -178,10 +179,11 @@ namespace Akka.Server
                     ObjectId = id,
                     RoomId = RoomID,
                     Chat = chat,
+                    Time = Timestamp.FromDateTime(DateTime.UtcNow)
                 }   
             };
-            ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(logPacket);
 
+            ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(logPacket);
             #endregion
             BroadcastExceptSelf(id, severChatPacket);
         }

@@ -20,7 +20,7 @@ namespace Akka.LogServer
         {
             Receive<WriteMessage<SL_ChatReadLog>>(message =>
             {
-                ChatLogLoader log = DataManager.LoadJsonLoader<ChatLogLoader>(Util.RoomNameing(message.Message.RoomId));
+                ChatLogLoader log = DataManager.LoadJson<ChatLogLoader>(Util.RoomNameing(message.Message.RoomId));
 
                 LS_ChatReadLog sendLog = new LS_ChatReadLog();
 
