@@ -24,6 +24,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 ![image](https://github.com/user-attachments/assets/ddaf7061-51be-48ed-ad8e-f9495e9b847f)
 
+
 ---
 
 ## 프로젝트 개요
@@ -55,6 +56,9 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 ---
 
 ## 주요 특징
+
+### 주요 사용 기술
+**Akka.net, IOCP, WebAPI, Json, protobuf, EntityFrameWork, Cluster, Serilog, bat파일, MMO 등**
 
 ### 1. Akka.NET 프로젝트 진행전 만든 설명 블로그
 - [Akka.NET 기본 설명 1](https://usingsystem.tistory.com/545)
