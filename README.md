@@ -30,22 +30,28 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 이 서버는 다음과 같은 구조를 가지고 있습니다:
 
-- **Akka.NET 기반 설계**: 
+- **Akka.NET 기반 설계**
   - 액터 모델(Actor Model)을 활용한 비동기 메시지 기반 설계.
   - 클라이언트 연결과 방(Room) 관리 로직을 명확히 분리.
 
-- **Cluster와 Router 설계**: 
+- **Cluster와 Router 설계**
   - 채팅룸에서 발생하는 채팅을 Json으로 기록하는 Cluster를 설계.
   - 채팅을 기록하거나 읽는 Actor를 Router로 설계하여 분산 처리.
      
-- **IOCP 기반 네트워크 처리**: 
+- **IOCP 기반 네트워크 처리**
   - 비동기 소켓 통신으로 대량의 클라이언트 연결을 효율적으로 처리.
   - `Listener`와 `Session` 클래스를 통해 클라이언트의 데이터 송수신과 연결 해제 관리.
 
-- **확장 가능한 설계**:
+- **확장 가능한 설계**
   - 클라이언트 수에 따라 동적으로 방(Room)을 생성하고 부하를 분산.
   - 독립적인 액터로 설계된 세션 관리와 방 관리.
 
+ - **Web API Server**
+   - 클라이언트의 회원가입 및 로그인 담당.
+
+ - **Entity Framework Mssql**
+   - DB를 EF로 개발하여 Web Server에서 사용
+    
 ---
 
 ## 주요 특징
@@ -123,6 +129,10 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 ### 5. ServerCore
 - **역할**: `Akka.Server`와 `DummyClient` 간 TCP 통신 지원 라이브러리.
 - **기능**: IOCP 기반의 TCP 통신 로직 구현.
+  
+### 6. AccountServer
+- **역할**: Client의 회원가입과 로그인 관리
+- **기능**: REST API와 EntityFrameWork Mssql로 구현현
 
 ---
 
