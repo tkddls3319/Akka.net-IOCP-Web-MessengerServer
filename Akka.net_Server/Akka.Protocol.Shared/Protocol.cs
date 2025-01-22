@@ -32,12 +32,13 @@ namespace Google.Protobuf.Protocol {
             "dENvdW50GAIgASgFIjIKCVNfRGVzcGF3bhIQCghvYmplY3RJZBgBIAEoBRIT",
             "CgtjbGllbnRDb3VudBgCIAEoBSIWCgZDX0NoYXQSDAoEY2hhdBgBIAEoCSJS",
             "CgZTX0NoYXQSEAoIb2JqZWN0SWQYASABKAUSDAoEY2hhdBgCIAEoCRIoCgR0",
-            "aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJDCgpDbGll",
-            "bnRJbmZvEhAKCG9iamVjdElkGAEgASgFEg4KBnJvb21JRBgCIAEoBRITCgtj",
-            "bGllbnRDb3VudBgDIAEoBSp6CghQYWNrZXRJRBISCg5DX0VOVEVSX1NFUlZF",
-            "UhAAEhIKDlNfRU5URVJfU0VSVkVSEAESEgoOU19MRUFWRV9TRVJWRVIQAhIL",
-            "CgdTX1NQQVdOEAMSDQoJU19ERVNQQVdOEAQSCgoGQ19DSEFUEAUSCgoGU19D",
-            "SEFUEAZCG6oCGEdvb2dsZS5Qcm90b2J1Zi5Qcm90b2NvbGIGcHJvdG8z"));
+            "aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJRCgpDbGll",
+            "bnRJbmZvEhAKCG9iamVjdElkGAEgASgFEgwKBG5hbWUYAiABKAkSDgoGcm9v",
+            "bUlEGAMgASgFEhMKC2NsaWVudENvdW50GAQgASgFKnoKCFBhY2tldElEEhIK",
+            "DkNfRU5URVJfU0VSVkVSEAASEgoOU19FTlRFUl9TRVJWRVIQARISCg5TX0xF",
+            "QVZFX1NFUlZFUhACEgsKB1NfU1BBV04QAxINCglTX0RFU1BBV04QBBIKCgZD",
+            "X0NIQVQQBRIKCgZTX0NIQVQQBkIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3Rv",
+            "Y29sYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.PacketID), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -48,7 +49,7 @@ namespace Google.Protobuf.Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Despawn), global::Google.Protobuf.Protocol.S_Despawn.Parser, new[]{ "ObjectId", "ClientCount" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Chat), global::Google.Protobuf.Protocol.C_Chat.Parser, new[]{ "Chat" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Chat), global::Google.Protobuf.Protocol.S_Chat.Parser, new[]{ "ObjectId", "Chat", "Time" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ClientInfo), global::Google.Protobuf.Protocol.ClientInfo.Parser, new[]{ "ObjectId", "RoomID", "ClientCount" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ClientInfo), global::Google.Protobuf.Protocol.ClientInfo.Parser, new[]{ "ObjectId", "Name", "RoomID", "ClientCount" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1096,6 +1097,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public ClientInfo(ClientInfo other) : this() {
       objectId_ = other.objectId_;
+      name_ = other.name_;
       roomID_ = other.roomID_;
       clientCount_ = other.clientCount_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -1117,8 +1119,19 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "roomID" field.</summary>
-    public const int RoomIDFieldNumber = 2;
+    public const int RoomIDFieldNumber = 3;
     private int roomID_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int RoomID {
@@ -1129,7 +1142,7 @@ namespace Google.Protobuf.Protocol {
     }
 
     /// <summary>Field number for the "clientCount" field.</summary>
-    public const int ClientCountFieldNumber = 3;
+    public const int ClientCountFieldNumber = 4;
     private int clientCount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ClientCount {
@@ -1153,6 +1166,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (ObjectId != other.ObjectId) return false;
+      if (Name != other.Name) return false;
       if (RoomID != other.RoomID) return false;
       if (ClientCount != other.ClientCount) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1162,6 +1176,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (RoomID != 0) hash ^= RoomID.GetHashCode();
       if (ClientCount != 0) hash ^= ClientCount.GetHashCode();
       if (_unknownFields != null) {
@@ -1181,12 +1196,16 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(ObjectId);
       }
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
       if (RoomID != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(24);
         output.WriteInt32(RoomID);
       }
       if (ClientCount != 0) {
-        output.WriteRawTag(24);
+        output.WriteRawTag(32);
         output.WriteInt32(ClientCount);
       }
       if (_unknownFields != null) {
@@ -1199,6 +1218,9 @@ namespace Google.Protobuf.Protocol {
       int size = 0;
       if (ObjectId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
+      }
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
       }
       if (RoomID != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomID);
@@ -1219,6 +1241,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
       }
       if (other.RoomID != 0) {
         RoomID = other.RoomID;
@@ -1241,11 +1266,15 @@ namespace Google.Protobuf.Protocol {
             ObjectId = input.ReadInt32();
             break;
           }
-          case 16: {
-            RoomID = input.ReadInt32();
+          case 18: {
+            Name = input.ReadString();
             break;
           }
           case 24: {
+            RoomID = input.ReadInt32();
+            break;
+          }
+          case 32: {
             ClientCount = input.ReadInt32();
             break;
           }

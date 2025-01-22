@@ -1,4 +1,5 @@
-﻿using AccountServer.DB;
+﻿
+using Akka.AccountServer.DB;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ using Microsoft.EntityFrameworkCore;
 
 //[FromBody] 속성은 ASP.NET Core Web API에서 클라이언트로부터 전송된 **HTTP 요청의 본문(body)**에서 데이터를 추출하는 데 사용됩니다. (json등 자동파싱)
 
-namespace AccountServer.Controllers
+namespace Akka.AccountServer.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -68,17 +69,17 @@ namespace AccountServer.Controllers
                                     .Where(a => a.AccountName == req.AccountName && a.Password == req.Password)
                                     .FirstOrDefault();
 
-            if(account == null)
+            if (account == null)
             {
                 res.LoginOk = false;
             }
             else
             {
                 res.LoginOk = true;
-
-                res.ServerList = new List<ServerInfo>()
+                //TODO : Clusetr Server에서 룸받아오기
+                res.RoomList = new List<RoomInfo>()
                 {
-                    new ServerInfo(){Name ="1", IpAddress="123", Port =0  , BusyScore = 9}
+                    new RoomInfo(){Name ="1"}
                 };
             }
 

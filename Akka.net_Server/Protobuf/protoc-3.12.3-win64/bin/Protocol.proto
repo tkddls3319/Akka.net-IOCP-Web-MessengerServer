@@ -53,6 +53,7 @@ message S_Chat{
 
 message ClientInfo{
 	int32 objectId =1;
-	int32 roomID =2;
-	int32 clientCount =3;
+	string name =2;
+	int32 roomID =3;
+	int32 clientCount =4;
 }

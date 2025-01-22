@@ -1,7 +1,7 @@
-using AccountServer.DB;
+using Akka.AccountServer.DB;
 using Microsoft.EntityFrameworkCore;
 
-namespace AccountServer
+namespace Akka.AccountServer
 {
     public class Program
     {
@@ -13,6 +13,11 @@ namespace AccountServer
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null; //제이슨으로 보낼 떄 대소문자 유지 (PascalCase)
+            });
 
             #region db
             builder.Services.AddDbContext<AppDbContext>(options =>

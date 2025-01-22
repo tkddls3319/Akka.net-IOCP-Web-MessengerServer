@@ -53,7 +53,13 @@ namespace DummyClient
         {
             Console.WriteLine("==========Server Connected==========");
             Console.WriteLine($"Server EndPoint - {endPoint}");
-            Send(new C_EnterServer());
+            Send(new C_EnterServer() 
+            { 
+                Client = new ClientInfo() 
+                { 
+                    Name = ClientP.AccountName 
+                } 
+            });
         }
 
         public override void OnDisconnected(EndPoint endPoint)

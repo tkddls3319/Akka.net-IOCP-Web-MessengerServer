@@ -12,12 +12,12 @@ namespace Akka.LogServer
             //최초 로드하고 싶은게 있다면
         }
         // Loader 인터페이스 사용하는데 Json파일에 Loader이름 있을 경우
-        public static Loader LoadJson<Loader>(string path) where Loader : ILoader, new()
+        public static Loader? LoadJson<Loader>(string path) where Loader : ILoader, new()
         {
             string jsonString = ReadJsonFile(path);
 
             if (string.IsNullOrEmpty(jsonString))
-                return new Loader();
+                return default(Loader);
 
             if (IsValidJson(jsonString) == false)
             {

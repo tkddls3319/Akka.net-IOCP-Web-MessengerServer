@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PacketTool", "PacketTool", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PacketGenerator", "PacketGenerator\PacketGenerator.csproj", "{DF63A2A7-3F9E-4D62-AAF6-D75210F13A79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccountServer", "AccountServer\AccountServer.csproj", "{075ED96B-488C-4286-A446-D2E21C2CB921}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Akka.AccountServer", "AccountServer\Akka.AccountServer.csproj", "{075ED96B-488C-4286-A446-D2E21C2CB921}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

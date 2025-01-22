@@ -53,7 +53,7 @@ namespace Akka.Server
         }
         void SetClusterActor(Address addr, ClusterType actorName)
         {
-            if (!_instance._clusterActors.ContainsKey(actorName))
+            if (!_clusterActors.ContainsKey(actorName))
             {
                 Task.Run(async () =>
                 {
@@ -66,7 +66,7 @@ namespace Akka.Server
 
                         lock (_lock)
                         {
-                            if (_instance._clusterActors.TryAdd(actorName, actorRef))
+                            if (_clusterActors.TryAdd(actorName, actorRef))
                                 Log.Logger.Information($"[ClusterActorManager] Cluster actor '{actorName}' initialized successfully.");
                             else
                                 Log.Logger.Error($"[ClusterActorManager] Cluster actor '{actorName}' initialized Unsuccessfully.");
@@ -88,14 +88,14 @@ namespace Akka.Server
         {
             lock (_lock)
             {
-                return _instance._clusterActors.TryGetValue(key, out var actorRef) ? actorRef : null;
+                return _clusterActors.TryGetValue(key, out var actorRef) ? actorRef : null;
             }
         }
         public bool RemoveClusterActor(ClusterType key)
         {
             lock (_lock)
             {
-                return _instance._clusterActors.Remove(key, out var actorRef);
+                return _clusterActors.Remove(key, out var actorRef);
             }
         }
         #endregion

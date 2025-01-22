@@ -2,7 +2,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AccountServer.DB
+namespace Akka.AccountServer.DB
 {
     public class AppDbContext :DbContext
     {

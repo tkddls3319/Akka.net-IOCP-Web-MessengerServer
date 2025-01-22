@@ -43,10 +43,9 @@ namespace Akka.Server
         IActorRef _roomManger;
         IActorRef _sessionManager;
         #endregion
-
         public int RoomID { get; set; }
         Dictionary<int, ClientSession> _clients = new Dictionary<int, ClientSession>();
-        int _clinetCount { get {  return _clients.Count; } }
+        int _clinetCount { get { return _clients.Count; } }
 
         public RoomActor(IActorRef roomMangerActor, IActorRef sessionManagerActor, int roomNumber)
         {
@@ -86,6 +85,7 @@ namespace Akka.Server
                 client.Session.Send(enterPaket);
             }
 
+            //채팅룸안에 모든 사용자 전달
             {
                 S_Spawn spawnPacket = new S_Spawn();
                 spawnPacket.ClientCount = _clinetCount;
@@ -110,23 +110,23 @@ namespace Akka.Server
 
             //이전 모든 채팅을 읽어 새로온 사용자에게 전달
             {
-                var response = ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)
+                LS_ChatReadLog response = ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)
                     ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
                     {
                         RoomId = this.RoomID
                     }, TimeSpan.FromSeconds(3)).Result;
 
-                if(response.Chats != null)
+                if (response?.Chats != null)
                 {
-                    foreach (var item in response.Chats)
+                    foreach (var chat in response.Chats)
                     {
-                        S_Chat chat = new S_Chat() 
+                        S_Chat readChat = new S_Chat()
                         {
-                            Chat = item.Chat,
-                            ObjectId = item.ObjectId,
-                            Time = item.Time 
+                            Chat = chat.Chat,
+                            ObjectId = chat.ObjectId,
+                            Time = chat.Time
                         };
-                        client.Session.Send(chat);
+                        client.Session.Send(readChat);
                     }
                 }
             }
@@ -176,22 +176,24 @@ namespace Akka.Server
                 ObjectId = id,
                 Chat = chat + "\n",
                 Time = Timestamp.FromDateTime(DateTime.UtcNow)
-
             };
 
-            #region Cluster
-            SL_ChatWriteLog logPacket = new()
-            { 
-                Chat = new ChatObject() {
-                    ObjectId = severChatPacket.ObjectId,
-                    RoomId = RoomID,
-                    Chat = severChatPacket.Chat,
-                    Time = severChatPacket.Time
-                }   
-            };
+            //LogServer클러스터에 Log 전달
+            {
+                SL_ChatWriteLog logPacket = new()
+                {
+                    Chat = new ChatObject()
+                    {
+                        ObjectId = severChatPacket.ObjectId,
+                        RoomId = RoomID,
+                        Chat = severChatPacket.Chat,
+                        Time = severChatPacket.Time
+                    }
+                };
 
-            ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(logPacket);
-            #endregion
+                ClusterActorManager.Instance.GetClusterActor(Define.ClusterType.LogManagerActor)?.Tell(logPacket);
+            }
+
             BroadcastExceptSelf(id, severChatPacket);
         }
 

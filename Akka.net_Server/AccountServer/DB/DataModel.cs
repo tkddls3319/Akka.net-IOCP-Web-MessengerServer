@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AccountServer.DB
+namespace Akka.AccountServer.DB
 {
     [Table("Account")]
     public class AccountDb

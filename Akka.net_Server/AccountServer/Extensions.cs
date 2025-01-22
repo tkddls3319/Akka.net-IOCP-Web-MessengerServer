@@ -1,5 +1,5 @@
 ﻿
-using AccountServer.DB;
+using Akka.AccountServer.DB;
 
 public static class Extensions
 {
