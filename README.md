@@ -69,7 +69,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 ### 2. 테스트 방법
 #### Visual Studio 빌드로 테스트하기
 1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
-2. `Akka.Server`, `Akka.LogServer`, `DummyClient` 작업 시작으로 설정.
+2. `Akka.Server`, `Akka.LogServer`, Akka.AccountServer, `DummyClient` 작업 시작으로 설정.
 3. F5 키를 눌러 실행.
 4. 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
 5. 로그인 하면 채팅룸 선택창
