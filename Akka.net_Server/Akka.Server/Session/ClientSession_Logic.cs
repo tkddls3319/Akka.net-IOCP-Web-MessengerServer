@@ -1,4 +1,6 @@
 ﻿using Akka.Actor;
+using Google.Protobuf.Protocol;
+
 using ServerCore;
 using System;
 using System.Collections.Generic;
@@ -10,8 +12,9 @@ namespace Akka.Server
 {
     public partial class ClientSession : PacketSession
     {
-        public void EnterServerHandler()
+        public void EnterServerHandler(C_EnterServer enterPacket)
         {
+            AccountName = enterPacket.Client.AccountName;
             if (Room == null)
             {
                 _roomManager.Tell(new RoomManagerActor.MsgAddClient(this));

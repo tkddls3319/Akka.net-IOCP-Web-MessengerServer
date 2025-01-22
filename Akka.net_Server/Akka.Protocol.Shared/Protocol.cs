@@ -28,28 +28,29 @@ namespace Google.Protobuf.Protocol {
             "aW1lc3RhbXAucHJvdG8iNQoNQ19FbnRlclNlcnZlchIkCgZjbGllbnQYASAB",
             "KAsyFC5Qcm90b2NvbC5DbGllbnRJbmZvIjUKDVNfRW50ZXJTZXJ2ZXISJAoG",
             "Y2xpZW50GAEgASgLMhQuUHJvdG9jb2wuQ2xpZW50SW5mbyIPCg1TX0xlYXZl",
-            "U2VydmVyIjEKB1NfU3Bhd24SEQoJb2JqZWN0SWRzGAEgAygFEhMKC2NsaWVu",
-            "dENvdW50GAIgASgFIjIKCVNfRGVzcGF3bhIQCghvYmplY3RJZBgBIAEoBRIT",
-            "CgtjbGllbnRDb3VudBgCIAEoBSIWCgZDX0NoYXQSDAoEY2hhdBgBIAEoCSJS",
-            "CgZTX0NoYXQSEAoIb2JqZWN0SWQYASABKAUSDAoEY2hhdBgCIAEoCRIoCgR0",
-            "aW1lGAMgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcCJRCgpDbGll",
-            "bnRJbmZvEhAKCG9iamVjdElkGAEgASgFEgwKBG5hbWUYAiABKAkSDgoGcm9v",
-            "bUlEGAMgASgFEhMKC2NsaWVudENvdW50GAQgASgFKnoKCFBhY2tldElEEhIK",
-            "DkNfRU5URVJfU0VSVkVSEAASEgoOU19FTlRFUl9TRVJWRVIQARISCg5TX0xF",
-            "QVZFX1NFUlZFUhACEgsKB1NfU1BBV04QAxINCglTX0RFU1BBV04QBBIKCgZD",
-            "X0NIQVQQBRIKCgZTX0NIQVQQBkIbqgIYR29vZ2xlLlByb3RvYnVmLlByb3Rv",
-            "Y29sYgZwcm90bzM="));
+            "U2VydmVyIkcKB1NfU3Bhd24SEQoJb2JqZWN0SWRzGAEgAygFEhQKDGFjY291",
+            "bnROYW1lcxgCIAMoCRITCgtjbGllbnRDb3VudBgDIAEoBSJHCglTX0Rlc3Bh",
+            "d24SEAoIb2JqZWN0SWQYASABKAUSEwoLYWNjb3VudE5hbWUYAiABKAkSEwoL",
+            "Y2xpZW50Q291bnQYAyABKAUiFgoGQ19DaGF0EgwKBGNoYXQYASABKAkiZwoG",
+            "U19DaGF0EhAKCG9iamVjdElkGAEgASgFEhMKC2FjY291bnROYW1lGAIgASgJ",
+            "EgwKBGNoYXQYAyABKAkSKAoEdGltZRgEIAEoCzIaLmdvb2dsZS5wcm90b2J1",
+            "Zi5UaW1lc3RhbXAiWAoKQ2xpZW50SW5mbxIQCghvYmplY3RJZBgBIAEoBRIT",
+            "CgthY2NvdW50TmFtZRgCIAEoCRIOCgZyb29tSUQYAyABKAUSEwoLY2xpZW50",
+            "Q291bnQYBCABKAUqegoIUGFja2V0SUQSEgoOQ19FTlRFUl9TRVJWRVIQABIS",
+            "Cg5TX0VOVEVSX1NFUlZFUhABEhIKDlNfTEVBVkVfU0VSVkVSEAISCwoHU19T",
+            "UEFXThADEg0KCVNfREVTUEFXThAEEgoKBkNfQ0hBVBAFEgoKBlNfQ0hBVBAG",
+            "QhuqAhhHb29nbGUuUHJvdG9idWYuUHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Google.Protobuf.Protocol.PacketID), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_EnterServer), global::Google.Protobuf.Protocol.C_EnterServer.Parser, new[]{ "Client" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_EnterServer), global::Google.Protobuf.Protocol.S_EnterServer.Parser, new[]{ "Client" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_LeaveServer), global::Google.Protobuf.Protocol.S_LeaveServer.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Spawn), global::Google.Protobuf.Protocol.S_Spawn.Parser, new[]{ "ObjectIds", "ClientCount" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Despawn), global::Google.Protobuf.Protocol.S_Despawn.Parser, new[]{ "ObjectId", "ClientCount" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Spawn), global::Google.Protobuf.Protocol.S_Spawn.Parser, new[]{ "ObjectIds", "AccountNames", "ClientCount" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Despawn), global::Google.Protobuf.Protocol.S_Despawn.Parser, new[]{ "ObjectId", "AccountName", "ClientCount" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.C_Chat), global::Google.Protobuf.Protocol.C_Chat.Parser, new[]{ "Chat" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Chat), global::Google.Protobuf.Protocol.S_Chat.Parser, new[]{ "ObjectId", "Chat", "Time" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ClientInfo), global::Google.Protobuf.Protocol.ClientInfo.Parser, new[]{ "ObjectId", "Name", "RoomID", "ClientCount" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.S_Chat), global::Google.Protobuf.Protocol.S_Chat.Parser, new[]{ "ObjectId", "AccountName", "Chat", "Time" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.Protocol.ClientInfo), global::Google.Protobuf.Protocol.ClientInfo.Parser, new[]{ "ObjectId", "AccountName", "RoomID", "ClientCount" }, null, null, null, null)
           }));
     }
     #endregion
@@ -470,6 +471,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public S_Spawn(S_Spawn other) : this() {
       objectIds_ = other.objectIds_.Clone();
+      accountNames_ = other.accountNames_.Clone();
       clientCount_ = other.clientCount_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -489,8 +491,18 @@ namespace Google.Protobuf.Protocol {
       get { return objectIds_; }
     }
 
+    /// <summary>Field number for the "accountNames" field.</summary>
+    public const int AccountNamesFieldNumber = 2;
+    private static readonly pb::FieldCodec<string> _repeated_accountNames_codec
+        = pb::FieldCodec.ForString(18);
+    private readonly pbc::RepeatedField<string> accountNames_ = new pbc::RepeatedField<string>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<string> AccountNames {
+      get { return accountNames_; }
+    }
+
     /// <summary>Field number for the "clientCount" field.</summary>
-    public const int ClientCountFieldNumber = 2;
+    public const int ClientCountFieldNumber = 3;
     private int clientCount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ClientCount {
@@ -514,6 +526,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if(!objectIds_.Equals(other.objectIds_)) return false;
+      if(!accountNames_.Equals(other.accountNames_)) return false;
       if (ClientCount != other.ClientCount) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -522,6 +535,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       hash ^= objectIds_.GetHashCode();
+      hash ^= accountNames_.GetHashCode();
       if (ClientCount != 0) hash ^= ClientCount.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -537,8 +551,9 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
       objectIds_.WriteTo(output, _repeated_objectIds_codec);
+      accountNames_.WriteTo(output, _repeated_accountNames_codec);
       if (ClientCount != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(24);
         output.WriteInt32(ClientCount);
       }
       if (_unknownFields != null) {
@@ -550,6 +565,7 @@ namespace Google.Protobuf.Protocol {
     public int CalculateSize() {
       int size = 0;
       size += objectIds_.CalculateSize(_repeated_objectIds_codec);
+      size += accountNames_.CalculateSize(_repeated_accountNames_codec);
       if (ClientCount != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientCount);
       }
@@ -565,6 +581,7 @@ namespace Google.Protobuf.Protocol {
         return;
       }
       objectIds_.Add(other.objectIds_);
+      accountNames_.Add(other.accountNames_);
       if (other.ClientCount != 0) {
         ClientCount = other.ClientCount;
       }
@@ -584,7 +601,11 @@ namespace Google.Protobuf.Protocol {
             objectIds_.AddEntriesFrom(input, _repeated_objectIds_codec);
             break;
           }
-          case 16: {
+          case 18: {
+            accountNames_.AddEntriesFrom(input, _repeated_accountNames_codec);
+            break;
+          }
+          case 24: {
             ClientCount = input.ReadInt32();
             break;
           }
@@ -620,6 +641,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public S_Despawn(S_Despawn other) : this() {
       objectId_ = other.objectId_;
+      accountName_ = other.accountName_;
       clientCount_ = other.clientCount_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -640,8 +662,19 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "accountName" field.</summary>
+    public const int AccountNameFieldNumber = 2;
+    private string accountName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string AccountName {
+      get { return accountName_; }
+      set {
+        accountName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "clientCount" field.</summary>
-    public const int ClientCountFieldNumber = 2;
+    public const int ClientCountFieldNumber = 3;
     private int clientCount_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int ClientCount {
@@ -665,6 +698,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (ObjectId != other.ObjectId) return false;
+      if (AccountName != other.AccountName) return false;
       if (ClientCount != other.ClientCount) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -673,6 +707,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
+      if (AccountName.Length != 0) hash ^= AccountName.GetHashCode();
       if (ClientCount != 0) hash ^= ClientCount.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -691,8 +726,12 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(ObjectId);
       }
+      if (AccountName.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(AccountName);
+      }
       if (ClientCount != 0) {
-        output.WriteRawTag(16);
+        output.WriteRawTag(24);
         output.WriteInt32(ClientCount);
       }
       if (_unknownFields != null) {
@@ -705,6 +744,9 @@ namespace Google.Protobuf.Protocol {
       int size = 0;
       if (ObjectId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
+      }
+      if (AccountName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(AccountName);
       }
       if (ClientCount != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ClientCount);
@@ -722,6 +764,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
+      }
+      if (other.AccountName.Length != 0) {
+        AccountName = other.AccountName;
       }
       if (other.ClientCount != 0) {
         ClientCount = other.ClientCount;
@@ -741,7 +786,11 @@ namespace Google.Protobuf.Protocol {
             ObjectId = input.ReadInt32();
             break;
           }
-          case 16: {
+          case 18: {
+            AccountName = input.ReadString();
+            break;
+          }
+          case 24: {
             ClientCount = input.ReadInt32();
             break;
           }
@@ -906,6 +955,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public S_Chat(S_Chat other) : this() {
       objectId_ = other.objectId_;
+      accountName_ = other.accountName_;
       chat_ = other.chat_;
       time_ = other.time_ != null ? other.time_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -927,8 +977,19 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
+    /// <summary>Field number for the "accountName" field.</summary>
+    public const int AccountNameFieldNumber = 2;
+    private string accountName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string AccountName {
+      get { return accountName_; }
+      set {
+        accountName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
     /// <summary>Field number for the "chat" field.</summary>
-    public const int ChatFieldNumber = 2;
+    public const int ChatFieldNumber = 3;
     private string chat_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public string Chat {
@@ -939,7 +1000,7 @@ namespace Google.Protobuf.Protocol {
     }
 
     /// <summary>Field number for the "time" field.</summary>
-    public const int TimeFieldNumber = 3;
+    public const int TimeFieldNumber = 4;
     private global::Google.Protobuf.WellKnownTypes.Timestamp time_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public global::Google.Protobuf.WellKnownTypes.Timestamp Time {
@@ -963,6 +1024,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (ObjectId != other.ObjectId) return false;
+      if (AccountName != other.AccountName) return false;
       if (Chat != other.Chat) return false;
       if (!object.Equals(Time, other.Time)) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -972,6 +1034,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
+      if (AccountName.Length != 0) hash ^= AccountName.GetHashCode();
       if (Chat.Length != 0) hash ^= Chat.GetHashCode();
       if (time_ != null) hash ^= Time.GetHashCode();
       if (_unknownFields != null) {
@@ -991,12 +1054,16 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(ObjectId);
       }
-      if (Chat.Length != 0) {
+      if (AccountName.Length != 0) {
         output.WriteRawTag(18);
+        output.WriteString(AccountName);
+      }
+      if (Chat.Length != 0) {
+        output.WriteRawTag(26);
         output.WriteString(Chat);
       }
       if (time_ != null) {
-        output.WriteRawTag(26);
+        output.WriteRawTag(34);
         output.WriteMessage(Time);
       }
       if (_unknownFields != null) {
@@ -1009,6 +1076,9 @@ namespace Google.Protobuf.Protocol {
       int size = 0;
       if (ObjectId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
+      }
+      if (AccountName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(AccountName);
       }
       if (Chat.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Chat);
@@ -1029,6 +1099,9 @@ namespace Google.Protobuf.Protocol {
       }
       if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
+      }
+      if (other.AccountName.Length != 0) {
+        AccountName = other.AccountName;
       }
       if (other.Chat.Length != 0) {
         Chat = other.Chat;
@@ -1055,10 +1128,14 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 18: {
-            Chat = input.ReadString();
+            AccountName = input.ReadString();
             break;
           }
           case 26: {
+            Chat = input.ReadString();
+            break;
+          }
+          case 34: {
             if (time_ == null) {
               Time = new global::Google.Protobuf.WellKnownTypes.Timestamp();
             }
@@ -1097,7 +1174,7 @@ namespace Google.Protobuf.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public ClientInfo(ClientInfo other) : this() {
       objectId_ = other.objectId_;
-      name_ = other.name_;
+      accountName_ = other.accountName_;
       roomID_ = other.roomID_;
       clientCount_ = other.clientCount_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -1119,14 +1196,14 @@ namespace Google.Protobuf.Protocol {
       }
     }
 
-    /// <summary>Field number for the "name" field.</summary>
-    public const int NameFieldNumber = 2;
-    private string name_ = "";
+    /// <summary>Field number for the "accountName" field.</summary>
+    public const int AccountNameFieldNumber = 2;
+    private string accountName_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public string Name {
-      get { return name_; }
+    public string AccountName {
+      get { return accountName_; }
       set {
-        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        accountName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1166,7 +1243,7 @@ namespace Google.Protobuf.Protocol {
         return true;
       }
       if (ObjectId != other.ObjectId) return false;
-      if (Name != other.Name) return false;
+      if (AccountName != other.AccountName) return false;
       if (RoomID != other.RoomID) return false;
       if (ClientCount != other.ClientCount) return false;
       return Equals(_unknownFields, other._unknownFields);
@@ -1176,7 +1253,7 @@ namespace Google.Protobuf.Protocol {
     public override int GetHashCode() {
       int hash = 1;
       if (ObjectId != 0) hash ^= ObjectId.GetHashCode();
-      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      if (AccountName.Length != 0) hash ^= AccountName.GetHashCode();
       if (RoomID != 0) hash ^= RoomID.GetHashCode();
       if (ClientCount != 0) hash ^= ClientCount.GetHashCode();
       if (_unknownFields != null) {
@@ -1196,9 +1273,9 @@ namespace Google.Protobuf.Protocol {
         output.WriteRawTag(8);
         output.WriteInt32(ObjectId);
       }
-      if (Name.Length != 0) {
+      if (AccountName.Length != 0) {
         output.WriteRawTag(18);
-        output.WriteString(Name);
+        output.WriteString(AccountName);
       }
       if (RoomID != 0) {
         output.WriteRawTag(24);
@@ -1219,8 +1296,8 @@ namespace Google.Protobuf.Protocol {
       if (ObjectId != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ObjectId);
       }
-      if (Name.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      if (AccountName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(AccountName);
       }
       if (RoomID != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomID);
@@ -1242,8 +1319,8 @@ namespace Google.Protobuf.Protocol {
       if (other.ObjectId != 0) {
         ObjectId = other.ObjectId;
       }
-      if (other.Name.Length != 0) {
-        Name = other.Name;
+      if (other.AccountName.Length != 0) {
+        AccountName = other.AccountName;
       }
       if (other.RoomID != 0) {
         RoomID = other.RoomID;
@@ -1267,7 +1344,7 @@ namespace Google.Protobuf.Protocol {
             break;
           }
           case 18: {
-            Name = input.ReadString();
+            AccountName = input.ReadString();
             break;
           }
           case 24: {

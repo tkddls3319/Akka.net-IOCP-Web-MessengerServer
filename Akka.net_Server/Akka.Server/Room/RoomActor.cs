@@ -92,7 +92,10 @@ namespace Akka.Server
                 foreach (ClientSession p in _clients.Values)
                 {
                     if (client.Session != p)
+                    {
                         spawnPacket.ObjectIds.Add(p.SessionID);
+                        spawnPacket.AccountNames.Add(p.AccountName);
+                    }
                 }
                 client.Session.Send(spawnPacket);
             }
@@ -101,6 +104,7 @@ namespace Akka.Server
                 S_Spawn spawnPacket = new S_Spawn();
                 spawnPacket.ClientCount = _clinetCount;
                 spawnPacket.ObjectIds.Add(session.SessionID);
+                spawnPacket.AccountNames.Add(session.AccountName);
                 foreach (ClientSession p in _clients.Values)
                 {
                     if (client.Session != p)
@@ -123,9 +127,11 @@ namespace Akka.Server
                         S_Chat readChat = new S_Chat()
                         {
                             Chat = chat.Chat,
+                            AccountName = chat.AccoutnName,
                             ObjectId = chat.ObjectId,
-                            Time = chat.Time
+                            Time = chat.Time,
                         };
+
                         client.Session.Send(readChat);
                     }
                 }
@@ -152,6 +158,7 @@ namespace Akka.Server
                 S_Despawn despawnPacket = new S_Despawn();
                 despawnPacket.ObjectId = clientId;
                 despawnPacket.ClientCount = _clinetCount;
+                despawnPacket.AccountName = client.AccountName;
                 BroadcastExceptSelf(clientId, despawnPacket);
             }
 
@@ -174,6 +181,7 @@ namespace Akka.Server
             S_Chat severChatPacket = new S_Chat()
             {
                 ObjectId = id,
+                AccountName = player.AccountName,
                 Chat = chat + "\n",
                 Time = Timestamp.FromDateTime(DateTime.UtcNow)
             };
@@ -187,7 +195,8 @@ namespace Akka.Server
                         ObjectId = severChatPacket.ObjectId,
                         RoomId = RoomID,
                         Chat = severChatPacket.Chat,
-                        Time = severChatPacket.Time
+                        Time = severChatPacket.Time,
+                        AccoutnName = player.AccountName,
                     }
                 };
 

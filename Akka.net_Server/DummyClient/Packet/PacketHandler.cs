@@ -20,8 +20,8 @@ public class PacketHandler
 
         string message = s_chat.Chat.TrimEnd('\n', ' ');
 
-        Console.WriteLine($"\t\t\t[{s_chat.ObjectId}번 유저]");
-        Console.WriteLine($"\t\t\t[{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} : {message}]\n");
+        Console.WriteLine($"\t\t\t[{s_chat.AccountName}]");
+        Console.WriteLine($"\t\t\t[{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} ▶  {message}]\n");
     }
     public static void S_EnterServerHandler(PacketSession session, IMessage packet)
     {
@@ -54,19 +54,19 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_Spawn s_spawn = (S_Spawn)packet;
 
-        string ids = string.Empty;
-        foreach (var id in s_spawn.ObjectIds)
+        string names = string.Empty;
+        foreach (var name in s_spawn.AccountNames)
         {
-            ids += id + " ";
+            names += name + " ";
         }
-        if (string.IsNullOrEmpty(ids) == false)
-            Console.WriteLine($"> {ids}님이 채팅 방에 참여했습니다. 현재 참여인원 {s_spawn.ClientCount}명.");
+        if (string.IsNullOrEmpty(names) == false)
+            Console.WriteLine($"> {names}님이 채팅 방에 참여했습니다. 현재 참여인원 {s_spawn.ClientCount}명.");
     }
     public static void S_DespawnHandler(PacketSession session, IMessage packet)
     {
         ServerSession clientSession = (ServerSession)session;
         S_Despawn s_dspawn = (S_Despawn)packet;
 
-        Console.WriteLine($"> {s_dspawn.ObjectId}님이 채팅 방에서 나가셨습니다.. 현재 참여인원 {s_dspawn.ClientCount}명.");
+        Console.WriteLine($"> {s_dspawn.AccountName}님이 채팅 방에서 나가셨습니다.. 현재 참여인원 {s_dspawn.ClientCount}명.");
     }
 }

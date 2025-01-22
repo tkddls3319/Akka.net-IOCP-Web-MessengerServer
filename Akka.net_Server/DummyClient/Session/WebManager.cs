@@ -17,7 +17,13 @@ namespace DummyClient.Session
 
         public WebManager()
         {
-            _httpClient = new HttpClient()
+            //원활한 테스트환경을 위해 인증서 무시.
+            HttpClientHandler handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true  // 인증서 검증 무시
+            };
+
+            _httpClient = new HttpClient(handler)
             {
                 BaseAddress = new Uri(_baseUrl),
                 DefaultRequestHeaders =

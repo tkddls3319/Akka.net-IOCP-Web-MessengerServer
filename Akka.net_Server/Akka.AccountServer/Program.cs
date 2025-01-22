@@ -19,6 +19,19 @@ namespace Akka.AccountServer
                 options.JsonSerializerOptions.PropertyNamingPolicy = null; //제이슨으로 보낼 떄 대소문자 유지 (PascalCase)
             });
 
+            builder.WebHost.UseKestrel(options =>
+            {
+                options.ListenAnyIP(7022, listenOptions =>
+                {
+                    listenOptions.UseHttps();  // 로컬에서도 HTTPS 허용
+                });
+
+                options.ListenLocalhost(5181, listenOptions =>
+                {
+                    listenOptions.UseHttps();
+                });
+            });
+
             #region db
             builder.Services.AddDbContext<AppDbContext>(options =>
                  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

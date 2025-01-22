@@ -57,14 +57,13 @@ namespace DummyClient
             { 
                 Client = new ClientInfo() 
                 { 
-                    Name = ClientP.AccountName 
+                    AccountName = ClientP.AccountName 
                 } 
             });
         }
-
         public override void OnDisconnected(EndPoint endPoint)
         {
-            Console.WriteLine(endPoint);
+            Console.WriteLine("[Session] Server Disconnected....");
         }
 
         public override void OnRecvedPacket(ArraySegment<byte> buffer)

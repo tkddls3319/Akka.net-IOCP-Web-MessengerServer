@@ -16,7 +16,7 @@ public class PacketHandler
         ClientSession clientSession = (ClientSession)session;
         C_EnterServer enterPacket = (C_EnterServer)packet;
 
-        clientSession.EnterServerHandler();
+        clientSession.EnterServerHandler(enterPacket);
     }
     public static void C_ChatHandler(PacketSession session, IMessage packet)
     {

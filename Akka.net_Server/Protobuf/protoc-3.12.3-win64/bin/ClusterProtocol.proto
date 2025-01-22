@@ -27,4 +27,5 @@ message ChatObject
 	int32 roomId = 2;
 	string chat = 3;
 	google.protobuf.Timestamp time =4;
+	string accoutnName =5;
 }

@@ -33,12 +33,14 @@ message S_LeaveServer{
 
 message S_Spawn {
  repeated int32 objectIds = 1;
- int32 clientCount =2;
+ repeated string accountNames = 2;
+ int32 clientCount =3;
 }
 
 message S_Despawn {
  int32 objectId = 1;
- int32 clientCount =2;
+ string accountName = 2;
+ int32 clientCount =3;
 }
 
 message C_Chat{
@@ -47,13 +49,14 @@ message C_Chat{
 
 message S_Chat{
  int32 objectId =1;
- string chat = 2;
- google.protobuf.Timestamp time =3;
+ string accountName =2;
+ string chat = 3;
+ google.protobuf.Timestamp time =4;
 }
 
 message ClientInfo{
 	int32 objectId =1;
-	string name =2;
+	string accountName =2;
 	int32 roomID =3;
 	int32 clientCount =4;
 }

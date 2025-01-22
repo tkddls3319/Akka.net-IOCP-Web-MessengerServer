@@ -11,10 +11,10 @@ namespace DummyClient
 
     public class ClientP
     {
+        public static string AccountName;
         static bool isLoggedIn = false; // 로그인 상태 플래그
         static bool isSigedIn = false; // 회원가입 상태 플래그
 
-        public static string AccountName;
         static void Main(string[] args)
         {
             //서버 보다 빨리 켜져서 Log 클러스터가 서버에 붙기 전에 켜짐 그래서 sleep 걸어놈
@@ -25,23 +25,24 @@ namespace DummyClient
 
             #region 컨텐츠 역역입니다. 그렇게 중요하진 않아요. WebManager를 사용해 Web Api와 통신하는 부분만 보셔도 됩니다.
             ManuChoice();
-
-            //로그인다하고 넘어가게
+            //로그인성공하면 Server 접속으로 넘어가게 막는용
             while (isLoggedIn == false) { }
             #endregion
 
             #region 채팅 Server 접속
-            //string hostName = Dns.GetHostName();
+            string hostName = Dns.GetHostName();
 
-            //IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
-            //IPAddress ipAddr = ipEntry.AddressList[1];
+            IPHostEntry ipEntry = Dns.GetHostEntry(hostName);
+            //IPAddress ipAddr = IPAddress.Parse("localhost");
+            IPAddress ipAddr = ipEntry.AddressList[1];
 
-            //IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
+            IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
 
-            //Connector connector = new Connector();
-            //connector.Connect(endPoint, () => { return new ServerSession(); }, false);
+            Connector connector = new Connector();
+            connector.Connect(endPoint, () => { return new ServerSession(); }, false);
             #endregion
-            //while (true) { }
+
+            while (true) { }
         }
 
         static void ManuChoice()
