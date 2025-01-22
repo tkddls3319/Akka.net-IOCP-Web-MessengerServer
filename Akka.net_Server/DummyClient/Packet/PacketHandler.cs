@@ -20,8 +20,9 @@ public class PacketHandler
 
         string message = s_chat.Chat.TrimEnd('\n', ' ');
 
-        Console.WriteLine($"\t\t\t[{s_chat.AccountName}]");
-        Console.WriteLine($"\t\t\t[{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} ▶  {message}]\n");
+        Util.PrintDisplayMessage(s_chat.AccountName, message, s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss"));
+        //Console.WriteLine($"\t\t\t[{s_chat.AccountName}]");
+        //Console.WriteLine($"\t\t\t[{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} ▶  {message}]\n");
     }
     public static void S_EnterServerHandler(PacketSession session, IMessage packet)
     {

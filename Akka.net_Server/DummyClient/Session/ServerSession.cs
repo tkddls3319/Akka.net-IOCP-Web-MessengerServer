@@ -33,32 +33,31 @@ namespace DummyClient
             {
                 while (true)
                 {
-                    Update();
+                    Console.Write(">> ");
+                    string input = Console.ReadLine();
+
+                    Util.PrintDisplayMessage("나", input, DateTime.Now.ToShortTimeString());
+
+                    C_Chat packet = new C_Chat();
+                    packet.Chat = input;
+                    Send(packet);
                 }
             });
 
             t1.Name = "InputThread";
             t1.Start();
         }
-        public void Update()
-        {
-            string input = Console.ReadLine();
-
-            C_Chat packet = new C_Chat();
-            packet.Chat = input;
-            Send(packet);
-        }
 
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine("==========Server Connected==========");
             Console.WriteLine($"Server EndPoint - {endPoint}");
-            Send(new C_EnterServer() 
-            { 
-                Client = new ClientInfo() 
-                { 
-                    AccountName = ClientP.AccountName 
-                } 
+            Send(new C_EnterServer()
+            {
+                Client = new ClientInfo()
+                {
+                    AccountName = ClientP.AccountName
+                }
             });
         }
         public override void OnDisconnected(EndPoint endPoint)
