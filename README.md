@@ -14,7 +14,7 @@
 - [ ] Web API Server(ASP.NET) Server와 Actor로 통신
 - [ ] Client Unity
 
-# Akka.NET + IOCP Server
+# Akka.NET + IOCP Server + ASP.NET
 
 Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신저 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
 
@@ -70,13 +70,14 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 #### Visual Studio 빌드로 테스트하기
 1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
 2. `Akka.Server`, `Akka.LogServer`, Akka.AccountServer, `DummyClient` 작업 시작으로 설정.
-3. F5 키를 눌러 실행.
-4. 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
-5. 로그인 하면 채팅룸 선택창
-6. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
-7. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
+3. Library->PacketGenerator->빌드 ( **Aka.Server가 빌드되면 빌디 전 이벤트로 GenProto.bat파일이 실행됩니다. 해당 배치 파일은 PacketGenerator.exe를 실행 시키기 때문에 빌드를 해놓지 않으면 오류가 날 수 있습니다.**)
+4. F5 키를 눌러 실행. ( **만약 Akka.Server.csproj안에 <Exec Command="CALL $(SolutionDir)Protobuf\protoc-3.12.3-win64\bin\GenProto.bat" />에서 오류가 난다면 그냥 지우고 빌드해 주세요 배치 경로 문제일 가능성이 큽니다.** )
+5. 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
+6. 로그인 하면 채팅룸 선택창
+7. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
+8. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
    - `DummyClient.exe`를 여러 개 실행하면 멀티 채팅 테스트 가능.
-8. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
+9. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
 
 #### 추가 설정
 - 방(Room) 안에는 클라이언트 5명만 입장 가능.
@@ -138,7 +139,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
   
 ### 6. AccountServer
 - **역할**: Client의 회원가입과 로그인 관리
-- **기능**: REST API와 EntityFrameWork Mssql로 구현현
+- **기능**: REST API와 EntityFrameWork Mssql로 구현
 
 ---
 
