@@ -70,8 +70,8 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 #### Visual Studio 빌드로 테스트하기
 1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
 2. `Akka.Server`, `Akka.LogServer`, Akka.AccountServer, `DummyClient` 작업 시작으로 설정.
-3. Library->PacketGenerator->빌드 ( **Aka.Server가 빌드되면 빌디 전 이벤트로 GenProto.bat파일이 실행됩니다. 해당 배치 파일은 PacketGenerator.exe를 실행 시키기 때문에 빌드를 해놓지 않으면 오류가 날 수 있습니다.**)
-4. F5 키를 눌러 실행. ( **만약 Akka.Server.csproj안에 <Exec Command="CALL $(SolutionDir)Protobuf\protoc-3.12.3-win64\bin\GenProto.bat" />에서 오류가 난다면 그냥 지우고 빌드해 주세요 배치 경로 문제일 가능성이 큽니다.** )
+3. Library->PacketGenerator->빌드 ( **Akka.Server가 빌드되면 빌디 전 이벤트로 GenProto.bat파일이 실행됩니다. 해당 배치 파일은 PacketGenerator.exe를 실행 시키기 때문에 빌드를 해놓지 않으면 오류가 날 수 있습니다.**)
+4. F5 키를 눌러 실행. ( **만약 Akka.Server.csproj안에 <Exec Command="CALL $(SolutionDir)Protobuf\protoc-3.12.3-win64\bin\GenProto.bat" />에서 오류가 난다면 그냥 지우고 빌드 해도 됩니다. Akka.Server 빌드 전 이벤트 경로 문제일 가능성이 큽니다.** )
 5. 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
 6. 로그인 하면 채팅룸 선택창
 7. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
