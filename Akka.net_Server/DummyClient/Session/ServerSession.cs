@@ -36,7 +36,7 @@ namespace DummyClient
                     Console.Write(">> ");
                     string input = Console.ReadLine();
 
-                    Util.PrintDisplayMessage("나", input, DateTime.Now.ToShortTimeString());
+                    Util.AddOrPrintDisplayMessage(input, "나", DateTime.Now.ToShortTimeString());
 
                     C_Chat packet = new C_Chat();
                     packet.Chat = input;
@@ -50,8 +50,8 @@ namespace DummyClient
 
         public override void OnConnected(EndPoint endPoint)
         {
-            Console.WriteLine("==========Server Connected==========");
-            Console.WriteLine($"Server EndPoint - {endPoint}");
+            Util.AddOrPrintDisplayMessage("==========Server Connected==========");
+            Util.AddOrPrintDisplayMessage($"Server EndPoint - {endPoint}");
             Send(new C_EnterServer()
             {
                 Client = new ClientInfo()
@@ -62,7 +62,7 @@ namespace DummyClient
         }
         public override void OnDisconnected(EndPoint endPoint)
         {
-            Console.WriteLine("[Session] Server Disconnected....");
+            Util.AddOrPrintDisplayMessage("[Session] Server Disconnected....");
         }
 
         public override void OnRecvedPacket(ArraySegment<byte> buffer)

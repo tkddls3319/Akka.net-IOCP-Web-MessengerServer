@@ -8,7 +8,6 @@ using DummyClient.Session;
 
 namespace DummyClient
 {
-
     public class ClientP
     {
         public static string AccountName;
@@ -53,21 +52,7 @@ namespace DummyClient
             while (!isLoggedIn)
             {
                 Console.Clear();
-                Console.WriteLine("===== 메뉴 선택 =====");
-
-                for (int i = 0; i < menuOptions.Length; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"> {menuOptions[i]}"); // 선택된 항목 표시
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        Console.WriteLine($"  {menuOptions[i]}");
-                    }
-                }
+                Util.DrawBox("=== Welcome to ChatApp ===", menuOptions, selectedIndex);
 
                 ConsoleKey key = Console.ReadKey().Key;
 
@@ -95,10 +80,9 @@ namespace DummyClient
                         if (selectedIndex == 2)
                         {
                             Console.WriteLine("프로그램을 종료합니다.");
+                            Environment.Exit(0);
                             return;
                         }
-                        Console.WriteLine("\n아무 키나 누르면 계속...");
-                        Console.ReadKey();
                         break;
                 }
             }
@@ -107,13 +91,13 @@ namespace DummyClient
         private static async void SignUp()
         {
             Console.Clear();
+            Util.DrawMessageBox("회원가입", ConsoleColor.Green);
             while (true)
             {
-                Console.WriteLine("========== SignUp 창 ==========");
-                Console.Write("아이디를 입력하세요: ");
+                Console.Write("[아이디를 입력하세요] ");
                 string userId = Console.ReadLine();
 
-                Console.Write("비밀번호를 입력하세요: ");
+                Console.Write("[비밀번호를 입력하세요] ");
                 string password = Console.ReadLine();
 
                 var signUpInfo = new CreateAccountPacketReq() { AccountName = userId, Password = password };
@@ -139,17 +123,14 @@ namespace DummyClient
         private static async void Login(bool signup = false)
         {
             Console.Clear();
+            Util.DrawMessageBox(signup ? "회원가입 성공! 로그인 해주세요." : "로그인", ConsoleColor.Blue);
 
             while (true)
             {
-                if (signup)
-                    Console.WriteLine("회원가입되었습니다. 로그인 해주세요.");
-
-                Console.WriteLine("========== Login 창 ==========");
-                Console.Write("아이디를 입력하세요: ");
+                Console.Write("[아이디를 입력하세요] ");
                 string userId = Console.ReadLine();
 
-                Console.Write("비밀번호를 입력하세요: ");
+                Console.Write("[비밀번호를 입력하세요] ");
                 string password = Console.ReadLine();
 
                 var info = new LoginAccountPacketReq() { AccountName = userId, Password = password };

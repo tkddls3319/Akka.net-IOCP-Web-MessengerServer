@@ -15,23 +15,32 @@ namespace Akka.LogAkka.Server
         static ActorSystem ServerActorSystem;
         static void Main(string[] args)
         {
-            ConfigManager.LoadConfig();
-            
-            #region Serilog Logger 정의
-            SerilogManager.Init();//Log.Logger 정의
-            #endregion
+            try
+            {
+                ConfigManager.LoadConfig();
 
-            #region Cluster 활성화
-            var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
-            ServerActorSystem = ActorSystem.Create("ClusterSystem", config);
+                #region Serilog Logger 정의
+                SerilogManager.Init();//Log.Logger 정의
+                #endregion
 
-            var LogManagerActor = ServerActorSystem.ActorOf(Props.Create(() => new LogManagerActor()), "LogManagerActor");
-            #endregion
+                #region Cluster 활성화
+                var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
+                ServerActorSystem = ActorSystem.Create(Enum.GetName(ActtorType.ClusterSystem), config);
 
-            Log.Logger.Information($"==========LogServer OPEN==========");
-            Log.Logger.Information("로그 경로 : Debuf/logs/xx.json");
-            ServerActorSystem.WhenTerminated.Wait();
-            Log.CloseAndFlush();
+                var logManagerActor = ServerActorSystem.ActorOf(Props.Create(() => new LogManagerActor()), Enum.GetName(ActtorType.LogManagerActor));
+                #endregion
+
+                Log.Logger.Information($"==========LogServer OPEN==========");
+                Log.Logger.Information("로그 경로 : Debuf/logs/xx.json");
+
+                ServerActorSystem.WhenTerminated.Wait();
+                Log.CloseAndFlush();
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

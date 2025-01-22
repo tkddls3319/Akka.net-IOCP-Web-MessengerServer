@@ -8,6 +8,8 @@ namespace Akka.Server
 {
     public class Define
     {
+        public const int RoomMaxCount = 100;
+
         #region Cluster 
         public static readonly string AddrLogManagerActor = "akka.tcp://ClusterSystem@localhost:5001";
         public enum ClusterType
@@ -16,6 +18,15 @@ namespace Akka.Server
         }
         #endregion
 
-        public const int RoomMaxCount = 100;
+        #region Actor 이름
+        public enum ActtorType
+        {
+            ClusterSystem,
+
+            clusterListenerActor,
+            SessionManagerActor,
+            RoomManagerActor
+        }
+        #endregion
     }
 }

@@ -31,10 +31,10 @@ namespace Akka.LogServer
             IActorRef _chatReadLogRouter;
 
             _chatWriteLogRouter = Context.ActorOf(Props.Create(() => new ChatLogWriteActor())
-                .WithRouter(new RoundRobinPool(5)), "ChatLogWriteActor");
+                .WithRouter(new RoundRobinPool(5)), Enum.GetName(ActtorType.ChatLogWriteActor));
 
             _chatReadLogRouter = Context.ActorOf(Props.Create(() => new ChatLogReaderActor())
-                .WithRouter(new RoundRobinPool(5)), "ChatLogReaderActor");
+                .WithRouter(new RoundRobinPool(5)), Enum.GetName(ActtorType.ChatLogReaderActor));
             #endregion
 
             Receive<SL_ChatWriteLog>(message =>

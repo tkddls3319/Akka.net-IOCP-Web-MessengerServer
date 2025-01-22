@@ -9,9 +9,10 @@ namespace DummyClient.Session
 {
     public class WebManager
     {
+        #region Singleton
         static readonly WebManager _instance = new WebManager();
         public static WebManager Instance => _instance;
-
+        #endregion
         readonly HttpClient _httpClient;
         string _baseUrl => "https://localhost:7022";
 

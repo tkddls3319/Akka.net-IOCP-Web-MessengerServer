@@ -15,6 +15,8 @@ using Serilog;
 
 using ServerCore;
 
+using static Akka.Server.Define;
+
 namespace Akka.Server
 {
     public class Program
@@ -32,13 +34,13 @@ namespace Akka.Server
 
             #region cluster
             var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
-            ServerActorSystem = ActorSystem.Create("ClusterSystem", config);
+            ServerActorSystem = ActorSystem.Create(Enum.GetName(ActtorType.ClusterSystem), config);
             #endregion
 
             #region Actor
-            var clusterListenerActor =  ServerActorSystem.ActorOf(Props.Create(() => new ClusterListenerActor()), "clusterListenerActor");
-            var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), "SessionManagerActor");
-            var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor(sessionManager)), "RoomManagerActor");
+            var clusterListenerActor =  ServerActorSystem.ActorOf(Props.Create(() => new ClusterListenerActor()), Enum.GetName(ActtorType.clusterListenerActor));
+            var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), Enum.GetName(ActtorType.SessionManagerActor));
+            var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor(sessionManager)), Enum.GetName(ActtorType.RoomManagerActor));
 
             sessionManager.Tell(new SessionManagerActor.MsgSetRoomManagerActor(roomManager));
             #endregion
