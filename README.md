@@ -8,15 +8,15 @@
 - [x] IOCP 라이브러리
 - [x] 채팅 룸별 로그 JSon으로 Serialize
 - [x] 채팅 룸별 로그 Deserialize
-- [ ] 채팅 시간 추가
-- [ ] 회원가입 (일단 로그로 처리)
-- [ ] 회원가입 디비
-- [ ] Web API Server(ASP.NET) 로그인용 Cluster
+- [x] 채팅 시간 추가
+- [x] 회원가입 디비
+- [x] Web API Server(ASP.NET) 로그인용
+- [ ] Web API Server(ASP.NET) Server와 Actor로 통신
 - [ ] Client Unity
 
 # Akka.NET + IOCP Server
 
-Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
+Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신저 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
 
 추 후 기회가 된다면 클라이언트는 콘솔이 아닌 Unity나 머 WPF나 다른 걸로 개발해 볼 예정.
 
@@ -71,10 +71,12 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
 2. `Akka.Server`, `Akka.LogServer`, `DummyClient` 작업 시작으로 설정.
 3. F5 키를 눌러 실행.
-4.  'DummyClient이 켜지면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
-5. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
+4. 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
+5. 로그인 하면 채팅룸 선택창
+6. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
+7. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
    - `DummyClient.exe`를 여러 개 실행하면 멀티 채팅 테스트 가능.
-6. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
+8. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
 
 #### 추가 설정
 - 방(Room) 안에는 클라이언트 5명만 입장 가능.
