@@ -63,7 +63,6 @@ namespace DummyClient
                 Console.WriteLine(line);
             }
         }
-
         static void PrintLeftAligned(string text)
         {
             int maxWidth = Console.WindowWidth;
@@ -74,7 +73,6 @@ namespace DummyClient
                 Console.WriteLine(line);
             }
         }
-
         static List<string> WrapText(string text, int maxWidth)
         {
             var lines = new List<string>();
@@ -88,7 +86,6 @@ namespace DummyClient
             lines.Add(text); // 마지막 줄 추가
             return lines;
         }
-
         public static void DrawBox(string title, string[] options, int selectedIndex)
         {
             int width = Console.WindowWidth;
