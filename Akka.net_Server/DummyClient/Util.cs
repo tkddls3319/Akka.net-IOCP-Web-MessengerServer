@@ -105,9 +105,9 @@ namespace DummyClient
                 }
                 else
                 {
-                    Console.Write('║');
+                    Console.Write('|');
                     Console.SetCursorPosition(left + boxWidth - 1, top + i);
-                    Console.Write('║');
+                    Console.Write('|');
                 }
             }
 
