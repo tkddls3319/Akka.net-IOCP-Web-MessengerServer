@@ -138,9 +138,9 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 - **역할**: `Akka.Server`와 `DummyClient` 간 TCP 통신 지원 라이브러리.
 - **기능**: IOCP 기반의 TCP 통신 로직 구현.
   
-### 6. AccountServer
+### 6. Akka.AccountServer
 - **역할**: Client의 회원가입과 로그인 관리
-- **기능**: REST API와 EntityFrameWork Mssql로 구현
+- **기능**: REST API와 EntityFrameWork Mssql로 구현, Cluster중 하나로 Akka.Server와 actor 통신
 
 ---
 
