@@ -67,40 +67,36 @@ namespace Akka.AccountServer.Actor
             //로그인
             Receive<AccountMessage<LoginAccountPacketReq>>(async (message) =>
             {
-                AppDbContext context = message.Context;
-                LoginAccountPacketReq req = message.Message;
-
-                LoginAccountPacketRes res = new LoginAccountPacketRes();
-
-                AccountDb account = context.Accounts
-                                        .AsNoTracking()
-                                        .Where(a => a.AccountName == req.AccountName && a.Password == req.Password)
-                                        .FirstOrDefault();
-
-                if (account == null)
-                {
-                    res.LoginOk = false;
-                }
-                else
-                {
-                    res.LoginOk = true;
-
-                    //TODO : Clusetr Server에서 룸받아오기
-                    {
-                        var seedNodes = Akka.Cluster.Cluster.Get(_actorSystem).Settings.SeedNodes[0];
-                        //TODO : Cluster를 관리하는 고용적 라이브러리 메니저 필요할 것 같음 Akka.Server에 만들어 놨으나 이걸 튜닝해서 라이브러리화 해야할 것 같음.
-                        SA_GetAllRoomInfo response = await _actorSystem.ActorSelection($"{seedNodes}/user/RoomManagerActor").Ask<SA_GetAllRoomInfo>(new AS_GetAllRoomInfo(), TimeSpan.FromSeconds(5));
-                     
-                        res.RoomList = new List<RoomInfo>();
-                        foreach (var room in response.RoomId)
-                        {
-                            res.RoomList.Add(new RoomInfo() { RoomId = room.ToString() });
-                        }
-                    }
-                }
-
-                Sender.Tell(res);
+                var task = HandleLogin(message);
+                task.PipeTo(Sender, Self);
             });
+        }
+        private async Task<LoginAccountPacketRes> HandleLogin(AccountMessage<LoginAccountPacketReq> message)
+        {
+            var context = message.Context;
+            var req = message.Message;
+
+            var res = new LoginAccountPacketRes();
+            var account = await context.Accounts
+                                        .AsNoTracking()
+                                        .FirstOrDefaultAsync(a => a.AccountName == req.AccountName && a.Password == req.Password);
+
+            if (account == null)
+            {
+                res.LoginOk = false;
+            }
+            else
+            {
+                res.LoginOk = true;
+
+                var seedNodes = Akka.Cluster.Cluster.Get(_actorSystem).Settings.SeedNodes[0];
+                var response = await _actorSystem.ActorSelection($"{seedNodes}/user/RoomManagerActor")
+                                                 .Ask<SA_GetAllRoomInfo>(new AS_GetAllRoomInfo(), TimeSpan.FromSeconds(5));
+
+                res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
+            }
+
+            return res;
         }
     }
 }
