@@ -42,7 +42,7 @@ namespace Akka.Server
             var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), Enum.GetName(ActtorType.SessionManagerActor));
             var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor(sessionManager)), Enum.GetName(ActtorType.RoomManagerActor));
 
-            sessionManager.Tell(new SessionManagerActor.MsgSetRoomManagerActor(roomManager));
+            sessionManager.Tell(new SessionManagerActor.SetRoomManagerActorMessage(roomManager));
             #endregion
 
             #region IOCP Server Start
@@ -58,7 +58,7 @@ namespace Akka.Server
 
             _listener.Init(endPoint, (socket) =>
             {
-                sessionManager.Tell(new SessionManagerActor.MsgGenerateSession(socket));
+                sessionManager.Tell(new SessionManagerActor.GenerateSessionMessage(socket));
             });
             #endregion
             

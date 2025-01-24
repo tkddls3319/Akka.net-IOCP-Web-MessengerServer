@@ -1,10 +1,13 @@
 ﻿
+using Akka.AccountServer.AkkaDefine;
 using Akka.AccountServer.DB;
+using Akka.AccountServer.Define;
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+using static Akka.AccountServer.Actor.AccountActor;
 
 //HTTP메서드	    기능(CRUD)	    주 용도
 //POST	        Create	        새로운 리소스 생성 (데이터 추가)
@@ -21,74 +24,36 @@ namespace Akka.AccountServer.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        AppDbContext _context;
-
-        public AccountController(AppDbContext context)
+        private readonly ILogger<AccountController> _logger;
+        private readonly IActorBridge _bridge;
+        private readonly AppDbContext _context;
+        public AccountController(AppDbContext context, ILogger<AccountController> logger, IActorBridge bridge)
         {
             _context = context;
+            _logger = logger;
+            _bridge = bridge;
         }
 
         [HttpPost]
         [Route("create")]
-        public CreateAccountPacketRes CreateAccount([FromBody] CreateAccountPacketReq req)
+        public Task<CreateAccountPacketRes> CreateAccount([FromBody] CreateAccountPacketReq req)
         {
-            CreateAccountPacketRes res = new CreateAccountPacketRes();
-
-            AccountDb account = _context.Accounts
-                                      .AsNoTracking()//read only로 성능 향상
-                                      .Where(a => a.AccountName == req.AccountName)
-                                      .FirstOrDefault();
-
-            if (account == null)
-            {
-                _context.Accounts.Add(new AccountDb()
-                {
-                    AccountName = req.AccountName,
-                    Password = req.Password,
-                });
-
-                bool success = _context.SaveChangesEx();
-                res.CreateOk = success;
-            }
-            else
-            {
-                res.CreateOk = false;
-            }
-
-            return res;
+            _logger.LogInformation("[CreateAccount]");
+            return _bridge.Ask<CreateAccountPacketRes>(ActtorType.AccountActor, new AccountMessage<CreateAccountPacketReq>(_context, req));
         }
 
         [HttpPost]
         [Route("login")]
-        public LoginAccountPacketRes LoginAccount([FromBody] LoginAccountPacketReq req)
+        public Task<LoginAccountPacketRes> LoginAccount([FromBody] LoginAccountPacketReq req)
         {
-            LoginAccountPacketRes res = new LoginAccountPacketRes();
-
-            AccountDb account = _context.Accounts
-                                    .AsNoTracking()
-                                    .Where(a => a.AccountName == req.AccountName && a.Password == req.Password)
-                                    .FirstOrDefault();
-
-            if (account == null)
-            {
-                res.LoginOk = false;
-            }
-            else
-            {
-                res.LoginOk = true;
-                //TODO : Clusetr Server에서 룸받아오기
-                res.RoomList = new List<RoomInfo>()
-                {
-                    new RoomInfo(){Name ="1"}
-                };
-            }
-
-            return res;
+            _logger.LogInformation("[LoginAccount]");
+            return _bridge.Ask<LoginAccountPacketRes>(ActtorType.AccountActor, new AccountMessage<LoginAccountPacketReq>(_context, req));
         }
+
         int count = 100;
         [HttpGet]
-        [Route("getCount")]
-        public string GetCount()
+        [Route("gettest")]
+        public string Gettest()
         {
             return count.ToString();
         }

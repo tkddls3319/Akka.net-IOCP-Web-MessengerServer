@@ -101,7 +101,7 @@ namespace DummyClient
                 Console.SetCursorPosition(left, top + i);
                 if (i == 0 || i == boxHeight - 1)
                 {
-                    Console.WriteLine(new string('═', boxWidth));
+                    Console.WriteLine(new string('-', boxWidth));
                 }
                 else
                 {
@@ -146,13 +146,13 @@ namespace DummyClient
 
             Console.ForegroundColor = color;
             Console.SetCursorPosition(left, 1);
-            Console.WriteLine(new string('═', boxWidth));
+            Console.WriteLine(new string('-', boxWidth));
 
             Console.SetCursorPosition(left, 2);
             Console.WriteLine($"{" ".PadLeft(leftSpace)}{message}{" ".PadRight(rightSpace)}");
 
             Console.SetCursorPosition(left, 3);
-            Console.WriteLine(new string('═', boxWidth));
+            Console.WriteLine(new string('-', boxWidth));
             Console.ResetColor();
         }
     }

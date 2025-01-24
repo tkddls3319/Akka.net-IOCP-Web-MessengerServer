@@ -1,5 +1,7 @@
 ﻿using Akka.Actor;
 
+using Google.Protobuf.ClusterProtocol;
+
 using Serilog;
 
 using System;
@@ -14,27 +16,27 @@ namespace Akka.Server
     public class RoomManagerActor : ReceiveActor
     {
         #region Message
-        public class MsgSetSessionManager
+        public class SetSessionManagerMessage
         {
             public IActorRef SessionManager { get; }
-            public MsgSetSessionManager(IActorRef sessionManager) => SessionManager = sessionManager;
+            public SetSessionManagerMessage(IActorRef sessionManager) => SessionManager = sessionManager;
         }
-        public class MsgAddRoom
+        public class AddRoomMessage
         {
-            public MsgAddRoom() { }
+            public AddRoomMessage() { }
         }
-        public class MsgRemoveRoom
+        public class RemoveRoomMessage
         {
             public int RoomId { get; set; }
-            public MsgRemoveRoom(int roomId)
+            public RemoveRoomMessage(int roomId)
             {
                 RoomId = roomId;
             }
         }
-        public class MsgAddClient
+        public class AddClientMessage
         {
             public ClientSession Session { get; }
-            public MsgAddClient(ClientSession session)
+            public AddClientMessage(ClientSession session)
             {
                 Session = session;
             }
@@ -51,23 +53,37 @@ namespace Akka.Server
         public RoomManagerActor(IActorRef sessionManager)
         {
             _sessionManager = sessionManager;
-            Receive<MsgSetSessionManager>(msg => _sessionManager = msg.SessionManager);
+            Receive<SetSessionManagerMessage>(msg => _sessionManager = msg.SessionManager);
 
-            Receive<MsgAddRoom>(msg => AddRoomHandler());
-            Receive<MsgRemoveRoom>(msg => RemoveRoomHandler(msg.RoomId));
-            Receive<MsgAddClient>(msg => AddClientToRoomHandler(msg.Session));
+            Receive<AddRoomMessage>(msg => AddRoomHandler());
+            Receive<RemoveRoomMessage>(msg => RemoveRoomHandler(msg.RoomId));
+            Receive<AddClientMessage>(msg => AddClientToRoomHandler(msg.Session));
+
+
+            #region Cluster
+            Receive<AS_GetAllRoomInfo>(msg =>
+            {
+                SA_GetAllRoomInfo packet = new SA_GetAllRoomInfo();
+
+                foreach (var roomInfo in _rooms)
+                {
+                    packet.RoomId.Add(roomInfo.Key);
+                }
+
+                Sender.Tell(packet);
+            });
+            #endregion
         }
         protected override void PreStart()
         {
             base.PreStart();
-
             AddRoomHandler();
         }
         private void AddClientToRoomHandler(ClientSession session)
         {
             var roomResults = _rooms.Values.Select(room =>
             {
-                var clientCount = room.Ask<int>(new RoomActor.MsgGetClientCount()).Result;
+                var clientCount = room.Ask<int>(new RoomActor.GetClientCountMessage()).Result;
                 return new { Room = room, ClientCount = clientCount };
             }).ToArray();
 
@@ -77,11 +93,11 @@ namespace Akka.Server
             if (selectedRoom == null)
             {
                 AddRoomHandler(); // 새로운 룸 생성
-                _rooms[_roomCount].Tell(new RoomActor.MsgEnterClient(session)); // 새로 생성한 룸에 클라이언트 추가
+                _rooms[_roomCount].Tell(new RoomActor.EnterClientMessage(session)); // 새로 생성한 룸에 클라이언트 추가
             }
             else
             {
-                selectedRoom.Tell(new RoomActor.MsgEnterClient(session));
+                selectedRoom.Tell(new RoomActor.EnterClientMessage(session));
             }
         }
         void AddRoomHandler()

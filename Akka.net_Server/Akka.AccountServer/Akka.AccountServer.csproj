@@ -21,6 +21,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Akka.Protocol.Shared\Akka.Protocol.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="hocon.conf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

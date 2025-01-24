@@ -10,19 +10,23 @@ using System.Threading.Tasks;
 using Akka.Actor.Setup;
 using Akka.Routing;
 using Microsoft.AspNetCore.SignalR;
+using Akka.AccountServer.Controllers;
+using Akka.AccountServer.Actor;
+using Akka.AccountServer.Define;
 
 namespace Akka.AccountServer.AkkaDefine
 {
     public interface IActorBridge
     {
-        void Tell(object message);  // 메시지를 보냄 (비동기)
-        Task<T> Ask<T>(object message);  // 응답을 기대하며 메시지를 보냄
+        void Tell(ActtorType type, object message);  
+        Task<T> Ask<T>(ActtorType type, object message);  
     }
     public sealed class AkkaService : IHostedService, IActorBridge
     {
         private ActorSystem _serverActorSystem;
         private readonly IServiceProvider _serviceProvider;
-        private IActorRef _actorRef;
+
+        Dictionary<ActtorType, IActorRef> _actorRefs = new Dictionary<ActtorType, IActorRef>();
 
         private readonly IHostApplicationLifetime _applicationLifetime;
 
@@ -47,7 +51,7 @@ namespace Akka.AccountServer.AkkaDefine
             // 모든 설정을 하나로 병합 (부트스트랩 + DI 설정)
             var actorSystemSetup = bootstrap.And(diSetup);
 
-            _serverActorSystem = ActorSystem.Create("ClusterSystem", actorSystemSetup);
+            _serverActorSystem = ActorSystem.Create(Enum.GetName(ActtorType.ClusterSystem), actorSystemSetup);
 
             //actor 정의
             {
@@ -61,9 +65,10 @@ namespace Akka.AccountServer.AkkaDefine
                     "commands"
 
                  _actorRef = _actorSystem.ActorOf(Worker.Prop(), "heavy-weight-word");
+                
                 );
                 */
-
+                _actorRefs.Add(ActtorType.AccountActor, _serverActorSystem.ActorOf(Props.Create(() => new AccountActor(_serverActorSystem)), Enum.GetName(ActtorType.AccountActor)));
             }
 
             _serverActorSystem.WhenTerminated.ContinueWith(tr => {
@@ -78,14 +83,14 @@ namespace Akka.AccountServer.AkkaDefine
             await CoordinatedShutdown.Get(_serverActorSystem).Run(CoordinatedShutdown.ClrExitReason.Instance);
         }
 
-        public void Tell(object message)
+        public void Tell(ActtorType type, object message)
         {
-            _actorRef.Tell(message);
+            _actorRefs[type].Tell(message);
         }
 
-        public Task<T> Ask<T>(object message)
+        public Task<T> Ask<T>(ActtorType type, object message)
         {
-            return _actorRef.Ask<T>(message);
+            return _actorRefs[type].Ask<T>(message);
         }
     }
 }

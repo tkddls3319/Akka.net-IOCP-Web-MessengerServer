@@ -49,7 +49,10 @@ namespace Akka.Server
             if (Cluster.Cluster.Get(_actorSystem).State.Members.Any(m => m.Address.ToString() == $"{addr}"))
                 SetClusterActor(addr, actorName);
             else
+            {
                 RemoveClusterActor(actorName);
+                SetClusterActor(addr, actorName);
+            }
         }
         void SetClusterActor(Address addr, ClusterType actorName)
         {

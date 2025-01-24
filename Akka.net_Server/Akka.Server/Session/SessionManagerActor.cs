@@ -14,42 +14,42 @@ namespace Akka.Server
     public class SessionManagerActor : ReceiveActor, IWithTimers
     {
         #region message
-        public class MsgSetRoomManagerActor
+        public class SetRoomManagerActorMessage
         {
             public IActorRef RoomManager { get; }
-            public MsgSetRoomManagerActor(IActorRef roomManager) => RoomManager = roomManager;
+            public SetRoomManagerActorMessage(IActorRef roomManager) => RoomManager = roomManager;
         }
-        public class MsgGenerateSession
+        public class GenerateSessionMessage
         {
             public Socket SessionSocket { get; set; }
-            public MsgGenerateSession(Socket sessionSocekt)
+            public GenerateSessionMessage(Socket sessionSocekt)
             {
                 SessionSocket = sessionSocekt;
             }
         }
-        public class MsgFindSession
+        public class FindSessionMessage
         {
             public int SessionID { get; }
-            public MsgFindSession(int sessionID) => SessionID = sessionID;
+            public FindSessionMessage(int sessionID) => SessionID = sessionID;
         }
-        public class MsgRemoveSession
+        public class RemoveSessionMessage
         {
             public ClientSession Session { get; }
-            public MsgRemoveSession(ClientSession session) => Session = session;
+            public RemoveSessionMessage(ClientSession session) => Session = session;
         }
-        public class MsgGetAllSessions { }
-        public class MsgFlushSendAll { }
+        public class GetAllSessionsMessage { }
+        public class FlushSendAllMessage { }
 
         // 타이머 키와 메시지
-        private sealed class MsgTimerKey
+        private sealed class TimerKeyMessage
         {
-            public static readonly MsgTimerKey Instance = new();
-            private MsgTimerKey() { }
+            public static readonly TimerKeyMessage Instance = new();
+            private TimerKeyMessage() { }
         }
-        private sealed class MsgTimerMessage
+        private sealed class TimerMessageMessage
         {
-            public static readonly MsgTimerMessage Instance = new();
-            private MsgTimerMessage() { }
+            public static readonly TimerMessageMessage Instance = new();
+            private TimerMessageMessage() { }
         }
         // 타이머 설정
         #endregion
@@ -64,56 +64,50 @@ namespace Akka.Server
 
         public SessionManagerActor()
         {
-            Receive<MsgSetRoomManagerActor>(msg => _roomManager = msg.RoomManager);
+            //종속성
+            Receive<SetRoomManagerActorMessage>(msg => _roomManager = msg.RoomManager);
 
-            Receive<MsgGenerateSession>(msg => GenerateSessionHandle(msg));
-            Receive<MsgFindSession>(msg => FindSessionHandle(msg));
-            Receive<MsgRemoveSession>(msg => RemoveSessionHandle(msg));
-            Receive<MsgGetAllSessions>(_ => GetAllSessionsHandle());
+            // 세션 생성
+            Receive<GenerateSessionMessage>(msg =>
+            {
+                var clientSession = new ClientSession(_roomManager);
+                clientSession.SessionID = ++_sessionID;
+                _sessions.Add(clientSession.SessionID, clientSession);
 
-            // 초기화: 타이머 시작
-            Timers.StartPeriodicTimer(
-                key: MsgTimerKey.Instance,
-                msg: MsgTimerMessage.Instance,
-                initialDelay: TimeSpan.FromMilliseconds(100),  // 초기 지연 시간
-                interval: TimeSpan.FromMilliseconds(100));    // 주기적 실행 간격
+                clientSession.Start(msg.SessionSocket);
+                clientSession.OnConnected(msg.SessionSocket.RemoteEndPoint);
 
-            // 타이머 메시지 처리
-            Receive<MsgTimerMessage>(_ => FlushAllSessions());
-        }
+                Log.Logger.Information($"[SessionManager] Generate Session Comp Session Count : {GetAllSessions().Count()}");
 
-        // 세션 생성
-        private void GenerateSessionHandle(MsgGenerateSession msg)
-        {
-            var clientSession = new ClientSession(_roomManager);
-            clientSession.SessionID = ++_sessionID;
-            _sessions.Add(clientSession.SessionID, clientSession);
+            });
+            // 세션 조회
+            Receive<FindSessionMessage>(msg =>
+            {
+                _sessions.TryGetValue(msg.SessionID, out var clientSession);
+                Sender.Tell(clientSession); // 결과 반환
+            });
+            // 세션 제거
+            Receive<RemoveSessionMessage>(msg =>
+            {
+                _sessions.Remove(msg.Session.SessionID);
+                Log.Logger.Information($"[SessionManager] Remove Session Comp Session Count : {GetAllSessions().Count()}");
+            });
+            // 모든 세션 조회
+            Receive<GetAllSessionsMessage>(_ =>
+            {
+                var allSessions = GetAllSessions();
+                Sender.Tell(allSessions); // 세션 목록 반환
+            });
 
-            clientSession.Start(msg.SessionSocket);
-            clientSession.OnConnected(msg.SessionSocket.RemoteEndPoint);
-
-            Log.Logger.Information($"[SessionManager] Generate Session Comp Session Count : {GetAllSessions().Count()}");
-        }
-
-        // 세션 조회
-        private void FindSessionHandle(MsgFindSession msg)
-        {
-            _sessions.TryGetValue(msg.SessionID, out var clientSession);
-            Sender.Tell(clientSession); // 결과 반환
-        }
-
-        // 세션 제거
-        private void RemoveSessionHandle(MsgRemoveSession msg)
-        {
-            _sessions.Remove(msg.Session.SessionID);
-            Log.Logger.Information($"[SessionManager] Remove Session Comp Session Count : {GetAllSessions().Count()}");
-        }
-
-        // 모든 세션 조회
-        private void GetAllSessionsHandle()
-        {
-            var allSessions = GetAllSessions();
-            Sender.Tell(allSessions); // 세션 목록 반환
+            //Session에 Send를 비워주는 timer
+            {
+                Timers.StartPeriodicTimer(
+                    key: TimerKeyMessage.Instance,
+                    msg: TimerMessageMessage.Instance,
+                    initialDelay: TimeSpan.FromMilliseconds(100),  // 초기 지연 시간
+                    interval: TimeSpan.FromMilliseconds(100));    // 주기적 실행 간격
+                Receive<TimerMessageMessage>(_ => FlushAllSessions());
+            }
         }
         private List<ClientSession> GetAllSessions()
         {

@@ -1,5 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Cluster;
+
 using Google.Protobuf.Protocol;
 
 using Serilog;
@@ -26,6 +27,12 @@ namespace Akka.Server
                 {
                     var actorAddr = Address.Parse(Define.AddrLogManagerActor);
                     ClusterActorManager.Instance.InitClusterActor(actorAddr, Define.ClusterType.LogManagerActor);
+                }
+                else
+                     if (msg.Member.Roles.Any(role => role.Contains("account")))
+                {
+                    var actorAddr = Address.Parse(Define.AddrAccountActor);
+                    ClusterActorManager.Instance.InitClusterActor(actorAddr, Define.ClusterType.AccountActor);
                 }
             });
 

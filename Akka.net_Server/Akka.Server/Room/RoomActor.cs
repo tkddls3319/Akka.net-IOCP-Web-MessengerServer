@@ -20,19 +20,19 @@ namespace Akka.Server
     public class RoomActor : ReceiveActor
     {
         #region Message
-        public class MsgGetClientCount { }
-        public class MsgEnterClient
+        public class GetClientCountMessage { }
+        public class EnterClientMessage
         {
             public ClientSession Session { get; }
-            public MsgEnterClient(ClientSession session)
+            public EnterClientMessage(ClientSession session)
             {
                 Session = session;
             }
         }
-        public class MsgLeaveClient
+        public class LeaveClientMessage
         {
             public int ClientId { get; }
-            public MsgLeaveClient(int clientId)
+            public LeaveClientMessage(int clientId)
             {
                 ClientId = clientId;
             }
@@ -54,12 +54,12 @@ namespace Akka.Server
 
             RoomID = roomNumber;
 
-            Receive<MsgEnterClient>(msg => EnterClientHandler(msg));
-            Receive<MsgGetClientCount>(_ => Sender.Tell(_clients.Count));
-            Receive<MsgLeaveClient>(msg => LeaveClientHandler(msg.ClientId));
+            Receive<EnterClientMessage>(msg => EnterClientHandler(msg));
+            Receive<GetClientCountMessage>( _ => Sender.Tell(_clients.Count));
+            Receive<LeaveClientMessage>(msg => LeaveClientHandler(msg.ClientId));
             Receive<MessageCustom<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
         }
-        private void EnterClientHandler(MsgEnterClient client)
+        private void EnterClientHandler(EnterClientMessage client)
         {
             if (client.Session == null)
                 return;
@@ -146,7 +146,7 @@ namespace Akka.Server
                 return;
 
             client.Room = null;
-            _sessionManager.Tell(new SessionManagerActor.MsgRemoveSession(client));
+            _sessionManager.Tell(new SessionManagerActor.RemoveSessionMessage(client));
 
             {
                 S_LeaveServer leavePacket = new S_LeaveServer();
@@ -163,7 +163,7 @@ namespace Akka.Server
             }
 
             if (_clients.Count == 0)
-                _roomManger.Tell(new RoomManagerActor.MsgRemoveRoom(RoomID));
+                _roomManger.Tell(new RoomManagerActor.RemoveRoomMessage(RoomID));
 
             Log.Logger.Information($"[Room{RoomID}] Leave Client ID : {clientId}");
         }
