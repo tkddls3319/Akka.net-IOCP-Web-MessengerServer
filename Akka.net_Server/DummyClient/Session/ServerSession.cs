@@ -35,7 +35,7 @@ namespace DummyClient
                 {
                     Console.Write(">> ");
                     string input = Console.ReadLine();
-                    Util.AddOrPrintDisplayMessage(input, "나", DateTimeKind.Utc.ToString());
+                    Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTimeKind.Utc.ToString());
 
                     C_Chat packet = new C_Chat();
                     packet.Chat = input;
@@ -55,7 +55,7 @@ namespace DummyClient
             {
                 Client = new ClientInfo()
                 {
-                    AccountName = ClientP.AccountName
+                    AccountName = Program.AccountName
                 }
             });
         }

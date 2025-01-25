@@ -8,9 +8,9 @@ using DummyClient.Session;
 
 namespace DummyClient
 {
-    public class ClientP
+    public class Program
     {
-        public static string AccountName;
+        public static string AccountName { get; set; }
         static bool isLoggedIn = false; // 로그인 상태 플래그
         static bool isSigedIn = false; // 회원가입 상태 플래그
 

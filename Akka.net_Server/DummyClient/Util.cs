@@ -30,7 +30,7 @@ namespace DummyClient
 
             foreach (var (sender, message, time) in _chatLogs)
             {
-                if (sender == "나")
+                if (sender == Program.AccountName)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     PrintRightAligned($"[나] {message}", 10);
