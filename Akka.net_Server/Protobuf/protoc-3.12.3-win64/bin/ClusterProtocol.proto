@@ -37,5 +37,12 @@ message AS_GetAllRoomInfo
 }
 message SA_GetAllRoomInfo
 {
-	repeated int32 roomId =1;
+	repeated RoomInfo roomInfos =1;
+}
+
+message RoomInfo
+{
+	int32 roomID =1;
+	int32 maxCount=2;
+	int32 currentCount=3;
 }

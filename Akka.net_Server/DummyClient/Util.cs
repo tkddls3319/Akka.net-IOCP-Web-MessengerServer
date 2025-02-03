@@ -7,9 +7,53 @@ using System.Threading.Tasks;
 
 namespace DummyClient
 {
-    internal class Util
+    public class Util
     {
         static List<(string sender, string message, string time)> _chatLogs = new List<(string, string, string)>();
+
+        public static int RoomChoice(List<RoomInfo> roomInfos)
+        {
+            List<string> menuOptions = roomInfos.Select(s => s.RoomId.ToString()).ToList();
+            //menuOptions.Insert(0, "방 만들기.(기능 아직 구현 X)");
+
+            int selectedIndex = 0;
+            while (true)
+            {
+                Console.Clear();
+                Util.DrawBox("=== 채팅방을 골라주세요. ===", roomInfos, selectedIndex);
+
+                ConsoleKey key = Console.ReadKey().Key;
+
+                switch (key)
+                {
+                    case ConsoleKey.UpArrow:
+                        selectedIndex = (selectedIndex == 0) ? menuOptions.Count - 1 : selectedIndex - 1;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        selectedIndex = (selectedIndex == menuOptions.Count - 1) ? 0 : selectedIndex + 1;
+                        break;
+                    case ConsoleKey.Enter:
+                        Console.Clear();
+                        Console.WriteLine($"선택된 메뉴: {menuOptions[selectedIndex]}");
+                        if (selectedIndex == 0)
+                        {
+                            return roomInfos[selectedIndex].RoomId;
+                            // return 0;
+                        }
+                        //TODO:
+                        //else if (selectedIndex == 2)
+                        //{
+                        //    Console.WriteLine("프로그램을 종료합니다.");
+                        //    Environment.Exit(0);
+                        //    return 2;
+                        //}
+                        else
+                        {
+                            return roomInfos[selectedIndex].RoomId;
+                        }
+                }
+            }
+        }
 
         public static void AddDisplayMessage(string message, string sender = "", string time = "")
         {
@@ -129,6 +173,52 @@ namespace DummyClient
                     Console.Write("  ");
                 }
                 Console.Write(options[i]);
+                Console.ResetColor();
+            }
+        }
+        public static void DrawBox(string title, List<RoomInfo> options, int selectedIndex)
+        {
+            int width = Console.WindowWidth;
+            int boxWidth = 40;
+            int boxHeight = options.Count + 4;
+
+            int left = (width - boxWidth) / 2;
+            int top = 3;
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            for (int i = 0; i < boxHeight; i++)
+            {
+                Console.SetCursorPosition(left, top + i);
+                if (i == 0 || i == boxHeight - 1)
+                {
+                    Console.WriteLine(new string('-', boxWidth));
+                }
+                else
+                {
+                    Console.Write('|');
+                    Console.SetCursorPosition(left + boxWidth - 1, top + i);
+                    Console.Write('|');
+                }
+            }
+
+            Console.SetCursorPosition(left + (boxWidth - title.Length) / 2, top);
+            Console.Write(title);
+
+            Console.ResetColor();
+
+            for (int i = 0; i < options.Count; i++)
+            {
+                Console.SetCursorPosition(left + 3, top + 2 + i);
+                if (i == selectedIndex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("> ");
+                }
+                else
+                {
+                    Console.Write("  ");
+                }
+                Console.Write($"{options[i].RoomId}번 방 ( {options[i].CurrentCount}/{options[i].MaxCount} )");
                 Console.ResetColor();
             }
         }

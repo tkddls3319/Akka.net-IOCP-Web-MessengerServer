@@ -50,11 +50,15 @@ namespace DummyClient
         {
             Util.AddOrPrintDisplayMessage("==========Server Connected==========");
             Util.AddOrPrintDisplayMessage($"Server EndPoint - {endPoint}");
+
+           int roomId = Util.RoomChoice(Program.RoomInfos);
+
             Send(new C_EnterServer()
             {
                 Client = new ClientInfo()
                 {
-                    AccountName = Program.AccountName
+                    AccountName = Program.AccountName,
+                    RoomID = roomId,
                 }
             });
         }

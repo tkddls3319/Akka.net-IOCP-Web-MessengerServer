@@ -99,7 +99,10 @@ namespace Akka.AccountServer.Actor
                         TimeSpan.FromSeconds(5)
                     );
 
-                    res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
+                    foreach (var info in response.RoomInfos)
+                    {
+                        res.RoomList.Add(new RoomInfo { RoomId = info.RoomID, MaxCount = info.MaxCount, CurrentCount = info.CurrentCount });
+                    }
 
                     //var seedNodes = Akka.Cluster.Cluster.Get(_actorSystem).Settings.SeedNodes[0];
                     //var response = await _actorSystem.ActorSelection($"{seedNodes}/user/{ClusterActorType.RoomManagerActor}")

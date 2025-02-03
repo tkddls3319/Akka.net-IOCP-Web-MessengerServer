@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using ServerCore;
 using DummyClient.Session;
+using Akka.Util;
 
 namespace DummyClient
 {
@@ -14,6 +15,7 @@ namespace DummyClient
         static bool isLoggedIn = false; // 로그인 상태 플래그
         static bool isSigedIn = false; // 회원가입 상태 플래그
 
+        public static List<RoomInfo> RoomInfos = new List<RoomInfo>();
         static void Main(string[] args)
         {
             //서버 보다 빨리 켜져서 Log 클러스터가 서버에 붙기 전에 켜짐 그래서 sleep 걸어놈
@@ -26,6 +28,7 @@ namespace DummyClient
             ManuChoice();
             //로그인성공하면 Server 접속으로 넘어가게 막는용
             while (isLoggedIn == false) { }
+          
             #endregion
 
             #region 채팅 Server 접속
@@ -142,8 +145,7 @@ namespace DummyClient
                 {
                     Console.Clear();
                     AccountName = userId;
-                    Console.WriteLine($"{AccountName}님 로그인에 성공하셨습니다. 서버에 접속중입니다...");
-                    Console.WriteLine($"방 수"+result.RoomList[0]);
+                    RoomInfos = result.RoomList;
                     isLoggedIn = true; // 로그인 성공 시 메뉴 빠져나가기
                 }
                 else
@@ -156,5 +158,6 @@ namespace DummyClient
                 if (isLoggedIn) break;
             }
         }
+
     }
 }

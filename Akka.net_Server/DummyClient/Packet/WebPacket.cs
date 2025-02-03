@@ -22,6 +22,7 @@ public class LoginAccountPacketRes
 }
 public class RoomInfo
 {
-    public string RoomId { get; set; }
-    public string Name { get; set; }
+    public int RoomId { get; set; }
+    public int MaxCount { get; set; }
+    public int CurrentCount { get; set; }
 }

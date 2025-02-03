@@ -36,9 +36,11 @@ namespace Akka.Server
         public class AddClientMessage
         {
             public ClientSession Session { get; }
-            public AddClientMessage(ClientSession session)
+            public int RoomId { get; }
+            public AddClientMessage(ClientSession session, int roomId)
             {
                 Session = session;
+                RoomId = roomId;
             }
         }
         #endregion
@@ -57,7 +59,7 @@ namespace Akka.Server
 
             Receive<AddRoomMessage>(msg => AddRoomHandler());
             Receive<RemoveRoomMessage>(msg => RemoveRoomHandler(msg.RoomId));
-            Receive<AddClientMessage>(msg => AddClientToRoomHandler(msg.Session));
+            Receive<AddClientMessage>(msg => AddClientToRoomHandler(msg));
 
             #region Cluster
             Receive<AS_GetAllRoomInfo>(msg =>
@@ -66,7 +68,16 @@ namespace Akka.Server
 
                 foreach (var roomInfo in _rooms)
                 {
-                    packet.RoomId.Add(roomInfo.Key);
+                    var room = new RoomInfo()
+                    {
+                        RoomID = roomInfo.Key,
+                        MaxCount = Define.RoomMaxCount,
+                    };
+
+                    var clientCount = roomInfo.Value.Ask<int>(new RoomActor.GetClientCountMessage()).Result;
+                    room.CurrentCount = clientCount;
+
+                    packet.RoomInfos.Add(room);
                 }
 
                 Sender.Tell(packet);
@@ -78,26 +89,39 @@ namespace Akka.Server
             base.PreStart();
             AddRoomHandler();
         }
-        private void AddClientToRoomHandler(ClientSession session)
+        private void AddClientToRoomHandler(AddClientMessage session)
         {
-            var roomResults = _rooms.Values.Select(room =>
-            {
-                var clientCount = room.Ask<int>(new RoomActor.GetClientCountMessage()).Result;
-                return new { Room = room, ClientCount = clientCount };
-            }).ToArray();
+            int roomId = session.RoomId;
+            var roomResults = _rooms[roomId].Ask<int>(new RoomActor.GetClientCountMessage()).Result;
 
-            // 클라이언트 수가 5 이하인 첫 번째 룸 찾기
-            var selectedRoom = roomResults.FirstOrDefault(r => r.ClientCount < Define.RoomMaxCount)?.Room;
-
-            if (selectedRoom == null)
+            if(roomResults < Define.RoomMaxCount)
             {
-                AddRoomHandler(); // 새로운 룸 생성
-                _rooms[_roomCount].Tell(new RoomActor.EnterClientMessage(session)); // 새로 생성한 룸에 클라이언트 추가
+                 _rooms[roomId].Tell(new RoomActor.EnterClientMessage(session.Session)); // 새로 생성한 룸에 클라이언트 추가
             }
             else
             {
-                selectedRoom.Tell(new RoomActor.EnterClientMessage(session));
+                //TODO: 꽉차서 방 못 들어가서 다시선택 해야하는 패킷 만들어야함
             }
+
+            //TODO : 랜덤 방입장 기능 만들 때 사용 예정.
+            //var roomResults = _rooms.Values.Select(room =>
+            //{
+            //    var clientCount = room.Ask<int>(new RoomActor.GetClientCountMessage()).Result;
+            //    return new { Room = room, ClientCount = clientCount };
+            //}).ToArray();
+
+            //// 클라이언트 수가 5 이하인 첫 번째 룸 찾기
+            //var selectedRoom = roomResults.FirstOrDefault(r => r.ClientCount < Define.RoomMaxCount)?.Room;
+
+            //if (selectedRoom == null)
+            //{
+            //    AddRoomHandler(); // 새로운 룸 생성
+            //    _rooms[_roomCount].Tell(new RoomActor.EnterClientMessage(session)); // 새로 생성한 룸에 클라이언트 추가
+            //}
+            //else
+            //{
+            //    selectedRoom.Tell(new RoomActor.EnterClientMessage(session));
+            //}
         }
         void AddRoomHandler()
         {

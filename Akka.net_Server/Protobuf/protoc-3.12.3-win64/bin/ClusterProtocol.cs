@@ -32,9 +32,11 @@ namespace Google.Protobuf.ClusterProtocol {
             "T2JqZWN0InsKCkNoYXRPYmplY3QSEAoIb2JqZWN0SWQYASABKAUSDgoGcm9v",
             "bUlkGAIgASgFEgwKBGNoYXQYAyABKAkSKAoEdGltZRgEIAEoCzIaLmdvb2ds",
             "ZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLYWNjb3V0bk5hbWUYBSABKAkiEwoR",
-            "QVNfR2V0QWxsUm9vbUluZm8iIwoRU0FfR2V0QWxsUm9vbUluZm8SDgoGcm9v",
-            "bUlkGAEgAygFQiKqAh9Hb29nbGUuUHJvdG9idWYuQ2x1c3RlclByb3RvY29s",
-            "YgZwcm90bzM="));
+            "QVNfR2V0QWxsUm9vbUluZm8iQQoRU0FfR2V0QWxsUm9vbUluZm8SLAoJcm9v",
+            "bUluZm9zGAEgAygLMhkuQ2x1c3RlclByb3RvY29sLlJvb21JbmZvIkIKCFJv",
+            "b21JbmZvEg4KBnJvb21JRBgBIAEoBRIQCghtYXhDb3VudBgCIAEoBRIUCgxj",
+            "dXJyZW50Q291bnQYAyABKAVCIqoCH0dvb2dsZS5Qcm90b2J1Zi5DbHVzdGVy",
+            "UHJvdG9jb2xiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -43,7 +45,8 @@ namespace Google.Protobuf.ClusterProtocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.LS_ChatReadLog), global::Google.Protobuf.ClusterProtocol.LS_ChatReadLog.Parser, new[]{ "Chats" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.ChatObject), global::Google.Protobuf.ClusterProtocol.ChatObject.Parser, new[]{ "ObjectId", "RoomId", "Chat", "Time", "AccoutnName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.AS_GetAllRoomInfo), global::Google.Protobuf.ClusterProtocol.AS_GetAllRoomInfo.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfo), global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfo.Parser, new[]{ "RoomId" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfo), global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfo.Parser, new[]{ "RoomInfos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.RoomInfo), global::Google.Protobuf.ClusterProtocol.RoomInfo.Parser, new[]{ "RoomID", "MaxCount", "CurrentCount" }, null, null, null, null)
           }));
     }
     #endregion
@@ -808,7 +811,7 @@ namespace Google.Protobuf.ClusterProtocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public SA_GetAllRoomInfo(SA_GetAllRoomInfo other) : this() {
-      roomId_ = other.roomId_.Clone();
+      roomInfos_ = other.roomInfos_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -817,14 +820,14 @@ namespace Google.Protobuf.ClusterProtocol {
       return new SA_GetAllRoomInfo(this);
     }
 
-    /// <summary>Field number for the "roomId" field.</summary>
-    public const int RoomIdFieldNumber = 1;
-    private static readonly pb::FieldCodec<int> _repeated_roomId_codec
-        = pb::FieldCodec.ForInt32(10);
-    private readonly pbc::RepeatedField<int> roomId_ = new pbc::RepeatedField<int>();
+    /// <summary>Field number for the "roomInfos" field.</summary>
+    public const int RoomInfosFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Google.Protobuf.ClusterProtocol.RoomInfo> _repeated_roomInfos_codec
+        = pb::FieldCodec.ForMessage(10, global::Google.Protobuf.ClusterProtocol.RoomInfo.Parser);
+    private readonly pbc::RepeatedField<global::Google.Protobuf.ClusterProtocol.RoomInfo> roomInfos_ = new pbc::RepeatedField<global::Google.Protobuf.ClusterProtocol.RoomInfo>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<int> RoomId {
-      get { return roomId_; }
+    public pbc::RepeatedField<global::Google.Protobuf.ClusterProtocol.RoomInfo> RoomInfos {
+      get { return roomInfos_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -840,14 +843,14 @@ namespace Google.Protobuf.ClusterProtocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if(!roomId_.Equals(other.roomId_)) return false;
+      if(!roomInfos_.Equals(other.roomInfos_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      hash ^= roomId_.GetHashCode();
+      hash ^= roomInfos_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -861,7 +864,7 @@ namespace Google.Protobuf.ClusterProtocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      roomId_.WriteTo(output, _repeated_roomId_codec);
+      roomInfos_.WriteTo(output, _repeated_roomInfos_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -870,7 +873,7 @@ namespace Google.Protobuf.ClusterProtocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      size += roomId_.CalculateSize(_repeated_roomId_codec);
+      size += roomInfos_.CalculateSize(_repeated_roomInfos_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -882,7 +885,7 @@ namespace Google.Protobuf.ClusterProtocol {
       if (other == null) {
         return;
       }
-      roomId_.Add(other.roomId_);
+      roomInfos_.Add(other.roomInfos_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -894,9 +897,193 @@ namespace Google.Protobuf.ClusterProtocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 10:
+          case 10: {
+            roomInfos_.AddEntriesFrom(input, _repeated_roomInfos_codec);
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
+  public sealed partial class RoomInfo : pb::IMessage<RoomInfo> {
+    private static readonly pb::MessageParser<RoomInfo> _parser = new pb::MessageParser<RoomInfo>(() => new RoomInfo());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RoomInfo> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Google.Protobuf.ClusterProtocol.ClusterProtocolReflection.Descriptor.MessageTypes[6]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomInfo() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomInfo(RoomInfo other) : this() {
+      roomID_ = other.roomID_;
+      maxCount_ = other.maxCount_;
+      currentCount_ = other.currentCount_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RoomInfo Clone() {
+      return new RoomInfo(this);
+    }
+
+    /// <summary>Field number for the "roomID" field.</summary>
+    public const int RoomIDFieldNumber = 1;
+    private int roomID_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int RoomID {
+      get { return roomID_; }
+      set {
+        roomID_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "maxCount" field.</summary>
+    public const int MaxCountFieldNumber = 2;
+    private int maxCount_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int MaxCount {
+      get { return maxCount_; }
+      set {
+        maxCount_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "currentCount" field.</summary>
+    public const int CurrentCountFieldNumber = 3;
+    private int currentCount_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CurrentCount {
+      get { return currentCount_; }
+      set {
+        currentCount_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RoomInfo);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RoomInfo other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (RoomID != other.RoomID) return false;
+      if (MaxCount != other.MaxCount) return false;
+      if (CurrentCount != other.CurrentCount) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (RoomID != 0) hash ^= RoomID.GetHashCode();
+      if (MaxCount != 0) hash ^= MaxCount.GetHashCode();
+      if (CurrentCount != 0) hash ^= CurrentCount.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (RoomID != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(RoomID);
+      }
+      if (MaxCount != 0) {
+        output.WriteRawTag(16);
+        output.WriteInt32(MaxCount);
+      }
+      if (CurrentCount != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(CurrentCount);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (RoomID != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(RoomID);
+      }
+      if (MaxCount != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(MaxCount);
+      }
+      if (CurrentCount != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(CurrentCount);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RoomInfo other) {
+      if (other == null) {
+        return;
+      }
+      if (other.RoomID != 0) {
+        RoomID = other.RoomID;
+      }
+      if (other.MaxCount != 0) {
+        MaxCount = other.MaxCount;
+      }
+      if (other.CurrentCount != 0) {
+        CurrentCount = other.CurrentCount;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
           case 8: {
-            roomId_.AddEntriesFrom(input, _repeated_roomId_codec);
+            RoomID = input.ReadInt32();
+            break;
+          }
+          case 16: {
+            MaxCount = input.ReadInt32();
+            break;
+          }
+          case 24: {
+            CurrentCount = input.ReadInt32();
             break;
           }
         }

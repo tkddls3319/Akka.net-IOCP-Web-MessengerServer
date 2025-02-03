@@ -60,3 +60,10 @@ message ClientInfo{
 	int32 roomID =3;
 	int32 clientCount =4;
 }
+
+message RoomInfo
+{
+	int32 roomID =1;
+	int32 maxCount=2;
+	int32 currentCount=3;
+}
