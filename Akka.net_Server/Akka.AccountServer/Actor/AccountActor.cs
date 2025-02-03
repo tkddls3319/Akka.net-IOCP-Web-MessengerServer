@@ -94,7 +94,7 @@ namespace Akka.AccountServer.Actor
                     var clusterLocator = new ClusterActorLocator(_actorSystem);
 
                     var response = await clusterLocator.AskClusterActor<SA_GetAllRoomInfo>(
-                        $"{TcpClusterActorType.RoomManagerActor}",
+                        $"{TcpServerActorType.RoomManagerActor}",
                         new AS_GetAllRoomInfo(),
                         TimeSpan.FromSeconds(5)
                     );

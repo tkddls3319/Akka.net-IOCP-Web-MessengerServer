@@ -1,4 +1,5 @@
 ﻿using Akka.Actor;
+using Akka.ClusterCore;
 
 using Google.Protobuf;
 using Google.Protobuf.ClusterProtocol;
@@ -114,27 +115,67 @@ namespace Akka.Server
 
             //이전 모든 채팅을 읽어 새로온 사용자에게 전달
             {
-                LS_ChatReadLog response = ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)
-                    ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
+                GlobalActors.ClusterManager.Ask<IActorRef>(
+                        new GetClusterActor(Define.LogServerActorType.LogManagerActor),
+                        TimeSpan.FromSeconds(3)
+                    ).ContinueWith(task =>
                     {
-                        RoomId = this.RoomID
-                    }, TimeSpan.FromSeconds(3)).Result;
-
-                if (response?.Chats != null)
-                {
-                    foreach (var chat in response.Chats)
-                    {
-                        S_Chat readChat = new S_Chat()
+                        if (task.Status != TaskStatus.RanToCompletion || task.Result == ActorRefs.Nobody)
                         {
-                            Chat = chat.Chat,
-                            AccountName = chat.AccoutnName,
-                            ObjectId = chat.ObjectId,
-                            Time = chat.Time,
-                        };
+                            Console.WriteLine("해당 액터를 찾을 수 없음.");
+                            return;
+                        }
 
-                        client.Session.Send(readChat);
-                    }
-                }
+                        var actorRef = task.Result;
+
+                        actorRef.Ask<LS_ChatReadLog>(
+                            new SL_ChatReadLog() { RoomId = this.RoomID },
+                            TimeSpan.FromSeconds(3)
+                        ).ContinueWith(responseTask =>
+                        {
+                            if (responseTask.Status == TaskStatus.RanToCompletion && responseTask.Result?.Chats != null)
+                            {
+                                foreach (var chat in responseTask.Result.Chats)
+                                {
+                                    S_Chat readChat = new S_Chat()
+                                    {
+                                        Chat = chat.Chat,
+                                        AccountName = chat.AccoutnName,
+                                        ObjectId = chat.ObjectId,
+                                        Time = chat.Time,
+                                    };
+
+                                    client.Session.Send(readChat);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("채팅 데이터를 가져오지 못했습니다.");
+                            }
+                        }, TaskContinuationOptions.ExecuteSynchronously);
+                    }, TaskContinuationOptions.ExecuteSynchronously);
+
+                //LS_ChatReadLog response = ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)
+                //    ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
+                //    {
+                //        RoomId = this.RoomID
+                //    }, TimeSpan.FromSeconds(3)).Result;
+
+                //if (response?.Chats != null)
+                //{
+                //    foreach (var chat in response.Chats)
+                //    {
+                //        S_Chat readChat = new S_Chat()
+                //        {
+                //            Chat = chat.Chat,
+                //            AccountName = chat.AccoutnName,
+                //            ObjectId = chat.ObjectId,
+                //            Time = chat.Time,
+                //        };
+
+                //        client.Session.Send(readChat);
+                //    }
+                //}
             }
 
             Log.Logger.Information($"[Room{RoomID}] Enter Client ID : {session.SessionID}");
@@ -200,7 +241,7 @@ namespace Akka.Server
                     }
                 };
 
-                ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)?.Tell(logPacket);
+                GlobalActors.ClusterManager.Tell(new SendClusterActor(Define.LogServerActorType.LogManagerActor, logPacket));
             }
 
             BroadcastExceptSelf(id, severChatPacket);

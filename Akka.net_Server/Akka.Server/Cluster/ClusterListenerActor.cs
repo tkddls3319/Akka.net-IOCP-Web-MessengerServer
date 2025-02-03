@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Cluster;
 using Akka.ClusterCore;
+
 using Google.Protobuf.Protocol;
 
 using Serilog;
@@ -19,11 +20,8 @@ namespace Akka.Server
     {
         private readonly Cluster.Cluster _cluster = Cluster.Cluster.Get(Context.System);
 
-        IActorRef _clusterManager;
-        public ClusterListenerActor(ActorSystem actorsystem)
+        public ClusterListenerActor()
         {
-            _clusterManager = actorsystem.ActorOf(ClusterManagerActor.Props(), "clusterActor-manager");
-
             // 클러스터에 새로운 노드가 참가했을 때 발생
             Receive<ClusterEvent.MemberJoined>(msg =>
             {
@@ -95,14 +93,14 @@ namespace Akka.Server
         {
             foreach (var actorType in Enum.GetValues(typeof(T)).Cast<T>())
             {
-                _clusterManager.Tell(new InitClusterActor(actorAddr, actorType));
+                GlobalActors.ClusterManager.Tell(new InitClusterActor(actorAddr, actorType));
             }
         }
        void RemoveActors<T>() where T : Enum
         {
             foreach (var actorType in Enum.GetValues(typeof(T)).Cast<T>())
             {
-                _clusterManager.Tell(new RemoveClusterActor(actorType));
+                GlobalActors.ClusterManager.Tell(new RemoveClusterActor(actorType));
             }
         }
 
