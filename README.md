@@ -70,23 +70,27 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
   - `Akka.Server`에서 받은 채팅을 채팅룸 별로 .json으로 기록 저장.
   - Serilog를 사용해 로그 작성.
   - 룸별로 채팅을 읽어 Server에 전달.
-
-### 3. Akka.Protocol.Shared
-- **역할**: 공통 Protobuf 정의를 공유.
-- **구성**: 모든 프로젝트에서 참조되는 `Protocol.cs` 포함.
+  
+### 3. Akka.AccountServer
+- **역할**: Client의 회원가입과 로그인 관리
+- **기능**: REST API와 EntityFrameWork Mssql로 구현, Cluster중 하나로 Akka.Server와 actor 통신
 
 ### 4. DummyClient
 - **역할**: 채팅 클라이언트.
 - **기능**: `Akka.Server`와 비동기 TCP 통신 수행.
 
-### 5. ServerCore
+### 개발한 라이브러리 폴더
+### 1. Akka.Protocol.Shared
+- **역할**: 공통 Protobuf 정의를 공유.
+- **구성**: 모든 프로젝트에서 참조되는 `Protocol.cs` 포함.
+
+### 2. ServerCore
 - **역할**: `Akka.Server`와 `DummyClient` 간 TCP 통신 지원 라이브러리.
 - **기능**: IOCP 기반의 TCP 통신 로직 구현.
-  
-### 6. Akka.AccountServer
-- **역할**: Client의 회원가입과 로그인 관리
-- **기능**: REST API와 EntityFrameWork Mssql로 구현, Cluster중 하나로 Akka.Server와 actor 통신
 
+### 3. Akka.ClusterCore
+- **역할**: `Akka를 사용하는 Cluster`간 액터를 관리하며 메세지를 보내기 위한 라이브러리.
+- **기능**: 클러스터 Actor 재사용, 클러스터에 Actor를 찾아 있으면 전송.
 ---
 
 ## 프로젝트 개요
