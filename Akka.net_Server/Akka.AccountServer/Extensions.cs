@@ -15,17 +15,4 @@ public static class Extensions
             return false;
         }
     }
-
-    //public static bool SaveChangesEx(this SharedDbContext db)
-    //{
-    //    try
-    //    {
-    //        db.SaveChanges();
-    //        return true;
-    //    }
-    //    catch
-    //    {
-    //        return false;
-    //    }
-    //}
 }

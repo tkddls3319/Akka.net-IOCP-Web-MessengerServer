@@ -15,7 +15,6 @@ namespace Akka.LogServer
     public class ConfigManager
     {
         public static LogConfig Config { get; set; }
-
         public static void LoadConfig()
         {
             string text = File.ReadAllText("config.json");

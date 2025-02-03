@@ -10,7 +10,6 @@ class PacketManager
 	static PacketManager _instance = new PacketManager();
 	public static PacketManager Instance { get { return _instance; } }
 	#endregion
-
 	PacketManager()
 	{
 		Register();
@@ -28,7 +27,6 @@ class PacketManager
 		_onRecv.Add((ushort)PacketID.CChat, MakePacket<C_Chat>);
 		_handler.Add((ushort)PacketID.CChat, PacketHandler.C_ChatHandler);
 	}
-
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
 	{
 		ushort count = 0;
@@ -42,7 +40,6 @@ class PacketManager
 		if (_onRecv.TryGetValue(id, out action))
 			action.Invoke(session, buffer, id);
 	}
-
 	void MakePacket<T>(PacketSession session, ArraySegment<byte> buffer, ushort id) where T : IMessage, new()
 	{
 		T pkt = new T();
@@ -59,7 +56,6 @@ class PacketManager
 				action.Invoke(session, pkt);
 		}
 	}
-
 	public Action<PacketSession, IMessage> GetPacketHandler(ushort id)
 	{
 		Action<PacketSession, IMessage> action = null;

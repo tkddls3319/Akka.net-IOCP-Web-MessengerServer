@@ -22,7 +22,7 @@ namespace Akka.LogServer
             {
                 SL_ChatWriteLog writeLog = message.Message;
 
-                var logger = SerilogManager.Get($"Room{writeLog.Chat.RoomId}");
+                var logger = SeriLogManager.Get($"Room{writeLog.Chat.RoomId}");
                 logger?.Information($"{message.Sender} - {writeLog.Chat}");
             });
         }

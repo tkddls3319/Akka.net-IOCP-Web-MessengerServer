@@ -59,7 +59,6 @@ namespace Akka.Server
             Receive<RemoveRoomMessage>(msg => RemoveRoomHandler(msg.RoomId));
             Receive<AddClientMessage>(msg => AddClientToRoomHandler(msg.Session));
 
-
             #region Cluster
             Receive<AS_GetAllRoomInfo>(msg =>
             {

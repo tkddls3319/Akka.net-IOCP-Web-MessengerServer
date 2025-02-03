@@ -20,7 +20,5 @@ namespace Akka.LogServer
             Message = message;
         }
     }
-
     #endregion
-
 }

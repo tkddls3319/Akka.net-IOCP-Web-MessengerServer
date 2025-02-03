@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace Akka.LogServer
 {
-
     public class ChatLogReaderActor : ReceiveActor
     {
         public LogConfig Config { get; private set; }

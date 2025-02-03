@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Akka.LogServer
 {
-    //google.protobuf.Timestamp를 Newtonsoft.Json을 사용하여 Deserialize 하기위한 커스텀 소스코드
+    //google.protobuf.Timestamp를 Newtonsoft.Json을 사용하여 Deserialize 하기 위한 커스텀 소스코드
     //사용 방법
     /*
       var settings = new JsonSerializerSettings

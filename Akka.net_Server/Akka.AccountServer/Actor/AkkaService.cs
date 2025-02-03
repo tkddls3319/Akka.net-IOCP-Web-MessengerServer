@@ -77,17 +77,14 @@ namespace Akka.AccountServer.AkkaDefine
 
             return Task.CompletedTask;
         }
-
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await CoordinatedShutdown.Get(_serverActorSystem).Run(CoordinatedShutdown.ClrExitReason.Instance);
         }
-
         public void Tell(ActtorType type, object message)
         {
             _actorRefs[type].Tell(message);
         }
-
         public Task<T> Ask<T>(ActtorType type, object message)
         {
             return _actorRefs[type].Ask<T>(message);

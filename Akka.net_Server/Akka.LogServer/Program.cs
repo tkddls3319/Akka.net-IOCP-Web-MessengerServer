@@ -20,7 +20,7 @@ namespace Akka.LogAkka.Server
                 ConfigManager.LoadConfig();
 
                 #region Serilog Logger 정의
-                SerilogManager.Init();//Log.Logger 정의
+                SeriLogManager.Init();//Log.Logger 정의
                 #endregion
 
                 #region Cluster 활성화

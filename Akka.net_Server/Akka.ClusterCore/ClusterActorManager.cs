@@ -25,7 +25,7 @@ namespace Akka.ClusterCore
         }
 
         /// <summary>
-        /// `ActorSelection`을 사용하여 액터를 찾고 `PipeTo(Self)`로 전달
+        /// `ActorSelection`을 사용하여 액터를 찾고 PipeTo(Self)로 전달
         /// </summary>
         private void InitClusterActorHandle(InitClusterActor msg)
         {
@@ -43,7 +43,7 @@ namespace Akka.ClusterCore
         }
 
         /// <summary>
-        /// `PipeTo(Self)`에서 받은 메시지를 처리하여 `_clusterActors`에 저장
+        /// `PipeTo(Self)`에서 받은 메시지를 처리하여 _clusterActors에 저장
         /// </summary>
         private void RegisterClusterActor(ClusterActorResolved msg)
         {
@@ -90,6 +90,7 @@ namespace Akka.ClusterCore
     public record ClusterActorResolved(Enum ActorType, IActorRef ActorRef);
     #endregion
 
+    #region 시행착오
     //public  class ClusterManagerActor : ReceiveActor
     //{
     //    private readonly ILoggingAdapter _log = Context.GetLogger();
@@ -287,3 +288,4 @@ namespace Akka.ClusterCore
 //        #endregion
 //    }
 //}
+#endregion

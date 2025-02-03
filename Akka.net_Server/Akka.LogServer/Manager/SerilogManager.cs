@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Akka.LogServer
 {
-    public static class SerilogManager
+    public static class SeriLogManager
     {
         static Dictionary<string, ILogger> _loggers = new();
 
         static object _lock = new object();
 
-        static SerilogManager()
+        static SeriLogManager()
         {
             Init();
         }

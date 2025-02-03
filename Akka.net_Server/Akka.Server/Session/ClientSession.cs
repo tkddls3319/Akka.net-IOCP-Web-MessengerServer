@@ -13,7 +13,6 @@ namespace Akka.Server
     {
         public IActorRef Room { get; set; }
         static IActorRef _roomManager;
-
         public int SessionID { get; set; }
         public string AccountName { get; set; }
         List<ArraySegment<byte>> _reservSendList = new List<ArraySegment<byte>>();
