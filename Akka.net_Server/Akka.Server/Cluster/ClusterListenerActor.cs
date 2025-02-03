@@ -11,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using static Akka.Server.Define;
+
 namespace Akka.Server
 {
     public class ClusterListenerActor : ReceiveActor
@@ -19,23 +21,22 @@ namespace Akka.Server
 
         public ClusterListenerActor()
         {
-            // 클러스터 이벤트 수신
+            // 클러스터에 새로운 노드가 참가했을 때 발생
             Receive<ClusterEvent.MemberJoined>(msg =>
             {
-                Log.Logger.Information($"[ClusterListener] Cluster Node Joined: {msg.Member}");
-                if (msg.Member.Roles.Any(role => role.Contains("logAkka")))
-                {
-                    var actorAddr = Address.Parse(Define.AddrLogManagerActor);
-                    ClusterActorManager.Instance.InitClusterActor(actorAddr, Define.ClusterType.LogManagerActor);
-                }
-                else
-                     if (msg.Member.Roles.Any(role => role.Contains("account")))
-                {
-                    var actorAddr = Address.Parse(Define.AddrAccountActor);
-                    ClusterActorManager.Instance.InitClusterActor(actorAddr, Define.ClusterType.AccountActor);
-                }
-            });
+                Member clusterMember = msg.Member;
 
+                var actorAddr = Address.Parse(clusterMember.Address.ToString());
+
+                //TODO : Roloes에 따라 달라지는데 어떻게 해야할지 좀 더 고민해봐야겠음.
+                string clusterName = clusterMember.Roles.OrderBy(r=>r).ToList().FirstOrDefault();
+
+                if (Enum.TryParse(clusterName, out ClusterType clusterType))
+                    ClusterManager.Instance.InitClusterActor(actorAddr, clusterType);
+
+                Log.Logger.Information($"[ClusterListener] Cluster Node Joined: {msg.Member}");
+            });
+            //정상적으로 활성화
             Receive<ClusterEvent.MemberUp>(msg =>
             {
                 Log.Logger.Information($"[ClusterListener] Cluster Node is Up : {msg.Member}");
@@ -44,13 +45,15 @@ namespace Akka.Server
             Receive<ClusterEvent.MemberRemoved>(msg =>
             {
                 var cluster = Cluster.Cluster.Get(Context.System);
+
+                Member clusterMember = msg.Member;
+                string clusterName = clusterMember.Roles.OrderBy(r => r).ToList().FirstOrDefault();
+
+                if (Enum.TryParse(clusterName, out ClusterType clusterType))
+                    ClusterManager.Instance.RemoveClusterActor(clusterType);
+
                 Log.Logger.Information($"[ClusterListener] Cluster Node Removed : {msg.Member}");
                 Log.Logger.Information($"[ClusterListener] Current Cluster Members: {string.Join(", ", cluster.State.Members)}");
-
-                if (msg.Member.Roles.Any(role => role.Contains("logAkka")))
-                {
-                    ClusterActorManager.Instance.RemoveClusterActor(Define.ClusterType.LogManagerActor);
-                }
             });
 
             Receive<ClusterEvent.LeaderChanged>(msg =>

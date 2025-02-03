@@ -11,12 +11,10 @@ namespace Akka.Server
         public const int RoomMaxCount = 100;
 
         #region Cluster 
-        public static readonly string AddrLogManagerActor = "akka.tcp://ClusterSystem@localhost:5001";
-        public static readonly string AddrAccountActor = "akka.tcp://ClusterSystem@localhost:5002";
         public enum ClusterType
         {
-            LogManagerActor,
-            AccountActor,
+            LogServer,
+            AccountServer,
         }
         #endregion
 

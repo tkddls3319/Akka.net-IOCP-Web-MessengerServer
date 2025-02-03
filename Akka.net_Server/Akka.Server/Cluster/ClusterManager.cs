@@ -13,17 +13,15 @@ using System.Threading.Tasks;
 using static Akka.Server.Define;
 
 
-
 namespace Akka.Server
 {
-    public class ClusterActorManager
+    public class ClusterManager
     {
-
         #region Singleton
         static readonly object _lock = new();
 
-        static ClusterActorManager _instance;
-        public static ClusterActorManager Instance { get { Init(); return _instance; } }
+        static ClusterManager _instance;
+        public static ClusterManager Instance { get { Init(); return _instance; } }
         #endregion
 
         #region Cluster
@@ -36,9 +34,9 @@ namespace Akka.Server
         {
             if (_instance == null)
                 lock (_lock)
-                    _instance = new ClusterActorManager(Program.ServerActorSystem);
+                    _instance = new ClusterManager(Program.ServerActorSystem);
         }
-        public ClusterActorManager(ActorSystem actorSystem)
+        public ClusterManager(ActorSystem actorSystem)
         {
             _actorSystem = actorSystem;
         }
@@ -46,17 +44,11 @@ namespace Akka.Server
         #region LogCluster
         public void InitClusterActor(Address addr, ClusterType actorName)
         {
-            if (Cluster.Cluster.Get(_actorSystem).State.Members.Any(m => m.Address.ToString() == $"{addr}"))
-                SetClusterActor(addr, actorName);
-            else
-            {
-                RemoveClusterActor(actorName);
-                SetClusterActor(addr, actorName);
-            }
+            SetClusterActor(addr, actorName);
         }
         void SetClusterActor(Address addr, ClusterType actorName)
         {
-            if (!_clusterActors.ContainsKey(actorName))
+            if (_clusterActors.ContainsKey(actorName) == false)
             {
                 Task.Run(async () =>
                 {
@@ -73,7 +65,6 @@ namespace Akka.Server
                                 Log.Logger.Information($"[ClusterActorManager] Cluster actor '{actorName}' initialized successfully.");
                             else
                                 Log.Logger.Error($"[ClusterActorManager] Cluster actor '{actorName}' initialized Unsuccessfully.");
-
                         }
                     }
                     catch (ActorNotFoundException err)

@@ -12,6 +12,8 @@ namespace Akka.LogServer
     {
         static Dictionary<string, ILogger> _loggers = new();
 
+        static object _lock = new object();
+
         static SerilogManager()
         {
             Init();
@@ -29,13 +31,16 @@ namespace Akka.LogServer
         }
         static ILogger Create(string name)
         {
-            if (_loggers.TryAdd(name, new LoggerConfiguration()
-             .MinimumLevel.Debug()
-             .WriteTo.Console()
-             .WriteTo.File($"logs/{name}_.json", rollingInterval: RollingInterval.Day)
-             .CreateLogger()) == false)
+            lock (_lock)
             {
-                Log.Logger.Information($"[SerilogManager] CreateLog Fail : {name}");
+                if (_loggers.TryAdd(name, new LoggerConfiguration()
+                 .MinimumLevel.Debug()
+                 .WriteTo.Console()
+                 .WriteTo.File($"logs/{name}_.json", rollingInterval: RollingInterval.Day)
+                 .CreateLogger()) == false)
+                {
+                    Log.Logger.Information($"[SerilogManager] CreateLog Fail : {name}");
+                }
             }
 
             return _loggers[name];

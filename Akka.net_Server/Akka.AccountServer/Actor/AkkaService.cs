@@ -25,10 +25,9 @@ namespace Akka.AccountServer.AkkaDefine
     {
         private ActorSystem _serverActorSystem;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHostApplicationLifetime _applicationLifetime;
 
         Dictionary<ActtorType, IActorRef> _actorRefs = new Dictionary<ActtorType, IActorRef>();
-
-        private readonly IHostApplicationLifetime _applicationLifetime;
 
         public AkkaService(IServiceProvider serviceProvider, IHostApplicationLifetime appLifetime)
         {
@@ -46,7 +45,8 @@ namespace Akka.AccountServer.AkkaDefine
                 .WithActorRefProvider(ProviderSelection.Cluster.Instance); // Akka.Cluster를 활성화 (클러스터 모드 설정)
 
             // ASP.NET Core의 의존성 주입(DI)을 Akka.NET 액터 시스템과 통합
-            var diSetup = ServiceProviderSetup.Create(_serviceProvider);
+            //var diSetup = ServiceProviderSetup.Create(_serviceProvider);//.net6 버전에서 유효 .net8에서 사용 x
+            var diSetup = DependencyResolverSetup.Create(_serviceProvider);
 
             // 모든 설정을 하나로 병합 (부트스트랩 + DI 설정)
             var actorSystemSetup = bootstrap.And(diSetup);

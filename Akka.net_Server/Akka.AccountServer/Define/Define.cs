@@ -5,4 +5,10 @@
         ClusterSystem,
         AccountActor,
     }
+
+    public enum ClusterType
+    {
+        LogManagerActor,
+        AccountActor,
+    }
 }

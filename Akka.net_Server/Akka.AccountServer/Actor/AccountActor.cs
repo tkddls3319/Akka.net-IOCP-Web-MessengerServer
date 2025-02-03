@@ -89,6 +89,7 @@ namespace Akka.AccountServer.Actor
             {
                 res.LoginOk = true;
 
+                //TODO : Akka.LogServer처럼 ClusterManager
                 var seedNodes = Akka.Cluster.Cluster.Get(_actorSystem).Settings.SeedNodes[0];
                 var response = await _actorSystem.ActorSelection($"{seedNodes}/user/RoomManagerActor")
                                                  .Ask<SA_GetAllRoomInfo>(new AS_GetAllRoomInfo(), TimeSpan.FromSeconds(5));
