@@ -114,7 +114,7 @@ namespace Akka.Server
 
             //이전 모든 채팅을 읽어 새로온 사용자에게 전달
             {
-                LS_ChatReadLog response = ClusterManager.Instance.GetClusterActor(Define.ClusterType.LogServer)
+                LS_ChatReadLog response = ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)
                     ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
                     {
                         RoomId = this.RoomID
@@ -200,7 +200,7 @@ namespace Akka.Server
                     }
                 };
 
-                ClusterManager.Instance.GetClusterActor(Define.ClusterType.LogServer)?.Tell(logPacket);
+                ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)?.Tell(logPacket);
             }
 
             BroadcastExceptSelf(id, severChatPacket);

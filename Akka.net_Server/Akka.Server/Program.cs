@@ -38,7 +38,7 @@ namespace Akka.Server
             #endregion
 
             #region Actor
-            var clusterListenerActor =  ServerActorSystem.ActorOf(Props.Create(() => new ClusterListenerActor()), Enum.GetName(ActtorType.clusterListenerActor));
+            var clusterListenerActor =  ServerActorSystem.ActorOf(Props.Create(() => new ClusterListenerActor(ServerActorSystem)), Enum.GetName(ActtorType.clusterListenerActor));
             var sessionManager = ServerActorSystem.ActorOf(Props.Create(() => new SessionManagerActor()), Enum.GetName(ActtorType.SessionManagerActor));
             var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor(sessionManager)), Enum.GetName(ActtorType.RoomManagerActor));
 

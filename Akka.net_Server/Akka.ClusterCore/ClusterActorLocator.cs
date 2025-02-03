@@ -1,14 +1,12 @@
-﻿using Akka.AccountServer.Define;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 
-using Google.Protobuf.ClusterProtocol;
 
-namespace Akka.AccountServer
+namespace Akka.ClusterCore
 {
     /// <summary>
-    /// Cluster를 찾아 ActorSelection을 자동화 하기 위한 Class
+    /// Define정의안하고 ClusterManager를 사용하지 않고 하고 싶다면 Cluster를 찾아 ActorSelection을 자동화 하기 위한 Class
     /// </summary>
     public class ClusterActorLocator
     {

@@ -1,6 +1,7 @@
 ﻿using Akka.AccountServer.DB;
 using Akka.AccountServer.Define;
 using Akka.Actor;
+using Akka.ClusterCore;
 using Akka.Streams.Stage;
 
 using Google.Protobuf.ClusterProtocol;
@@ -23,7 +24,6 @@ namespace Akka.AccountServer.Actor
                 this.Message = message;
             }
         }
-
         #endregion
 
         ActorSystem _actorSystem;
@@ -88,22 +88,25 @@ namespace Akka.AccountServer.Actor
             {
                 res.LoginOk = true;
 
-                var clusterLocator = new ClusterActorLocator(_actorSystem);
+                //Akka.Server에 모든 방 정보 받아오는 부분.
+                {
 
-                var response = await clusterLocator.AskClusterActor<SA_GetAllRoomInfo>(
-                    $"{ClusterActorType.RoomManagerActor}",
-                    new AS_GetAllRoomInfo(),
-                    TimeSpan.FromSeconds(5)
-                );
+                    var clusterLocator = new ClusterActorLocator(_actorSystem);
 
-                res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
+                    var response = await clusterLocator.AskClusterActor<SA_GetAllRoomInfo>(
+                        $"{TcpClusterActorType.RoomManagerActor}",
+                        new AS_GetAllRoomInfo(),
+                        TimeSpan.FromSeconds(5)
+                    );
 
-                //TODO : Akka.LogServer처럼 ClusterManager
-                //var seedNodes = Akka.Cluster.Cluster.Get(_actorSystem).Settings.SeedNodes[0];
-                //var response = await _actorSystem.ActorSelection($"{seedNodes}/user/{ClusterActorType.RoomManagerActor}")
-                //                                 .Ask<SA_GetAllRoomInfo>(new AS_GetAllRoomInfo(), TimeSpan.FromSeconds(5));
+                    res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
 
-                //res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
+                    //var seedNodes = Akka.Cluster.Cluster.Get(_actorSystem).Settings.SeedNodes[0];
+                    //var response = await _actorSystem.ActorSelection($"{seedNodes}/user/{ClusterActorType.RoomManagerActor}")
+                    //                                 .Ask<SA_GetAllRoomInfo>(new AS_GetAllRoomInfo(), TimeSpan.FromSeconds(5));
+
+                    //res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
+                }
             }
 
             return res;

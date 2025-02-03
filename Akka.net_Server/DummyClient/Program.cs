@@ -143,6 +143,7 @@ namespace DummyClient
                     Console.Clear();
                     AccountName = userId;
                     Console.WriteLine($"{AccountName}님 로그인에 성공하셨습니다. 서버에 접속중입니다...");
+                    Console.WriteLine($"방 수"+result.RoomList[0]);
                     isLoggedIn = true; // 로그인 성공 시 메뉴 빠져나가기
                 }
                 else

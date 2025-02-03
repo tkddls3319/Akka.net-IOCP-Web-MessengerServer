@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Akka.ClusterCore\Akka.ClusterCore.csproj" />
     <ProjectReference Include="..\Akka.Protocol.Shared\Akka.Protocol.Shared.csproj" />
     <ProjectReference Include="..\ServerCore\ServerCore.csproj" />
   </ItemGroup>

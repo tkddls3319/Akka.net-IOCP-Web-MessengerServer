@@ -1,6 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Cluster;
-
+using Akka.ClusterCore;
 using Google.Protobuf.Protocol;
 
 using Serilog;
@@ -19,20 +19,34 @@ namespace Akka.Server
     {
         private readonly Cluster.Cluster _cluster = Cluster.Cluster.Get(Context.System);
 
-        public ClusterListenerActor()
+        IActorRef _clusterManager;
+        public ClusterListenerActor(ActorSystem actorsystem)
         {
+            _clusterManager = actorsystem.ActorOf(ClusterManagerActor.Props(), "clusterActor-manager");
+
             // 클러스터에 새로운 노드가 참가했을 때 발생
             Receive<ClusterEvent.MemberJoined>(msg =>
             {
-                Member clusterMember = msg.Member;
+                var clusterMember = msg.Member;
+                var actorAddr = clusterMember.Address;
 
-                var actorAddr = Address.Parse(clusterMember.Address.ToString());
+                // 역할 중 알파벳순으로 가장 앞에 있는 것 선택
+                string clusterName = clusterMember.Roles.Min();
 
-                //TODO : Roloes에 따라 달라지는데 어떻게 해야할지 좀 더 고민해봐야겠음.
-                string clusterName = clusterMember.Roles.OrderBy(r=>r).ToList().FirstOrDefault();
-
+                //새로들어온 클러스터에 맞게 모든액터를 세팅
                 if (Enum.TryParse(clusterName, out ClusterType clusterType))
-                    ClusterManager.Instance.InitClusterActor(actorAddr, clusterType);
+                {
+                    switch (clusterType)
+                    {
+                        case ClusterType.LogServer:
+                            InitializeActors<LogServerActorType>(actorAddr);
+                            break;
+
+                        case ClusterType.AccountServer:
+                            InitializeActors<AccountServerActorType>(actorAddr);
+                            break;
+                    }
+                }
 
                 Log.Logger.Information($"[ClusterListener] Cluster Node Joined: {msg.Member}");
             });
@@ -47,10 +61,25 @@ namespace Akka.Server
                 var cluster = Cluster.Cluster.Get(Context.System);
 
                 Member clusterMember = msg.Member;
-                string clusterName = clusterMember.Roles.OrderBy(r => r).ToList().FirstOrDefault();
+                var actorAddr = clusterMember.Address;
 
+                // 역할 중 알파벳순으로 가장 앞에 있는 것 선택
+                string clusterName = clusterMember.Roles.Min();
+
+                //새로들어온 클러스터에 맞게 모든액터를 세팅
                 if (Enum.TryParse(clusterName, out ClusterType clusterType))
-                    ClusterManager.Instance.RemoveClusterActor(clusterType);
+                {
+                    switch (clusterType)
+                    {
+                        case ClusterType.LogServer:
+                            RemoveActors<LogServerActorType>();
+                            break;
+
+                        case ClusterType.AccountServer:
+                            RemoveActors<AccountServerActorType>();
+                            break;
+                    }
+                }
 
                 Log.Logger.Information($"[ClusterListener] Cluster Node Removed : {msg.Member}");
                 Log.Logger.Information($"[ClusterListener] Current Cluster Members: {string.Join(", ", cluster.State.Members)}");
@@ -60,6 +89,21 @@ namespace Akka.Server
             {
                 Log.Logger.Information($"[ClusterListener] Cluster Leader Changed: : {msg.Leader}");
             });
+        }
+
+        private void InitializeActors<T>(Address actorAddr) where T : Enum
+        {
+            foreach (var actorType in Enum.GetValues(typeof(T)).Cast<T>())
+            {
+                _clusterManager.Tell(new InitClusterActor(actorAddr, actorType));
+            }
+        }
+       void RemoveActors<T>() where T : Enum
+        {
+            foreach (var actorType in Enum.GetValues(typeof(T)).Cast<T>())
+            {
+                _clusterManager.Tell(new RemoveClusterActor(actorType));
+            }
         }
 
         protected override void PreStart()

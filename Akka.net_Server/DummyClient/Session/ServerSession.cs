@@ -35,8 +35,7 @@ namespace DummyClient
                 {
                     Console.Write(">> ");
                     string input = Console.ReadLine();
-                    Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTimeKind.Utc.ToString());
-
+                    Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTime.Now.ToString());
                     C_Chat packet = new C_Chat();
                     packet.Chat = input;
                     Send(packet);

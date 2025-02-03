@@ -1,19 +1,16 @@
 ﻿namespace Akka.AccountServer.Define
 {
+    #region Cluster
+    public enum TcpClusterActorType
+    {
+        RoomManagerActor
+    }
+    #endregion
+
     public enum ActtorType
     {
         ClusterSystem,
         AccountActor,
     }
 
-    public enum ClusterType
-    {
-        LogManagerActor,
-        AccountActor,
-    }
-
-    public enum ClusterActorType
-    {
-        RoomManagerActor
-    }
 }
