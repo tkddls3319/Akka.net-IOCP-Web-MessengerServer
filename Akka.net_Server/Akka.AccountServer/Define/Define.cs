@@ -11,4 +11,9 @@
         LogManagerActor,
         AccountActor,
     }
+
+    public enum ClusterActorType
+    {
+        RoomManagerActor
+    }
 }
