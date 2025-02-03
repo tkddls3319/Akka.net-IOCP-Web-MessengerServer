@@ -152,6 +152,32 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 ---
 
+## Akka 에서의 글로벌에 대한 고찰
+
+1. ActorSelection을 사용하여 특정 액터를 찾는 문제
+ActorSelection은 경로(Path) 기반으로 액터를 찾음 → 탐색 비용이 발생.
+이를 해결하기 위해 싱글톤 캐싱 방식으로 한 번만 ActorSelection을 실행하고, 이후 캐시된 IActorRef를 사용.
+하지만 최초 ActorSelection 실행 시 lock이 필요함.
+2. Akka.NET에서 lock을 최소화하려는 이유
+액터 모델을 사용하는 주요 이유 중 하나는 lock을 줄여 동시성 비용을 줄이는 것.
+하지만 싱글톤 방식으로 ActorSelection을 캐싱할 경우, lock을 사용할 필요가 있음.
+→ 이 방식은 액터 모델의 철학과 충돌할 수 있음.
+3. lock을 사용하지 않고 ActorSelection 문제를 해결하는 방법
+대안 1: Ask<T>()와 PipeTo() 활용하기
+
+ActorSelection을 비동기로 실행하고 ResolveOne()을 통해 IActorRef를 캐싱.
+이후 PipeTo(Self)를 사용하여 액터 내부에서 비동기 결과를 처리.
+var actorSelection = Context.ActorSelection("/user/SomeActor");
+actorSelection.ResolveOne(TimeSpan.FromSeconds(5))
+    .PipeTo(Self, success: actorRef => new StoreActorRef(actorRef));
+이 방식은 lock 없이 IActorRef를 안전하게 캐싱 가능.
+
+4. 싱글톤 액터를 직접 만드는 문제 (비동기 처리 문제 발생)
+싱글톤 액터를 만들면 특정 액터가 중앙 집중화됨.
+Ask<T>()를 통해 응답을 받아야 하는 경우 비동기 호출이 중첩되면서 "비동기 지옥"에 빠질 가능성이 있음.
+
+---
+
 ## Akka 직렬화에 대한 고찰
 
 ### 1. Protobuf와 사용자 정의 프로토콜
