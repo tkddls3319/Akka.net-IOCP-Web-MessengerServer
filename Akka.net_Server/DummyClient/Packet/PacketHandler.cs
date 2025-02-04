@@ -36,7 +36,6 @@ public class PacketHandler
 
         Util.AddDisplayMessage($"> {s_enter.Client.RoomID}번 채팅 방에 참여했습니다.");
         Util.AddDisplayMessage($"> 당신의 아이디는 {s_enter.Client.ObjectId}입니다. 현재 참여인원 {s_enter.Client.ClientCount}명.");
-        Util.AddDisplayMessage($"\n> ※※※ 채팅방에서 나가고 싶으시면 ESC를 채팅방에 입력 후 ENTER키를 누르세요. ※※※\n");
 
         if (s_enter.Client.ClientCount == 1)
         {
@@ -45,6 +44,7 @@ public class PacketHandler
             Util.AddDisplayMessage("※ DummyClient.exe경로 : DummyClient -> bin->Debug or Release -> DummyClient.exe");
             Util.AddDisplayMessage("");
         }
+        Util.AddDisplayMessage($"> ※※※ 채팅방에서 나가고 싶으시면 ESC를 채팅방에 입력 후 ENTER키를 누르세요. ※※※");
         Util.AddOrPrintDisplayMessage("> 메시지를 입력하세요.");
     }
 
