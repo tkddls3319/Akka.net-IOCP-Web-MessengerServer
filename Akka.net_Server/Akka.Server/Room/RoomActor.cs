@@ -137,7 +137,7 @@ namespace Akka.Server
                             }
                             else
                             {
-                                Console.WriteLine("채팅 데이터를 가져오지 못했습니다.");
+                                Log.Logger.Warning("채팅 데이터를 가져오지 못했습니다.");
                             }
                         }, TaskContinuationOptions.ExecuteSynchronously);
                     }, TaskContinuationOptions.ExecuteSynchronously);

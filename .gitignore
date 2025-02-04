@@ -34,7 +34,8 @@ bld/
 
 !Akka.net_Server/Protobuf/protoc-3.12.3-win64/bin/
 !Akka.net_Server/Protobuf/protoc-3.12.3-win64/bin/**
-
+!Akka.net_Server/PacketGenerator/bin/
+!Akka.net_Server/PacketGenerator/bin/**
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

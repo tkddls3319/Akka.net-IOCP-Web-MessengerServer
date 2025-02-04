@@ -80,14 +80,14 @@ namespace Akka.Server
         void AddClientHandler(AddClientCommand session)
         {
             int roomId = session.RoomId;
-            //var clientCount = _rooms[roomId].Ask<int>(new RoomActor.GetClientCountQuery()).Result;
+            //var clientCount = _rooms[roomId].Ask<int>(new RoomActor.GetClientCountQuery()).Result;//동기적
             //if (clientCount < Define.RoomMaxCount)
             //{
             //    _rooms[roomId].Tell(new RoomActor.EnterClientCommand(session.Session)); // 새로 생성한 룸에 클라이언트 추가
             //}
             //else
             //{
-            //    //TODO: 꽉차서 방 못 들어가서 다시선택 해야하는 패킷 만들어야함
+            //   
             //}
             _rooms[roomId].Ask<int>(new RoomActor.GetClientCountQuery(), TimeSpan.FromSeconds(3))
                      .PipeTo(Self, Sender, success: count =>
@@ -100,7 +100,6 @@ namespace Akka.Server
                          {
                              // TODO: 방이 꽉 차서 다시 선택해야 하는 로직 추가 필요
                          }
-
                          return null;
                      });
         }
