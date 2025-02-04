@@ -1,8 +1,11 @@
-﻿using Akka.IO;
+﻿using Akka.Event;
+using Akka.IO;
 
 using DummyClient;
+using DummyClient.Session;
 
 using Google.Protobuf;
+using Google.Protobuf.ClusterProtocol;
 using Google.Protobuf.Protocol;
 
 using ServerCore;
@@ -29,11 +32,13 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_EnterServer s_enter = (S_EnterServer)packet;
 
-        clientSession.MakeInputThread();
+        Program.RoomEnter = true;
+
         Util.AddDisplayMessage($"> {s_enter.Client.RoomID}번 채팅 방에 참여했습니다.");
         Util.AddDisplayMessage($"> 당신의 아이디는 {s_enter.Client.ObjectId}입니다. 현재 참여인원 {s_enter.Client.ClientCount}명.");
+        Util.AddDisplayMessage($"\n> ※※※ 채팅방에서 나가고 싶으시면 ESC를 채팅방에 입력 후 ENTER키를 누르세요. ※※※\n");
 
-        if(s_enter.Client.ClientCount == 1)
+        if (s_enter.Client.ClientCount == 1)
         {
             Util.AddDisplayMessage("");
             Util.AddDisplayMessage("※ 채팅방에 혼자 있습니다. 채팅을 위해 DummyClient를 하나 더 켜주세요.");
@@ -47,6 +52,20 @@ public class PacketHandler
     {
         ServerSession clientSession = (ServerSession)session;
         S_LeaveServer s_leave = (S_LeaveServer)packet;
+
+        Program.RoomEnter = false;
+
+        //채팅방 다시 선택
+        Task.Run(async () =>
+        {
+            var result = await WebManager.Instance.SendPostRequest<GetRoomsAccountPacketRes>(
+                "account/getrooms",
+                new GetRoomsAccountPacketReq()
+            );
+
+            Program.RoomInfos = result.RoomList;
+            clientSession.RoomChoice();
+        });
 
     }
     public static void S_SpawnHandler(PacketSession session, IMessage packet)

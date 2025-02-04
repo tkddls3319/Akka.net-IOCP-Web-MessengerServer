@@ -23,7 +23,7 @@ namespace Akka.Server
         #region Message
         public record GetClientCountQuery();
         public record EnterClientCommand(ClientSession Session);
-        public record LeaveClientCommand(int ClientId);
+        public record LeaveClientCommand(int ClientId, bool Disconnected);
 
         #endregion
 
@@ -44,7 +44,7 @@ namespace Akka.Server
 
             Receive<EnterClientCommand>(msg => EnterClientHandler(msg));
             Receive<GetClientCountQuery>( _ => Sender.Tell(_clients.Count));
-            Receive<LeaveClientCommand>(msg => LeaveClientHandler(msg.ClientId));
+            Receive<LeaveClientCommand>(msg => LeaveClientHandler(msg.ClientId, msg.Disconnected));
             Receive<MessageCustomCommand<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
         }
         private void EnterClientHandler(EnterClientCommand client)
@@ -167,18 +167,21 @@ namespace Akka.Server
 
             Log.Logger.Information($"[Room{RoomID}] Enter Client ID : {session.SessionID}");
         }
-        private void LeaveClientHandler(int clientId)
+        private void LeaveClientHandler(int clientId, bool disconnected)
         {
             ClientSession client = null;
             if (_clients.Remove(clientId, out client) == false)
                 return;
 
             client.Room = null;
-            _sessionManager.Tell(new SessionManagerActor.RemoveSessionCommand(client));
 
+            if (disconnected)//사용자가 프로그램을 종료 했을 때 세션제거
+                _sessionManager.Tell(new SessionManagerActor.RemoveSessionCommand(client));
+
+            //룸정보 전달
             {
-                S_LeaveServer leavePacket = new S_LeaveServer();
-                client.Send(leavePacket);
+                S_LeaveServer leavPacket = new S_LeaveServer();
+                client.Send(leavPacket);
             }
 
             //타인에게 전달
@@ -190,6 +193,7 @@ namespace Akka.Server
                 BroadcastExceptSelf(clientId, despawnPacket);
             }
 
+            //Room안에 사용자 0명이면 제거
             if (_clients.Count == 0)
                 _roomManger.Tell(new RoomManagerActor.RemoveRoomCommand(RoomID));
 

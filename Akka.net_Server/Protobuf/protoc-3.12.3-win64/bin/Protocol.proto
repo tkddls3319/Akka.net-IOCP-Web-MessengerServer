@@ -21,6 +21,8 @@ enum PacketID {
   S_CHAT = 6;
 
   C_NEW_ROOM_AND_ENTER_SERVER = 7;
+
+  C_LEAVE_ROOM = 8;
 }
 message C_EnterServer{
   ClientInfo client =1;
@@ -60,6 +62,9 @@ message C_NewRoomAndEnterServer{
  ClientInfo client =1;
 }
 
+message C_LeaveRoom{
+
+}
 
 message ClientInfo{
 	int32 objectId =1;

@@ -71,7 +71,7 @@ namespace Akka.Server
         {
             if (Room != null)
             {
-                Room.Tell(new RoomActor.LeaveClientCommand(SessionID));
+                Room.Tell(new RoomActor.LeaveClientCommand(SessionID, true));
                 Log.Logger.Information($"[ClientSession] Disconnected - IP : {endPoint}, SessionId : {SessionID}");
             }
         }

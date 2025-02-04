@@ -32,6 +32,7 @@ namespace Akka.Server
         Dictionary<int, IActorRef> _rooms = new Dictionary<int, IActorRef>();
         int _roomCount = 0;
 
+
         public RoomManagerActor(IActorRef sessionManager)
         {
             _sessionManager = sessionManager;
@@ -65,10 +66,15 @@ namespace Akka.Server
             });
             #endregion
         }
+
         protected override void PreStart()
         {
             base.PreStart();
-            CreateRoomHandler();
+
+            for (int i = 0; i < 3; i++)
+            {
+                CreateRoomHandler();
+            }
         }
         void CreateRoomHandler()
         {

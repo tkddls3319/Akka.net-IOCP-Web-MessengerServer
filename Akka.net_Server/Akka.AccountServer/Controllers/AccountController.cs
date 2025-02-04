@@ -49,6 +49,13 @@ namespace Akka.AccountServer.Controllers
             _logger.LogInformation("[LoginAccount]");
             return _bridge.Ask<LoginAccountPacketRes>(ActtorType.AccountActor, new AccountCommand<LoginAccountPacketReq>(_context, req));
         }
+        [HttpPost]
+        [Route("getrooms")]
+        public Task<GetRoomsAccountPacketRes> GetRoomsAccount([FromBody] GetRoomsAccountPacketReq req)
+        {
+            _logger.LogInformation("[GetRoomsAccount]");
+            return _bridge.Ask<GetRoomsAccountPacketRes>(ActtorType.AccountActor, new AccountCommand<GetRoomsAccountPacketReq>(_context, req));
+        }
 
         int count = 100;
         [HttpGet]

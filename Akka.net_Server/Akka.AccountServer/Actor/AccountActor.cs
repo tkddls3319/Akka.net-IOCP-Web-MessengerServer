@@ -60,6 +60,12 @@ namespace Akka.AccountServer.Actor
                 var task = HandleLogin(message);
                 task.PipeTo(Sender, Self);
             });
+
+            Receive<AccountCommand<GetRoomsAccountPacketReq>>(async (message) =>
+            {
+                var task = HandleRoomInfos(message);
+                task.PipeTo(Sender, Self);
+            });
         }
         private async Task<LoginAccountPacketRes> HandleLogin(AccountCommand<LoginAccountPacketReq> message)
         {
@@ -101,6 +107,25 @@ namespace Akka.AccountServer.Actor
 
                     //res.RoomList = response.RoomId.Select(room => new RoomInfo { RoomId = room.ToString() }).ToList();
                 }
+            }
+
+            return res;
+        }
+        private async Task<GetRoomsAccountPacketRes> HandleRoomInfos(AccountCommand<GetRoomsAccountPacketReq> message)
+        {
+            var res = new GetRoomsAccountPacketRes();
+
+            var clusterLocator = new ClusterActorLocator(_actorSystem);
+
+            var response = await clusterLocator.AskClusterActor<SA_GetAllRoomInfoResponse>(
+                $"{TcpServerActorType.RoomManagerActor}",
+                new AS_GetAllRoomInfoQuery(),
+                TimeSpan.FromSeconds(5)
+            );
+
+            foreach (var info in response.RoomInfos)
+            {
+                res.RoomList.Add(new RoomInfo { RoomId = info.RoomID, MaxCount = info.MaxCount, CurrentCount = info.CurrentCount });
             }
 
             return res;

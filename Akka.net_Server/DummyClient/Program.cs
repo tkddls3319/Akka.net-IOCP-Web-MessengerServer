@@ -15,7 +15,9 @@ namespace DummyClient
         static bool isLoggedIn = false; // 로그인 상태 플래그
         static bool isSigedIn = false; // 회원가입 상태 플래그
 
+        public static bool RoomEnter = false;
         public static List<RoomInfo> RoomInfos = new List<RoomInfo>();
+
         static void Main(string[] args)
         {
             //서버 보다 빨리 켜져서 Log 클러스터가 서버에 붙기 전에 켜짐 그래서 sleep 걸어놈

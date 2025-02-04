@@ -46,4 +46,15 @@ public class PacketHandler
 
         clientSession.NewRoomHandler(newroom);
     }
+
+    internal static void C_LeaveRoomHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        C_LeaveRoom newroom = (C_LeaveRoom)packet;
+
+        if (clientSession == null)
+            return;
+
+        clientSession.LeaveRoomHandler();
+    }
 }

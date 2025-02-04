@@ -26,3 +26,9 @@ public class LoginAccountPacketRes
     public int AccountId { get; set; }
     public List<RoomInfo> RoomList { get; set; } = new List<RoomInfo>();
 }
+
+public class GetRoomsAccountPacketReq { }
+public class GetRoomsAccountPacketRes
+{
+    public List<RoomInfo> RoomList { get; set; } = new List<RoomInfo>();
+}

@@ -28,5 +28,12 @@ namespace Akka.Server
                 _roomManager.Tell(new RoomManagerActor.CreateRoomAndAddClientCommand(this));
             }
         }
+        public void LeaveRoomHandler()
+        {
+            if (Room != null)
+            {
+                Room.Tell(new RoomActor.LeaveClientCommand(SessionID, false));
+            }
+        }
     }
 }

@@ -33,12 +33,24 @@ namespace DummyClient
             {
                 while (true)
                 {
-                    Console.Write(">> ");
-                    string input = Console.ReadLine();
-                    Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTime.Now.ToString());
-                    C_Chat packet = new C_Chat();
-                    packet.Chat = input;
-                    Send(packet);
+                    if (Program.RoomEnter)
+                    {
+                        Console.Write(">> ");
+                        string input = Console.ReadLine();
+
+                        if (input == "ESC")
+                        {
+                            Send(new C_LeaveRoom());
+                        }
+                        else
+                        {
+                            Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTime.Now.ToString());
+                            C_Chat packet = new C_Chat();
+                            packet.Chat = input;
+                            Send(packet);
+                        }
+                    }
+                    Thread.Sleep(500);
                 }
             });
 
@@ -51,6 +63,24 @@ namespace DummyClient
             Util.AddOrPrintDisplayMessage("==========Server Connected==========");
             Util.AddOrPrintDisplayMessage($"Server EndPoint - {endPoint}");
 
+            MakeInputThread();
+            RoomChoice();
+        }
+        public override void OnDisconnected(EndPoint endPoint)
+        {
+            Util.AddOrPrintDisplayMessage("[Session] Server Disconnected....");
+        }
+
+        public override void OnRecvedPacket(ArraySegment<byte> buffer)
+        {
+            PacketManager.Instance.OnRecvPacket(this, buffer);
+        }
+        public override void OnSended(int numOfByte)
+        {
+        }
+
+        public void RoomChoice()
+        {
             int? roomId = Util.RoomChoice(Program.RoomInfos);
 
             //새로운 방 생성
@@ -75,18 +105,6 @@ namespace DummyClient
                     }
                 });
             }
-        }
-        public override void OnDisconnected(EndPoint endPoint)
-        {
-            Util.AddOrPrintDisplayMessage("[Session] Server Disconnected....");
-        }
-
-        public override void OnRecvedPacket(ArraySegment<byte> buffer)
-        {
-            PacketManager.Instance.OnRecvPacket(this, buffer);
-        }
-        public override void OnSended(int numOfByte)
-        {
         }
     }
 }
