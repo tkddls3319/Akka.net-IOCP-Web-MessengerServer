@@ -18,9 +18,9 @@ namespace Akka.LogServer
     {
         public ChatLogWriteActor()
         {
-            Receive<WriteMessage<SL_ChatWriteLog>>(message =>
+            Receive<WriteMessageCommand<SL_ChatWriteLogCommand>>(message =>
             {
-                SL_ChatWriteLog writeLog = message.Message;
+                SL_ChatWriteLogCommand writeLog = message.Message;
 
                 var logger = SeriLogManager.Get($"Room{writeLog.Chat.RoomId}");
                 logger?.Information($"{message.Sender} - {writeLog.Chat}");

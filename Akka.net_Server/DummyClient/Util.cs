@@ -11,16 +11,23 @@ namespace DummyClient
     {
         static List<(string sender, string message, string time)> _chatLogs = new List<(string, string, string)>();
 
-        public static int RoomChoice(List<RoomInfo> roomInfos)
+        public static int? RoomChoice(List<RoomInfo> roomInfos)
         {
-            List<string> menuOptions = roomInfos.Select(s => s.RoomId.ToString()).ToList();
-            //menuOptions.Insert(0, "방 만들기.(기능 아직 구현 X)");
+            // 1. 메뉴 옵션을 생성 (방 만들기, 나가기 추가)
+            List<string> menuOptions = new List<string>
+                {
+                    "방 만들기",
+                    "나가기"
+                };
+
+            // 기존 채팅방 목록 추가
+            menuOptions.AddRange(roomInfos.Select(s => $"{s.RoomId}번 방 ( {s.CurrentCount}/{s.MaxCount} )"));
 
             int selectedIndex = 0;
             while (true)
             {
                 Console.Clear();
-                Util.DrawBox("=== 채팅방을 골라주세요. ===", roomInfos, selectedIndex);
+                Util.DrawBox("=== 채팅방을 골라주세요. ===", menuOptions, selectedIndex);
 
                 ConsoleKey key = Console.ReadKey().Key;
 
@@ -35,21 +42,21 @@ namespace DummyClient
                     case ConsoleKey.Enter:
                         Console.Clear();
                         Console.WriteLine($"선택된 메뉴: {menuOptions[selectedIndex]}");
-                        if (selectedIndex == 0)
+
+                        if (selectedIndex == 0) // 방 만들기
                         {
-                            return roomInfos[selectedIndex].RoomId;
-                            // return 0;
+                            return null; // -1을 반환하여 방 만들기 동작을 구분 가능
                         }
-                        //TODO:
-                        //else if (selectedIndex == 2)
-                        //{
-                        //    Console.WriteLine("프로그램을 종료합니다.");
-                        //    Environment.Exit(0);
-                        //    return 2;
-                        //}
+                        else if (selectedIndex == 1) // 나가기
+                        {
+                            Console.WriteLine("프로그램을 종료합니다.");
+                            Environment.Exit(0); // 프로그램 종료
+                            break;
+                        }
                         else
                         {
-                            return roomInfos[selectedIndex].RoomId;
+                            // 채팅방 선택
+                            return roomInfos[selectedIndex - 2].RoomId; // 앞의 2개(방 만들기, 나가기)를 제외한 index
                         }
                 }
             }
@@ -130,53 +137,7 @@ namespace DummyClient
             lines.Add(text); // 마지막 줄 추가
             return lines;
         }
-        public static void DrawBox(string title, string[] options, int selectedIndex)
-        {
-            int width = Console.WindowWidth;
-            int boxWidth = 40;
-            int boxHeight = options.Length + 4;
-
-            int left = (width - boxWidth) / 2;
-            int top = 3;
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            for (int i = 0; i < boxHeight; i++)
-            {
-                Console.SetCursorPosition(left, top + i);
-                if (i == 0 || i == boxHeight - 1)
-                {
-                    Console.WriteLine(new string('-', boxWidth));
-                }
-                else
-                {
-                    Console.Write('|');
-                    Console.SetCursorPosition(left + boxWidth - 1, top + i);
-                    Console.Write('|');
-                }
-            }
-
-            Console.SetCursorPosition(left + (boxWidth - title.Length) / 2, top);
-            Console.Write(title);
-
-            Console.ResetColor();
-
-            for (int i = 0; i < options.Length; i++)
-            {
-                Console.SetCursorPosition(left + 3, top + 2 + i);
-                if (i == selectedIndex)
-                {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("> ");
-                }
-                else
-                {
-                    Console.Write("  ");
-                }
-                Console.Write(options[i]);
-                Console.ResetColor();
-            }
-        }
-        public static void DrawBox(string title, List<RoomInfo> options, int selectedIndex)
+        public static void DrawBox(string title, List<string> options, int selectedIndex)
         {
             int width = Console.WindowWidth;
             int boxWidth = 40;
@@ -203,7 +164,6 @@ namespace DummyClient
 
             Console.SetCursorPosition(left + (boxWidth - title.Length) / 2, top);
             Console.Write(title);
-
             Console.ResetColor();
 
             for (int i = 0; i < options.Count; i++)
@@ -218,7 +178,7 @@ namespace DummyClient
                 {
                     Console.Write("  ");
                 }
-                Console.Write($"{options[i].RoomId}번 방 ( {options[i].CurrentCount}/{options[i].MaxCount} )");
+                Console.Write(options[i]);
                 Console.ResetColor();
             }
         }

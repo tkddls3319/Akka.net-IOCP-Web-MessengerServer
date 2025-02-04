@@ -13,17 +13,8 @@ namespace Akka.AccountServer.Actor
     public class AccountActor : ReceiveActor
     {
         #region Message
-        public class AccountMessage<T>
-        {
-            public AppDbContext Context { get; }
-            public T Message { get; }
+        public record AccountCommand<T>(AppDbContext Context, T Message);
 
-            public AccountMessage(AppDbContext context, T message)
-            {
-                Context = context;
-                this.Message = message;
-            }
-        }
         #endregion
 
         ActorSystem _actorSystem;
@@ -32,7 +23,7 @@ namespace Akka.AccountServer.Actor
             _actorSystem = actorSystem;
 
             //회원가입
-            Receive<AccountMessage<CreateAccountPacketReq>>((message) =>
+            Receive<AccountCommand<CreateAccountPacketReq>>((message) =>
             {
                 AppDbContext context = message.Context;
                 CreateAccountPacketReq req = message.Message;
@@ -64,13 +55,13 @@ namespace Akka.AccountServer.Actor
             });
 
             //로그인
-            Receive<AccountMessage<LoginAccountPacketReq>>(async (message) =>
+            Receive<AccountCommand<LoginAccountPacketReq>>(async (message) =>
             {
                 var task = HandleLogin(message);
                 task.PipeTo(Sender, Self);
             });
         }
-        private async Task<LoginAccountPacketRes> HandleLogin(AccountMessage<LoginAccountPacketReq> message)
+        private async Task<LoginAccountPacketRes> HandleLogin(AccountCommand<LoginAccountPacketReq> message)
         {
             var context = message.Context;
             var req = message.Message;
@@ -93,9 +84,9 @@ namespace Akka.AccountServer.Actor
 
                     var clusterLocator = new ClusterActorLocator(_actorSystem);
 
-                    var response = await clusterLocator.AskClusterActor<SA_GetAllRoomInfo>(
+                    var response = await clusterLocator.AskClusterActor<SA_GetAllRoomInfoResponse>(
                         $"{TcpServerActorType.RoomManagerActor}",
-                        new AS_GetAllRoomInfo(),
+                        new AS_GetAllRoomInfoQuery(),
                         TimeSpan.FromSeconds(5)
                     );
 

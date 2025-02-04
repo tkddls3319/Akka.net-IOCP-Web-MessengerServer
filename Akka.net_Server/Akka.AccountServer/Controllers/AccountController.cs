@@ -39,7 +39,7 @@ namespace Akka.AccountServer.Controllers
         public Task<CreateAccountPacketRes> CreateAccount([FromBody] CreateAccountPacketReq req)
         {
             _logger.LogInformation("[CreateAccount]");
-            return _bridge.Ask<CreateAccountPacketRes>(ActtorType.AccountActor, new AccountMessage<CreateAccountPacketReq>(_context, req));
+            return _bridge.Ask<CreateAccountPacketRes>(ActtorType.AccountActor, new AccountCommand<CreateAccountPacketReq>(_context, req));
         }
 
         [HttpPost]
@@ -47,7 +47,7 @@ namespace Akka.AccountServer.Controllers
         public Task<LoginAccountPacketRes> LoginAccount([FromBody] LoginAccountPacketReq req)
         {
             _logger.LogInformation("[LoginAccount]");
-            return _bridge.Ask<LoginAccountPacketRes>(ActtorType.AccountActor, new AccountMessage<LoginAccountPacketReq>(_context, req));
+            return _bridge.Ask<LoginAccountPacketRes>(ActtorType.AccountActor, new AccountCommand<LoginAccountPacketReq>(_context, req));
         }
 
         int count = 100;

@@ -21,23 +21,10 @@ namespace Akka.Server
     public class RoomActor : ReceiveActor
     {
         #region Message
-        public class GetClientCountMessage { }
-        public class EnterClientMessage
-        {
-            public ClientSession Session { get; }
-            public EnterClientMessage(ClientSession session)
-            {
-                Session = session;
-            }
-        }
-        public class LeaveClientMessage
-        {
-            public int ClientId { get; }
-            public LeaveClientMessage(int clientId)
-            {
-                ClientId = clientId;
-            }
-        }
+        public record GetClientCountQuery();
+        public record EnterClientCommand(ClientSession Session);
+        public record LeaveClientCommand(int ClientId);
+
         #endregion
 
         #region Actor
@@ -55,12 +42,12 @@ namespace Akka.Server
 
             RoomID = roomNumber;
 
-            Receive<EnterClientMessage>(msg => EnterClientHandler(msg));
-            Receive<GetClientCountMessage>( _ => Sender.Tell(_clients.Count));
-            Receive<LeaveClientMessage>(msg => LeaveClientHandler(msg.ClientId));
-            Receive<MessageCustom<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
+            Receive<EnterClientCommand>(msg => EnterClientHandler(msg));
+            Receive<GetClientCountQuery>( _ => Sender.Tell(_clients.Count));
+            Receive<LeaveClientCommand>(msg => LeaveClientHandler(msg.ClientId));
+            Receive<MessageCustomCommand<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
         }
-        private void EnterClientHandler(EnterClientMessage client)
+        private void EnterClientHandler(EnterClientCommand client)
         {
             if (client.Session == null)
                 return;
@@ -116,7 +103,7 @@ namespace Akka.Server
             //이전 모든 채팅을 읽어 새로온 사용자에게 전달
             {
                 GlobalActors.ClusterManager.Ask<IActorRef>(
-                        new GetClusterActor(Define.LogServerActorType.LogManagerActor),
+                        new GetClusterActorQuery(Define.LogServerActorType.LogManagerActor),
                         TimeSpan.FromSeconds(3)
                     ).ContinueWith(task =>
                     {
@@ -128,8 +115,8 @@ namespace Akka.Server
 
                         var actorRef = task.Result;
 
-                        actorRef.Ask<LS_ChatReadLog>(
-                            new SL_ChatReadLog() { RoomId = this.RoomID },
+                        actorRef.Ask<LS_ChatReadLogResponse>(
+                            new SL_ChatReadLogQuery() { RoomId = this.RoomID },
                             TimeSpan.FromSeconds(3)
                         ).ContinueWith(responseTask =>
                         {
@@ -187,7 +174,7 @@ namespace Akka.Server
                 return;
 
             client.Room = null;
-            _sessionManager.Tell(new SessionManagerActor.RemoveSessionMessage(client));
+            _sessionManager.Tell(new SessionManagerActor.RemoveSessionCommand(client));
 
             {
                 S_LeaveServer leavePacket = new S_LeaveServer();
@@ -204,7 +191,7 @@ namespace Akka.Server
             }
 
             if (_clients.Count == 0)
-                _roomManger.Tell(new RoomManagerActor.RemoveRoomMessage(RoomID));
+                _roomManger.Tell(new RoomManagerActor.RemoveRoomCommand(RoomID));
 
             Log.Logger.Information($"[Room{RoomID}] Leave Client ID : {clientId}");
         }
@@ -229,7 +216,7 @@ namespace Akka.Server
 
             //LogServer클러스터에 Log 전달
             {
-                SL_ChatWriteLog logPacket = new()
+                SL_ChatWriteLogCommand logPacket = new()
                 {
                     Chat = new ChatObject()
                     {
@@ -241,7 +228,7 @@ namespace Akka.Server
                     }
                 };
 
-                GlobalActors.ClusterManager.Tell(new SendClusterActor(Define.LogServerActorType.LogManagerActor, logPacket));
+                GlobalActors.ClusterManager.Tell(new SendClusterActorCommand(Define.LogServerActorType.LogManagerActor, logPacket));
             }
 
             BroadcastExceptSelf(id, severChatPacket);

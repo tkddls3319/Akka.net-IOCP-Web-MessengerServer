@@ -37,14 +37,14 @@ namespace Akka.LogServer
                 .WithRouter(new RoundRobinPool(5)), Enum.GetName(ActtorType.ChatLogReaderActor));
             #endregion
 
-            Receive<SL_ChatWriteLog>(message =>
+            Receive<SL_ChatWriteLogCommand>(message =>
             {
-                _chatWriteLogRouter.Tell(new WriteMessage<SL_ChatWriteLog>(Sender, message));
+                _chatWriteLogRouter.Tell(new WriteMessageCommand<SL_ChatWriteLogCommand>(Sender, message));
             });
 
-            Receive<SL_ChatReadLog>(message =>
+            Receive<SL_ChatReadLogQuery>(message =>
             {
-                _chatReadLogRouter.Tell(new WriteMessage<SL_ChatReadLog>(Sender, message));
+                _chatReadLogRouter.Tell(new WriteMessageCommand<SL_ChatReadLogQuery>(Sender, message));
             });
         }
     }

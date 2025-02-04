@@ -93,14 +93,14 @@ namespace Akka.Server
         {
             foreach (var actorType in Enum.GetValues(typeof(T)).Cast<T>())
             {
-                GlobalActors.ClusterManager.Tell(new InitClusterActor(actorAddr, actorType));
+                GlobalActors.ClusterManager.Tell(new InitClusterActorCommand(actorAddr, actorType));
             }
         }
        void RemoveActors<T>() where T : Enum
         {
             foreach (var actorType in Enum.GetValues(typeof(T)).Cast<T>())
             {
-                GlobalActors.ClusterManager.Tell(new RemoveClusterActor(actorType));
+                GlobalActors.ClusterManager.Tell(new RemoveClusterActorQuery(actorType));
             }
         }
 

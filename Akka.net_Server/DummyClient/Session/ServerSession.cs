@@ -51,16 +51,30 @@ namespace DummyClient
             Util.AddOrPrintDisplayMessage("==========Server Connected==========");
             Util.AddOrPrintDisplayMessage($"Server EndPoint - {endPoint}");
 
-           int roomId = Util.RoomChoice(Program.RoomInfos);
+            int? roomId = Util.RoomChoice(Program.RoomInfos);
 
-            Send(new C_EnterServer()
+            //새로운 방 생성
+            if (roomId == null)
             {
-                Client = new ClientInfo()
+                Send(new C_NewRoomAndEnterServer()
                 {
-                    AccountName = Program.AccountName,
-                    RoomID = roomId,
-                }
-            });
+                    Client = new ClientInfo()
+                    {
+                        AccountName = Program.AccountName,
+                    }
+                });
+            }
+            else
+            {
+                Send(new C_EnterServer()
+                {
+                    Client = new ClientInfo()
+                    {
+                        AccountName = Program.AccountName,
+                        RoomID = roomId.Value,
+                    }
+                });
+            }
         }
         public override void OnDisconnected(EndPoint endPoint)
         {

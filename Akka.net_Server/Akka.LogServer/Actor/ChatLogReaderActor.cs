@@ -17,11 +17,11 @@ namespace Akka.LogServer
 
         public ChatLogReaderActor()
         {
-            Receive<WriteMessage<SL_ChatReadLog>>(message =>
+            Receive<WriteMessageCommand<SL_ChatReadLogQuery>>(message =>
             {
                 ChatLogLoader log = DataManager.LoadJson<ChatLogLoader>(Util.RoomNameing(message.Message.RoomId));
 
-                LS_ChatReadLog sendLog = new LS_ChatReadLog();
+                LS_ChatReadLogResponse sendLog = new LS_ChatReadLogResponse();
 
                 if (log != null)
                 {

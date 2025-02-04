@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
 using ServerCore;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Sockets;
 
 public class PacketHandler
 {
@@ -31,6 +33,17 @@ public class PacketHandler
         if (room == null)
             return;
 
-        room.Tell(new MessageCustom<ClientSession, C_Chat>(clientSession, c_chat));
+        room.Tell(new MessageCustomCommand<ClientSession, C_Chat>(clientSession, c_chat));
+    }
+
+    public static void C_NewRoomAndEnterServerHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        C_NewRoomAndEnterServer newroom = (C_NewRoomAndEnterServer)packet;
+
+        if (clientSession == null)
+            return;
+
+        clientSession.NewRoomHandler(newroom);
     }
 }

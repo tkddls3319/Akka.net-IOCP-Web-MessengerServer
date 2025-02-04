@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 namespace Akka.LogServer
 {
     #region Message
-    public class WriteMessage<T>
+    public class WriteMessageCommand<T>
     {
         public IActorRef Sender { get; }
         public T Message { get; }
 
-        public WriteMessage(IActorRef sender, T message)
+        public WriteMessageCommand(IActorRef sender, T message)
         {
             Sender = sender;
             Message = message;

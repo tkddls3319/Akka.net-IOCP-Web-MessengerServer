@@ -10,15 +10,15 @@ option csharp_namespace = "Google.Protobuf.ClusterProtocol";
 //SA = Server To AccountServer
 //AS = AccountServer To Server 
 
-message SL_ChatWriteLog{
+message SL_ChatWriteLogCommand{
 	ChatObject Chat =1;
 }
 
-message SL_ChatReadLog
+message SL_ChatReadLogQuery
 {
 	int32 roomId = 1;
 }
-message LS_ChatReadLog
+message LS_ChatReadLogResponse
 {
 	repeated ChatObject chats=1;
 }
@@ -32,10 +32,10 @@ message ChatObject
 	string accoutnName =5;
 }
 
-message AS_GetAllRoomInfo
+message AS_GetAllRoomInfoQuery
 {
 }
-message SA_GetAllRoomInfo
+message SA_GetAllRoomInfoResponse
 {
 	repeated RoomInfo roomInfos =1;
 }

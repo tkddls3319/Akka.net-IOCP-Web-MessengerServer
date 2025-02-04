@@ -17,17 +17,17 @@ namespace Akka.ClusterCore
 
         public ClusterManagerActor()
         {
-            Receive<InitClusterActor>(msg => InitClusterActorHandle(msg));
-            Receive<ClusterActorResolved>(msg => RegisterClusterActor(msg));
-            Receive<GetClusterActor>(msg => Sender.Tell(GetClusterActorHandle(msg)));
-            Receive<RemoveClusterActor>(msg => Sender.Tell(RemoveClusterActorHandle(msg)));
-            Receive<SendClusterActor>(msg => SendClusterActorHandle(msg));
+            Receive<InitClusterActorCommand>(msg => InitClusterActorHandle(msg));
+            Receive<ClusterActorResolvedCommand>(msg => RegisterClusterActor(msg));
+            Receive<GetClusterActorQuery>(msg => Sender.Tell(GetClusterActorHandle(msg)));
+            Receive<RemoveClusterActorQuery>(msg => Sender.Tell(RemoveClusterActorHandle(msg)));
+            Receive<SendClusterActorCommand>(msg => SendClusterActorHandle(msg));
         }
 
         /// <summary>
         /// `ActorSelection`을 사용하여 액터를 찾고 PipeTo(Self)로 전달
         /// </summary>
-        private void InitClusterActorHandle(InitClusterActor msg)
+        private void InitClusterActorHandle(InitClusterActorCommand msg)
         {
             if (_clusterActors.ContainsKey(msg.ActorType))
                 return;
@@ -37,15 +37,15 @@ namespace Akka.ClusterCore
             actorSelector.ResolveOne(TimeSpan.FromSeconds(5))
                 .PipeTo(
                     Self,
-                    success: actorRef => new ClusterActorResolved(msg.ActorType, actorRef),
-                    failure: ex => new ClusterActorResolved(msg.ActorType, ActorRefs.Nobody) // 실패 시 처리
+                    success: actorRef => new ClusterActorResolvedCommand(msg.ActorType, actorRef),
+                    failure: ex => new ClusterActorResolvedCommand(msg.ActorType, ActorRefs.Nobody) // 실패 시 처리
                 );
         }
 
         /// <summary>
         /// `PipeTo(Self)`에서 받은 메시지를 처리하여 _clusterActors에 저장
         /// </summary>
-        private void RegisterClusterActor(ClusterActorResolved msg)
+        private void RegisterClusterActor(ClusterActorResolvedCommand msg)
         {
             if (msg.ActorRef == ActorRefs.Nobody)
             {
@@ -59,18 +59,18 @@ namespace Akka.ClusterCore
                 _log.Error($"[ClusterManagerActor] Cluster actor '{msg.ActorType}' initialization failed.");
         }
 
-        private IActorRef GetClusterActorHandle(GetClusterActor msg)
+        private IActorRef GetClusterActorHandle(GetClusterActorQuery msg)
         {
             return _clusterActors.TryGetValue(msg.ActorType, out var actorRef) ? actorRef : ActorRefs.Nobody;
         }
 
-        private void SendClusterActorHandle(SendClusterActor msg)
+        private void SendClusterActorHandle(SendClusterActorCommand msg)
         {
             var actor = _clusterActors.TryGetValue(msg.ActorType, out var actorRef) ? actorRef : ActorRefs.Nobody;
             actor.Tell(msg.Message);
         }
 
-        private bool RemoveClusterActorHandle(RemoveClusterActor msg)
+        private bool RemoveClusterActorHandle(RemoveClusterActorQuery msg)
         {
             return _clusterActors.TryRemove(msg.ActorType, out _);
         }
@@ -79,15 +79,15 @@ namespace Akka.ClusterCore
     }
 
     #region Messages
-    public record InitClusterActor(Address Address, Enum ActorType);
-    public record GetClusterActor(Enum ActorType);
-    public record RemoveClusterActor(Enum ActorType);
-    public record SendClusterActor(Enum ActorType, object Message);
+    public record InitClusterActorCommand(Address Address, Enum ActorType);
+    public record GetClusterActorQuery(Enum ActorType);
+    public record RemoveClusterActorQuery(Enum ActorType);
+    public record SendClusterActorCommand(Enum ActorType, object Message);
 
     /// <summary>
     /// `PipeTo(Self)`에서 사용될 메시지 (ActorSelection 결과 전달)
     /// </summary>
-    public record ClusterActorResolved(Enum ActorType, IActorRef ActorRef);
+    public record ClusterActorResolvedCommand(Enum ActorType, IActorRef ActorRef);
     #endregion
 
     #region 시행착오

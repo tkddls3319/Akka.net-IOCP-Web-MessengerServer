@@ -25,27 +25,28 @@ namespace Google.Protobuf.ClusterProtocol {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChVDbHVzdGVyUHJvdG9jb2wucHJvdG8SD0NsdXN0ZXJQcm90b2NvbBofZ29v",
-            "Z2xlL3Byb3RvYnVmL3RpbWVzdGFtcC5wcm90byI8Cg9TTF9DaGF0V3JpdGVM",
-            "b2cSKQoEQ2hhdBgBIAEoCzIbLkNsdXN0ZXJQcm90b2NvbC5DaGF0T2JqZWN0",
-            "IiAKDlNMX0NoYXRSZWFkTG9nEg4KBnJvb21JZBgBIAEoBSI8Cg5MU19DaGF0",
-            "UmVhZExvZxIqCgVjaGF0cxgBIAMoCzIbLkNsdXN0ZXJQcm90b2NvbC5DaGF0",
-            "T2JqZWN0InsKCkNoYXRPYmplY3QSEAoIb2JqZWN0SWQYASABKAUSDgoGcm9v",
-            "bUlkGAIgASgFEgwKBGNoYXQYAyABKAkSKAoEdGltZRgEIAEoCzIaLmdvb2ds",
-            "ZS5wcm90b2J1Zi5UaW1lc3RhbXASEwoLYWNjb3V0bk5hbWUYBSABKAkiEwoR",
-            "QVNfR2V0QWxsUm9vbUluZm8iQQoRU0FfR2V0QWxsUm9vbUluZm8SLAoJcm9v",
-            "bUluZm9zGAEgAygLMhkuQ2x1c3RlclByb3RvY29sLlJvb21JbmZvIkIKCFJv",
-            "b21JbmZvEg4KBnJvb21JRBgBIAEoBRIQCghtYXhDb3VudBgCIAEoBRIUCgxj",
-            "dXJyZW50Q291bnQYAyABKAVCIqoCH0dvb2dsZS5Qcm90b2J1Zi5DbHVzdGVy",
-            "UHJvdG9jb2xiBnByb3RvMw=="));
+            "Z2xlL3Byb3RvYnVmL3RpbWVzdGFtcC5wcm90byJDChZTTF9DaGF0V3JpdGVM",
+            "b2dDb21tYW5kEikKBENoYXQYASABKAsyGy5DbHVzdGVyUHJvdG9jb2wuQ2hh",
+            "dE9iamVjdCIlChNTTF9DaGF0UmVhZExvZ1F1ZXJ5Eg4KBnJvb21JZBgBIAEo",
+            "BSJEChZMU19DaGF0UmVhZExvZ1Jlc3BvbnNlEioKBWNoYXRzGAEgAygLMhsu",
+            "Q2x1c3RlclByb3RvY29sLkNoYXRPYmplY3QiewoKQ2hhdE9iamVjdBIQCghv",
+            "YmplY3RJZBgBIAEoBRIOCgZyb29tSWQYAiABKAUSDAoEY2hhdBgDIAEoCRIo",
+            "CgR0aW1lGAQgASgLMhouZ29vZ2xlLnByb3RvYnVmLlRpbWVzdGFtcBITCgth",
+            "Y2NvdXRuTmFtZRgFIAEoCSIYChZBU19HZXRBbGxSb29tSW5mb1F1ZXJ5IkkK",
+            "GVNBX0dldEFsbFJvb21JbmZvUmVzcG9uc2USLAoJcm9vbUluZm9zGAEgAygL",
+            "MhkuQ2x1c3RlclByb3RvY29sLlJvb21JbmZvIkIKCFJvb21JbmZvEg4KBnJv",
+            "b21JRBgBIAEoBRIQCghtYXhDb3VudBgCIAEoBRIUCgxjdXJyZW50Q291bnQY",
+            "AyABKAVCIqoCH0dvb2dsZS5Qcm90b2J1Zi5DbHVzdGVyUHJvdG9jb2xiBnBy",
+            "b3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SL_ChatWriteLog), global::Google.Protobuf.ClusterProtocol.SL_ChatWriteLog.Parser, new[]{ "Chat" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SL_ChatReadLog), global::Google.Protobuf.ClusterProtocol.SL_ChatReadLog.Parser, new[]{ "RoomId" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.LS_ChatReadLog), global::Google.Protobuf.ClusterProtocol.LS_ChatReadLog.Parser, new[]{ "Chats" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SL_ChatWriteLogCommand), global::Google.Protobuf.ClusterProtocol.SL_ChatWriteLogCommand.Parser, new[]{ "Chat" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SL_ChatReadLogQuery), global::Google.Protobuf.ClusterProtocol.SL_ChatReadLogQuery.Parser, new[]{ "RoomId" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.LS_ChatReadLogResponse), global::Google.Protobuf.ClusterProtocol.LS_ChatReadLogResponse.Parser, new[]{ "Chats" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.ChatObject), global::Google.Protobuf.ClusterProtocol.ChatObject.Parser, new[]{ "ObjectId", "RoomId", "Chat", "Time", "AccoutnName" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.AS_GetAllRoomInfo), global::Google.Protobuf.ClusterProtocol.AS_GetAllRoomInfo.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfo), global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfo.Parser, new[]{ "RoomInfos" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.AS_GetAllRoomInfoQuery), global::Google.Protobuf.ClusterProtocol.AS_GetAllRoomInfoQuery.Parser, null, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfoResponse), global::Google.Protobuf.ClusterProtocol.SA_GetAllRoomInfoResponse.Parser, new[]{ "RoomInfos" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.ClusterProtocol.RoomInfo), global::Google.Protobuf.ClusterProtocol.RoomInfo.Parser, new[]{ "RoomID", "MaxCount", "CurrentCount" }, null, null, null, null)
           }));
     }
@@ -53,11 +54,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
   }
   #region Messages
-  public sealed partial class SL_ChatWriteLog : pb::IMessage<SL_ChatWriteLog> {
-    private static readonly pb::MessageParser<SL_ChatWriteLog> _parser = new pb::MessageParser<SL_ChatWriteLog>(() => new SL_ChatWriteLog());
+  public sealed partial class SL_ChatWriteLogCommand : pb::IMessage<SL_ChatWriteLogCommand> {
+    private static readonly pb::MessageParser<SL_ChatWriteLogCommand> _parser = new pb::MessageParser<SL_ChatWriteLogCommand>(() => new SL_ChatWriteLogCommand());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<SL_ChatWriteLog> Parser { get { return _parser; } }
+    public static pb::MessageParser<SL_ChatWriteLogCommand> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -70,21 +71,21 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SL_ChatWriteLog() {
+    public SL_ChatWriteLogCommand() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SL_ChatWriteLog(SL_ChatWriteLog other) : this() {
+    public SL_ChatWriteLogCommand(SL_ChatWriteLogCommand other) : this() {
       chat_ = other.chat_ != null ? other.chat_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SL_ChatWriteLog Clone() {
-      return new SL_ChatWriteLog(this);
+    public SL_ChatWriteLogCommand Clone() {
+      return new SL_ChatWriteLogCommand(this);
     }
 
     /// <summary>Field number for the "Chat" field.</summary>
@@ -100,11 +101,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as SL_ChatWriteLog);
+      return Equals(other as SL_ChatWriteLogCommand);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(SL_ChatWriteLog other) {
+    public bool Equals(SL_ChatWriteLogCommand other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -154,7 +155,7 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(SL_ChatWriteLog other) {
+    public void MergeFrom(SL_ChatWriteLogCommand other) {
       if (other == null) {
         return;
       }
@@ -188,11 +189,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
   }
 
-  public sealed partial class SL_ChatReadLog : pb::IMessage<SL_ChatReadLog> {
-    private static readonly pb::MessageParser<SL_ChatReadLog> _parser = new pb::MessageParser<SL_ChatReadLog>(() => new SL_ChatReadLog());
+  public sealed partial class SL_ChatReadLogQuery : pb::IMessage<SL_ChatReadLogQuery> {
+    private static readonly pb::MessageParser<SL_ChatReadLogQuery> _parser = new pb::MessageParser<SL_ChatReadLogQuery>(() => new SL_ChatReadLogQuery());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<SL_ChatReadLog> Parser { get { return _parser; } }
+    public static pb::MessageParser<SL_ChatReadLogQuery> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -205,21 +206,21 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SL_ChatReadLog() {
+    public SL_ChatReadLogQuery() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SL_ChatReadLog(SL_ChatReadLog other) : this() {
+    public SL_ChatReadLogQuery(SL_ChatReadLogQuery other) : this() {
       roomId_ = other.roomId_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SL_ChatReadLog Clone() {
-      return new SL_ChatReadLog(this);
+    public SL_ChatReadLogQuery Clone() {
+      return new SL_ChatReadLogQuery(this);
     }
 
     /// <summary>Field number for the "roomId" field.</summary>
@@ -235,11 +236,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as SL_ChatReadLog);
+      return Equals(other as SL_ChatReadLogQuery);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(SL_ChatReadLog other) {
+    public bool Equals(SL_ChatReadLogQuery other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -289,7 +290,7 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(SL_ChatReadLog other) {
+    public void MergeFrom(SL_ChatReadLogQuery other) {
       if (other == null) {
         return;
       }
@@ -317,11 +318,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
   }
 
-  public sealed partial class LS_ChatReadLog : pb::IMessage<LS_ChatReadLog> {
-    private static readonly pb::MessageParser<LS_ChatReadLog> _parser = new pb::MessageParser<LS_ChatReadLog>(() => new LS_ChatReadLog());
+  public sealed partial class LS_ChatReadLogResponse : pb::IMessage<LS_ChatReadLogResponse> {
+    private static readonly pb::MessageParser<LS_ChatReadLogResponse> _parser = new pb::MessageParser<LS_ChatReadLogResponse>(() => new LS_ChatReadLogResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<LS_ChatReadLog> Parser { get { return _parser; } }
+    public static pb::MessageParser<LS_ChatReadLogResponse> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -334,21 +335,21 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public LS_ChatReadLog() {
+    public LS_ChatReadLogResponse() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public LS_ChatReadLog(LS_ChatReadLog other) : this() {
+    public LS_ChatReadLogResponse(LS_ChatReadLogResponse other) : this() {
       chats_ = other.chats_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public LS_ChatReadLog Clone() {
-      return new LS_ChatReadLog(this);
+    public LS_ChatReadLogResponse Clone() {
+      return new LS_ChatReadLogResponse(this);
     }
 
     /// <summary>Field number for the "chats" field.</summary>
@@ -363,11 +364,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as LS_ChatReadLog);
+      return Equals(other as LS_ChatReadLogResponse);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(LS_ChatReadLog other) {
+    public bool Equals(LS_ChatReadLogResponse other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -412,7 +413,7 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(LS_ChatReadLog other) {
+    public void MergeFrom(LS_ChatReadLogResponse other) {
       if (other == null) {
         return;
       }
@@ -685,11 +686,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
   }
 
-  public sealed partial class AS_GetAllRoomInfo : pb::IMessage<AS_GetAllRoomInfo> {
-    private static readonly pb::MessageParser<AS_GetAllRoomInfo> _parser = new pb::MessageParser<AS_GetAllRoomInfo>(() => new AS_GetAllRoomInfo());
+  public sealed partial class AS_GetAllRoomInfoQuery : pb::IMessage<AS_GetAllRoomInfoQuery> {
+    private static readonly pb::MessageParser<AS_GetAllRoomInfoQuery> _parser = new pb::MessageParser<AS_GetAllRoomInfoQuery>(() => new AS_GetAllRoomInfoQuery());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<AS_GetAllRoomInfo> Parser { get { return _parser; } }
+    public static pb::MessageParser<AS_GetAllRoomInfoQuery> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -702,29 +703,29 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public AS_GetAllRoomInfo() {
+    public AS_GetAllRoomInfoQuery() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public AS_GetAllRoomInfo(AS_GetAllRoomInfo other) : this() {
+    public AS_GetAllRoomInfoQuery(AS_GetAllRoomInfoQuery other) : this() {
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public AS_GetAllRoomInfo Clone() {
-      return new AS_GetAllRoomInfo(this);
+    public AS_GetAllRoomInfoQuery Clone() {
+      return new AS_GetAllRoomInfoQuery(this);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as AS_GetAllRoomInfo);
+      return Equals(other as AS_GetAllRoomInfoQuery);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(AS_GetAllRoomInfo other) {
+    public bool Equals(AS_GetAllRoomInfoQuery other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -765,7 +766,7 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(AS_GetAllRoomInfo other) {
+    public void MergeFrom(AS_GetAllRoomInfoQuery other) {
       if (other == null) {
         return;
       }
@@ -786,11 +787,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
   }
 
-  public sealed partial class SA_GetAllRoomInfo : pb::IMessage<SA_GetAllRoomInfo> {
-    private static readonly pb::MessageParser<SA_GetAllRoomInfo> _parser = new pb::MessageParser<SA_GetAllRoomInfo>(() => new SA_GetAllRoomInfo());
+  public sealed partial class SA_GetAllRoomInfoResponse : pb::IMessage<SA_GetAllRoomInfoResponse> {
+    private static readonly pb::MessageParser<SA_GetAllRoomInfoResponse> _parser = new pb::MessageParser<SA_GetAllRoomInfoResponse>(() => new SA_GetAllRoomInfoResponse());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<SA_GetAllRoomInfo> Parser { get { return _parser; } }
+    public static pb::MessageParser<SA_GetAllRoomInfoResponse> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
@@ -803,21 +804,21 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SA_GetAllRoomInfo() {
+    public SA_GetAllRoomInfoResponse() {
       OnConstruction();
     }
 
     partial void OnConstruction();
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SA_GetAllRoomInfo(SA_GetAllRoomInfo other) : this() {
+    public SA_GetAllRoomInfoResponse(SA_GetAllRoomInfoResponse other) : this() {
       roomInfos_ = other.roomInfos_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public SA_GetAllRoomInfo Clone() {
-      return new SA_GetAllRoomInfo(this);
+    public SA_GetAllRoomInfoResponse Clone() {
+      return new SA_GetAllRoomInfoResponse(this);
     }
 
     /// <summary>Field number for the "roomInfos" field.</summary>
@@ -832,11 +833,11 @@ namespace Google.Protobuf.ClusterProtocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
-      return Equals(other as SA_GetAllRoomInfo);
+      return Equals(other as SA_GetAllRoomInfoResponse);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(SA_GetAllRoomInfo other) {
+    public bool Equals(SA_GetAllRoomInfoResponse other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -881,7 +882,7 @@ namespace Google.Protobuf.ClusterProtocol {
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(SA_GetAllRoomInfo other) {
+    public void MergeFrom(SA_GetAllRoomInfoResponse other) {
       if (other == null) {
         return;
       }

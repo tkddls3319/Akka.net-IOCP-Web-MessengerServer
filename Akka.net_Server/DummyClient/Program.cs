@@ -49,7 +49,7 @@ namespace DummyClient
 
         static void ManuChoice()
         {
-            string[] menuOptions = { " Sign Up", " Login", " Exit." };
+            List<string> menuOptions = new List<string>() { " Sign Up", " Login", " Exit." };
             int selectedIndex = 0;
 
             while (!isLoggedIn)
@@ -62,10 +62,10 @@ namespace DummyClient
                 switch (key)
                 {
                     case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex == 0) ? menuOptions.Length - 1 : selectedIndex - 1;
+                        selectedIndex = (selectedIndex == 0) ? menuOptions.Count - 1 : selectedIndex - 1;
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex == menuOptions.Length - 1) ? 0 : selectedIndex + 1;
+                        selectedIndex = (selectedIndex == menuOptions.Count - 1) ? 0 : selectedIndex + 1;
                         break;
                     case ConsoleKey.Enter:
                         Console.Clear();
