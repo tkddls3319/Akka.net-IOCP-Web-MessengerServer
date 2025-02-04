@@ -80,15 +80,7 @@ namespace Akka.Server
         void AddClientHandler(AddClientCommand session)
         {
             int roomId = session.RoomId;
-            //var clientCount = _rooms[roomId].Ask<int>(new RoomActor.GetClientCountQuery()).Result;//동기적
-            //if (clientCount < Define.RoomMaxCount)
-            //{
-            //    _rooms[roomId].Tell(new RoomActor.EnterClientCommand(session.Session)); // 새로 생성한 룸에 클라이언트 추가
-            //}
-            //else
-            //{
-            //   
-            //}
+
             _rooms[roomId].Ask<int>(new RoomActor.GetClientCountQuery(), TimeSpan.FromSeconds(3))
                      .PipeTo(Self, Sender, success: count =>
                      {
