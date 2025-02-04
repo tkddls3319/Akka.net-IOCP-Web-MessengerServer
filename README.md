@@ -20,7 +20,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 채팅 서버를 목표로 하지만 채팅을 일반적인 패킷으로 본다면 해당 서버를 베이스로 다양한 분야에서 사용할 수 있을 것 같음. 
 
-![chat](https://github.com/user-attachments/assets/f3b8ecfc-7cdd-4dc9-8eab-a629436231b2)
+![chat](https://github.com/user-attachments/assets/360c1989-9bbb-423a-9c57-e95a4b07c286)
 
 ---
 ## 프로젝트 목표
