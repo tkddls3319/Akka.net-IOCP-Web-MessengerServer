@@ -118,14 +118,24 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
  - **Entity Framework Mssql**
    - DB를 EF로 개발하여 Web Server에서 사용
-    
----
+   
 
 ### Akka.NET 프로젝트 진행전 만든 설명 블로그
 - [Akka.NET 기본 설명 1](https://usingsystem.tistory.com/545)
 - [Akka.NET 기본 설명 2](https://usingsystem.tistory.com/547)
 - [Akka.NET 기본 설명 3](https://usingsystem.tistory.com/548)
 - [Akka.NET 기본 설명 4](https://usingsystem.tistory.com/549)
+
+---
+## 사용한 Message 네이밍 컨벤션
+
+| 메시지 유형 | 예제 | 설명 |
+|------------|--------------------|------------------------------|
+| **Command (명령)** | `CreateRoomCommand`, `AddClientCommand` | 액터에게 특정 동작을 요청하는 메시지 |
+| **Event (이벤트)** | `RoomCreatedEvent`, `ClientAddedEvent` | 상태 변경을 다른 액터에게 알리는 메시지 |
+| **Query (쿼리)** | `GetRoomInfoQuery`, `GetClientListQuery` | 데이터를 조회하는 요청 메시지 |
+| **Response (응답)** | `RoomInfoResponse`, `ClientListResponse` | 쿼리 요청에 대한 응답 메시지 |
+
 
 ---
 
