@@ -2,13 +2,15 @@ using Akka.AccountServer.AkkaDefine;
 using Akka.AccountServer.DB;
 using Akka.Actor;
 
+using Google.Protobuf.WellKnownTypes;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace Akka.AccountServer
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -16,17 +18,17 @@ namespace Akka.AccountServer
 
             builder.Services.AddControllers();
 
-            #region ·ÎÄÃÈ¯°æ ½ÇÇà ¶§¹®¿¡ 
+            #region ï¿½ï¿½ï¿½ï¿½È¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy = null; //Á¦ÀÌ½¼À¸·Î º¸³¾ ‹š ´ë¼Ò¹®ÀÚ À¯Áö (PascalCase)
+                options.JsonSerializerOptions.PropertyNamingPolicy = null; //ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ò¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (PascalCase)
             });
 
             builder.WebHost.UseKestrel(options =>
             {
                 options.ListenAnyIP(7022, listenOptions =>
                 {
-                    listenOptions.UseHttps();  // ·ÎÄÃ¿¡¼­µµ HTTPS Çã¿ë
+                    listenOptions.UseHttps();  // ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ HTTPS ï¿½ï¿½ï¿½
                 });
 
                 options.ListenLocalhost(5181, listenOptions =>
@@ -36,7 +38,7 @@ namespace Akka.AccountServer
             });
             #endregion
 
-            #region db
+            #region db ì„¤ì •
             builder.Services.AddDbContext<AppDbContext>(options =>
                  options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             #endregion
@@ -46,15 +48,18 @@ namespace Akka.AccountServer
             builder.Services.AddSwaggerGen();
 
             #region Akka
-            // DIµî·Ï  Controller.csÆÄÀÏ »ı¼ºÀÚ·Î ¹ŞÀ» ¼ö ÀÖÀ½
+            // DIï¿½ï¿½ï¿½  Controller.csï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             builder.Services.AddSingleton<IActorBridge, AkkaService>();
 
-            // AkkaService ½ÇÇà (Å¬·¯½ºÅÍ ±¸¼º Æ÷ÇÔ)
+            // AkkaService ï¿½ï¿½ï¿½ï¿½ (Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
             builder.Services.AddHostedService<AkkaService>(sp => (AkkaService)sp.GetRequiredService<IActorBridge>());
             #endregion
 
             var app = builder.Build();
 
+            // ì• í”Œë¦¬ì¼€ì´ì…˜ì´ ì‹œì‘ë  ë•Œ DB ì—°ê²°ì„ ë¯¸ë¦¬ ì´ˆê¸°í™”í•˜ëŠ” ì‘ì—…
+            await InitializeDatabaseConnectionAsync(app.Services);
+        
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -70,6 +75,28 @@ namespace Akka.AccountServer
             app.MapControllers();
 
             app.Run();
+        }
+        // DB ì—°ê²° ë¯¸ë¦¬ ì—´ê¸°
+        static async Task InitializeDatabaseConnectionAsync(IServiceProvider services)
+        {
+            // ì„œë¹„ìŠ¤ ìŠ¤ì½”í”„ë¥¼ ë§Œë“¤ì–´ DbContextë¥¼ ìƒì„±.
+            using (var scope = services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+                // DB ì—°ê²°ì„ ë¯¸ë¦¬ ì—´ì–´ë‘ê¸°
+                try
+                {
+                    await dbContext.Database.OpenConnectionAsync();
+                    //await dbContext.Database.MigrateAsync();  // ë§ˆì´ê·¸ë ˆì´ì…˜ì„ ìë™ìœ¼ë¡œ ì‹¤í–‰
+
+                    Console.WriteLine("DB ì—°ê²° ì´ˆê¸°í™” ì™„ë£Œ");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"DB ì—°ê²° ì´ˆê¸°í™” ì‹¤íŒ¨: {ex.Message}");
+                }
+            }
         }
     }
 }
