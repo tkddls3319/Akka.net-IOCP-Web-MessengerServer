@@ -30,10 +30,9 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 4. **IOCP 기반 TCP/IP 소켓 통신 구현.**
 5. **ASP.NET을 사용한 Web API Server 구현**
 6. **Entity Framework를 사용한 DB구현**
-7. **
 
 ### 주요 사용 기술
-**Akka.net, IOCP, WebAPI, Json, protobuf, EntityFrameWork, Cluster, Serilog, bat파일, MMO, SignalR 등**
+**Akka.net, IOCP, WebAPI, Json, protobuf, EntityFrameWork, Cluster, Serilog, bat파일, MMO 등**
 
 ---
 ## 테스트 방법
@@ -56,7 +55,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 #### 추가 설정
 - 방(Room) 안에는 클라이언트 100명만 입장 가능.
-- `RoomManagerActor`의 `AddClientToRoomHandler`에서 설정 변경 가능.
+- 클라이언트 입장 최대 인원은 `Akka.Server`의 `Define`에 'RoomMaxCount' 설정 변경 가능.
 
 ---
 
