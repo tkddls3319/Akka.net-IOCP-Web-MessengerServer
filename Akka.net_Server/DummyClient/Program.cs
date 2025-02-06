@@ -18,6 +18,8 @@ namespace DummyClient
         public static bool RoomEnter = false;
         public static List<RoomInfo> RoomInfos = new List<RoomInfo>();
 
+       public static bool IsMultitest = false;
+
         static void Main(string[] args)
         {
             //서버 보다 빨리 켜져서 Log 클러스터가 서버에 붙기 전에 켜짐 그래서 sleep 걸어놈
@@ -30,8 +32,10 @@ namespace DummyClient
             ManuChoice();
             //로그인성공하면 Server 접속으로 넘어가게 막는용
             while (isLoggedIn == false) { }
-          
+
             #endregion
+
+            Console.Clear();
 
             #region 채팅 Server 접속
             string hostName = Dns.GetHostName();
@@ -43,15 +47,29 @@ namespace DummyClient
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 8888);
 
             Connector connector = new Connector();
-            connector.Connect(endPoint, () => { return new ServerSession(); }, false);
+            connector.Connect(endPoint, () => { return SessionManager.Instance.Generate(); }, IsMultitest);
             #endregion
 
-            while (true) { }
+            if (IsMultitest)
+                MultiTestSendMessage();
+            else
+            {
+                while (true) { }
+            }
+        }
+
+        static void MultiTestSendMessage()
+        {
+            while (true)
+            {
+                SessionManager.Instance.FlushAllSessions();
+                Thread.Sleep(10000);//TODO : 더 빠른 메시지를 원하시면 시간초를 줄여주세요.
+            }
         }
 
         static void ManuChoice()
         {
-            List<string> menuOptions = new List<string>() { " Sign Up", " Login", " Exit." };
+            List<string> menuOptions = new List<string>() { " Sign Up", " Login", "MultiChatTest(player998명 생성)", " Exit." };
             int selectedIndex = 0;
 
             while (!isLoggedIn)
@@ -77,12 +95,17 @@ namespace DummyClient
                             SignUp();
                             return;
                         }
-                        if (selectedIndex == 1)
+                        else if (selectedIndex == 1)
                         {
                             Login();
                             return;
                         }
-                        if (selectedIndex == 2)
+                        else if (selectedIndex == 2)
+                        {
+                            MultiTest();
+                            return;
+                        }
+                        else if (selectedIndex == 3)
                         {
                             Console.WriteLine("프로그램을 종료합니다.");
                             Environment.Exit(0);
@@ -92,8 +115,7 @@ namespace DummyClient
                 }
             }
         }
-
-        private static async void SignUp()
+        static async void SignUp()
         {
             Console.Clear();
             Util.DrawMessageBox("회원가입", ConsoleColor.Green);
@@ -124,8 +146,7 @@ namespace DummyClient
                 if (isSigedIn) break;
             }
         }
-
-        private static async void Login(bool signup = false)
+        static async void Login(bool signup = false)
         {
             Console.Clear();
             Util.DrawMessageBox(signup ? "회원가입 성공! 로그인 해주세요." : "로그인", ConsoleColor.Blue);
@@ -160,6 +181,10 @@ namespace DummyClient
                 if (isLoggedIn) break;
             }
         }
-
+        static void MultiTest()
+        {
+            isLoggedIn = true;
+            IsMultitest = true;
+        }
     }
 }

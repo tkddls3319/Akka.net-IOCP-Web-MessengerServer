@@ -64,10 +64,16 @@ namespace DummyClient
 
         public static void AddDisplayMessage(string message, string sender = "", string time = "")
         {
+            if (Program.IsMultitest)
+                return;
+
             _chatLogs.Add((sender, message, time));
         }
         public static void AddOrPrintDisplayMessage(string message, string sender = "", string time = "")
         {
+            if (Program.IsMultitest)
+                return;
+
             AddDisplayMessage(message, sender, time);
             DisplayChat();
         }
@@ -141,16 +147,28 @@ namespace DummyClient
         {
             int width = Console.WindowWidth;
             int boxWidth = 40;
-            int boxHeight = options.Count + 4;
 
             int left = (width - boxWidth) / 2;
             int top = 3;
 
+            int maxHeight = Console.BufferHeight - top - 1; // 콘솔 버퍼 초과 방지
+            int boxHeight = Math.Min(options.Count + 4, maxHeight); // 박스 높이 조절
+
+            // 옵션 개수가 많아 박스 크기를 초과하면 오류 방지
+            if (boxHeight < 5) // 최소 높이가 5보다 작아지면 박스 출력 X
+            {
+                Console.WriteLine("❌ 화면 크기가 너무 작아서 박스를 표시할 수 없습니다.");
+                return;
+            }
+
             Console.ForegroundColor = ConsoleColor.Cyan;
+
+            // 박스 상단 & 하단 그리기
             for (int i = 0; i < boxHeight; i++)
             {
                 Console.SetCursorPosition(left, top + i);
-                if (i == 0 || i == boxHeight - 1)
+
+                if (i == 0 || i == boxHeight - 1) // 상단/하단 경계선
                 {
                     Console.WriteLine(new string('-', boxWidth));
                 }
@@ -162,13 +180,16 @@ namespace DummyClient
                 }
             }
 
+            // 타이틀 출력
             Console.SetCursorPosition(left + (boxWidth - title.Length) / 2, top);
             Console.Write(title);
             Console.ResetColor();
 
-            for (int i = 0; i < options.Count; i++)
+            // 옵션 출력 (박스 높이를 초과하지 않도록 조정)
+            for (int i = 0; i < Math.Min(options.Count, boxHeight - 4); i++)
             {
                 Console.SetCursorPosition(left + 3, top + 2 + i);
+
                 if (i == selectedIndex)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -182,6 +203,7 @@ namespace DummyClient
                 Console.ResetColor();
             }
         }
+
         public static void DrawMessageBox(string message, ConsoleColor color)
         {
             int width = Console.WindowWidth;

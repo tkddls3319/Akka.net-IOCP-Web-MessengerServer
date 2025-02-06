@@ -17,7 +17,7 @@ namespace Akka.Server
             AccountName = enterPacket.Client.AccountName;
             if (Room == null)
             {
-                _roomManager.Tell(new RoomManagerActor.AddClientCommand(this, enterPacket.Client.RoomID));
+                RoomManager.Tell(new RoomManagerActor.AddClientCommand(this, enterPacket.Client.RoomID));
             }
         }
         public void NewRoomHandler(C_NewRoomAndEnterServer packet)
@@ -25,7 +25,7 @@ namespace Akka.Server
             AccountName = packet.Client.AccountName;
             if (Room == null)
             {
-                _roomManager.Tell(new RoomManagerActor.CreateRoomAndAddClientCommand(this));
+                RoomManager.Tell(new RoomManagerActor.CreateRoomAndAddClientCommand(this));
             }
         }
         public void LeaveRoomHandler()

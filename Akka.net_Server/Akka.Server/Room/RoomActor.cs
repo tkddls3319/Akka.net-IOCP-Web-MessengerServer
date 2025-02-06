@@ -28,22 +28,20 @@ namespace Akka.Server
         #endregion
 
         #region Actor
-        IActorRef _roomManger;
         IActorRef _sessionManager;
         #endregion
         public int RoomID { get; set; }
         Dictionary<int, ClientSession> _clients = new Dictionary<int, ClientSession>();
         int _clinetCount { get { return _clients.Count; } }
 
-        public RoomActor(IActorRef roomMangerActor, IActorRef sessionManagerActor, int roomNumber)
+        public RoomActor(IActorRef sessionManagerActor, int roomNumber)
         {
-            _roomManger = roomMangerActor;
             _sessionManager = sessionManagerActor;
 
             RoomID = roomNumber;
 
+            Receive<GetClientCountQuery>(_ => Sender.Tell(_clients.Count));
             Receive<EnterClientCommand>(msg => EnterClientHandler(msg));
-            Receive<GetClientCountQuery>( _ => Sender.Tell(_clients.Count));
             Receive<LeaveClientCommand>(msg => LeaveClientHandler(msg.ClientId, msg.Disconnected));
             Receive<MessageCustomCommand<ClientSession, C_Chat>>(msg => ChatHandle(msg.Item1, msg.Item2));
         }
@@ -52,12 +50,22 @@ namespace Akka.Server
             if (client.Session == null)
                 return;
 
+            if(_clinetCount >= Define.RoomMaxCount)
+            {
+                Context.Parent.Tell(new RoomManagerActor.MultiTestRoomCommand(client.Session));
+                return;
+            }
+
             ClientSession session = client.Session;
             if (_clients.ContainsKey(session.SessionID))
                 return;
 
             _clients[session.SessionID] = session;
             session.Room = Self;
+
+            {
+                Context.Parent.Tell(new RoomManagerActor.ChangeUserCountCommand(RoomID, _clinetCount));
+            }
 
             {
                 S_EnterServer enterPaket = new S_EnterServer()
@@ -142,6 +150,8 @@ namespace Akka.Server
                         }, TaskContinuationOptions.ExecuteSynchronously);
                     }, TaskContinuationOptions.ExecuteSynchronously);
 
+
+                //동기적인 방법
                 //LS_ChatReadLog response = ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)
                 //    ?.Ask<LS_ChatReadLog>(new SL_ChatReadLog()
                 //    {
@@ -167,6 +177,7 @@ namespace Akka.Server
 
             Log.Logger.Information($"[Room{RoomID}] Enter Client ID : {session.SessionID}");
         }
+
         private void LeaveClientHandler(int clientId, bool disconnected)
         {
             ClientSession client = null;
@@ -195,7 +206,7 @@ namespace Akka.Server
 
             //Room안에 사용자 0명이면 제거
             if (_clients.Count == 0)
-                _roomManger.Tell(new RoomManagerActor.RemoveRoomCommand(RoomID));
+                Context.Parent.Tell(new RoomManagerActor.RemoveRoomCommand(RoomID));
 
             Log.Logger.Information($"[Room{RoomID}] Leave Client ID : {clientId}");
         }
@@ -248,11 +259,16 @@ namespace Akka.Server
         }
         public void BroadcastExceptSelf(int clientId, IMessage packet)
         {
-            foreach (ClientSession p in _clients.Values)
+            var sendLists = _clients.Values.ToList();
+
+            Task.Run(() =>
             {
-                if (p.SessionID != clientId)
-                    p.Send(packet);
-            }
+                foreach (ClientSession p in sendLists)
+                {
+                    if (p.SessionID != clientId)
+                        p.Send(packet);
+                }
+            });
         }
         #endregion;
     }

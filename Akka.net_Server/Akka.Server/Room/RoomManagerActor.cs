@@ -17,31 +17,44 @@ namespace Akka.Server
 {
     public class RoomManagerActor : ReceiveActor
     {
+        class Room
+        {
+            public IActorRef Actor { get; set; }
+            public int UserCount { get; set; }
+
+            public Room(IActorRef actor, int userCount)
+            {
+                Actor = actor;
+                UserCount = userCount;
+            }
+        }
+
         #region Message
-        public record SetSessionManagerCommand(IActorRef SessionManager);
         public record CreateRoomCommand ();
         public record RemoveRoomCommand(int RoomId);
         public record AddClientCommand(ClientSession Session, int RoomId);
         public record CreateRoomAndAddClientCommand(ClientSession Session);
+        public record MultiTestRoomCommand(ClientSession Session);
+        public record ChangeUserCountCommand(int RoomId, int UserCount);
         #endregion
 
         #region Actor
         IActorRef _sessionManager;
         #endregion
 
-        Dictionary<int, IActorRef> _rooms = new Dictionary<int, IActorRef>();
+        Dictionary<int, Room> _rooms = new Dictionary<int, Room>();
         int _roomCount = 0;
-
 
         public RoomManagerActor(IActorRef sessionManager)
         {
             _sessionManager = sessionManager;
 
-            Receive<SetSessionManagerCommand>(msg => _sessionManager = msg.SessionManager);
             Receive<CreateRoomCommand>(msg => CreateRoomHandler());
             Receive<RemoveRoomCommand>(msg => RemoveRoomHandler(msg.RoomId));
             Receive<AddClientCommand>(msg => AddClientHandler(msg));
             Receive<CreateRoomAndAddClientCommand>(msg => CreateRoomAndAddClientHandler(msg));
+            Receive<MultiTestRoomCommand>(msg => MultiTestRoomHandler(msg));
+            Receive<ChangeUserCountCommand>(msg => ChangeUserCountHandler(msg));
 
             #region Cluster
             Receive<AS_GetAllRoomInfoQuery>(msg =>
@@ -56,7 +69,7 @@ namespace Akka.Server
                         MaxCount = Define.RoomMaxCount,
                     };
 
-                    var clientCount = roomInfo.Value.Ask<int>(new RoomActor.GetClientCountQuery()).Result;
+                    var clientCount = roomInfo.Value.Actor.Ask<int>(new RoomActor.GetClientCountQuery()).Result;
                     room.CurrentCount = clientCount;
 
                     packet.RoomInfos.Add(room);
@@ -65,6 +78,12 @@ namespace Akka.Server
                 Sender.Tell(packet);
             });
             #endregion
+        }
+
+        private void ChangeUserCountHandler(ChangeUserCountCommand msg)
+        {
+            if (_rooms.TryGetValue(msg.RoomId, out var roomInfo))
+                roomInfo.UserCount = msg.UserCount;
         }
 
         protected override void PreStart()
@@ -76,63 +95,54 @@ namespace Akka.Server
                 CreateRoomHandler();
             }
         }
-        void CreateRoomHandler()
+        IActorRef CreateRoomHandler()
         {
             _roomCount++;
-            var roomActor = Context.ActorOf(Props.Create(() => new RoomActor(Self, _sessionManager, _roomCount)), $"{_roomCount}");
-            _rooms[_roomCount] = roomActor;
+            var roomActor = Context.ActorOf(Props.Create(() => new RoomActor(_sessionManager, _roomCount)), $"{_roomCount}");
+            _rooms[_roomCount] = new Room(roomActor, 0);
+
             Log.Logger.Information($"[RoomManager] Room{_roomCount} Created. Room Count : {_rooms.Count}");
+            return roomActor;
         }
         void AddClientHandler(AddClientCommand session)
         {
             int roomId = session.RoomId;
 
-            _rooms[roomId].Ask<int>(new RoomActor.GetClientCountQuery(), TimeSpan.FromSeconds(3))
-                     .PipeTo(Self, Sender, success: count =>
-                     {
-                         if (count < Define.RoomMaxCount)
-                         {
-                             _rooms[roomId].Tell(new RoomActor.EnterClientCommand(session.Session));
-                         }
-                         else
-                         {
-                             // TODO: 방이 꽉 차서 다시 선택해야 하는 로직 추가 필요
-                         }
-                         return null;
-                     });
+            if (_rooms[roomId].UserCount < Define.RoomMaxCount)
+            {
+                _rooms[roomId].Actor.Tell(new RoomActor.EnterClientCommand(session.Session));
+            }
+            else
+            {
+                // TODO: 방이 꽉 차서 다시 선택해야 하는 로직 추가 필요
+            }
+
+            //비동기 방식으로 해당 버전 사용해도 상관없음.
+            //_rooms[roomId].actor.Ask<int>(new RoomActor.GetClientCountQuery(), TimeSpan.FromSeconds(3))
+            //     .PipeTo(Self, Sender, success: count =>
+            //     {
+            //         if (count < Define.RoomMaxCount)
+            //         {
+            //             _rooms[roomId].actor.Tell(new RoomActor.EnterClientCommand(session.Session));
+            //         }
+            //         else
+            //         {
+            //             // TODO: 방이 꽉 차서 다시 선택해야 하는 로직 추가 필요
+            //         }
+            //         return null;
+            //     });
         }
         private void CreateRoomAndAddClientHandler(CreateRoomAndAddClientCommand session)
         {
             CreateRoomHandler();
-
             Self.Tell(new AddClientCommand(session.Session, _roomCount));//Deadlock 방지
-
-            //TODO : 랜덤 방입장 기능 만들 때 사용 예정.
-            //var roomResults = _rooms.Values.Select(room =>
-            //{
-            //    var clientCount = room.Ask<int>(new RoomActor.GetClientCountMessage()).Result;
-            //    return new { Room = room, ClientCount = clientCount };
-            //}).ToArray();
-
-            //// 클라이언트 수가 5 이하인 첫 번째 룸 찾기
-            //var selectedRoom = roomResults.FirstOrDefault(r => r.ClientCount < Define.RoomMaxCount)?.Room;
-
-            //if (selectedRoom == null)
-            //{
-            //    AddRoomHandler(); // 새로운 룸 생성
-            //    _rooms[_roomCount].Tell(new RoomActor.EnterClientMessage(session)); // 새로 생성한 룸에 클라이언트 추가
-            //}
-            //else
-            //{
-            //    selectedRoom.Tell(new RoomActor.EnterClientMessage(session));
-            //}
         }
 
         private void RemoveRoomHandler(int roomid)
         {
             if (_rooms.TryGetValue(roomid, out var roomActor))
             {
-                Context.Stop(roomActor);
+                Context.Stop(roomActor.Actor);
                 _rooms.Remove(roomid);
                 Log.Logger.Information($"[RoomManager] Room{roomid} Remove. Room Count : {_rooms.Count}");
             }
@@ -140,6 +150,40 @@ namespace Akka.Server
             {
                 Log.Logger.Information($"[RoomManager] Room{roomid} does not exist.");
             }
+        }
+        private async Task MultiTestRoomHandler(MultiTestRoomCommand msg)
+        {
+            var selectedRoom = _rooms.Values.FirstOrDefault(r => r.UserCount < Define.RoomMaxCount);
+
+            if (selectedRoom == null)
+            {
+                // 새로운 룸 생성, 새로 생성한 룸에 클라이언트 추가
+                var newRoom = CreateRoomHandler();
+                newRoom.Tell(new RoomActor.EnterClientCommand(msg.Session));
+            }
+            else
+            {
+                selectedRoom.Actor?.Tell(new RoomActor.EnterClientCommand(msg.Session));
+            }
+
+            //비동기 방식으로 해당 버전 사용해도 상관없음.
+            //var roomResults = _rooms.Values.Select(r =>
+            //{
+            //    var clientCount = r.Actor.Ask<int>(new RoomActor.GetClientCountQuery()).Result;
+            //    return new { Room = r.Actor, ClientCount = clientCount };
+            //}).ToArray();
+
+            //var selectedRoom = roomResults.FirstOrDefault(r => r.ClientCount < Define.RoomMaxCount)?.Room;
+
+            //if (selectedRoom == null)
+            //{
+            //    // 새로운 룸 생성, 새로 생성한 룸에 클라이언트 추가
+            //    CreateRoomHandler().Tell(new RoomActor.EnterClientCommand(msg.Session));
+            //}
+            //else
+            //{
+            //    selectedRoom.Tell(new RoomActor.EnterClientCommand(msg.Session));
+            //}
         }
     }
 }

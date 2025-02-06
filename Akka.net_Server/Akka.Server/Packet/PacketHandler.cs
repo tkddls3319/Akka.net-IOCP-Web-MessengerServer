@@ -57,4 +57,14 @@ public class PacketHandler
 
         clientSession.LeaveRoomHandler();
     }
+
+    internal static void C_MultiTestRoomHandler(PacketSession session, IMessage packet)
+    {
+        ClientSession clientSession = (ClientSession)session;
+        clientSession.AccountName = "";
+        if (clientSession.Room == null)
+        {
+            clientSession.RoomManager.Tell(new RoomManagerActor.MultiTestRoomCommand(clientSession));
+        }
+    }
 }

@@ -88,8 +88,8 @@ namespace Akka.Server
                 Timers.StartPeriodicTimer(
                     key: TimerKeyCommand.Instance,
                     msg: TimerMessageCommand.Instance,
-                    initialDelay: TimeSpan.FromMilliseconds(100),  // 초기 지연 시간
-                    interval: TimeSpan.FromMilliseconds(100));    // 주기적 실행 간격
+                    initialDelay: TimeSpan.FromMilliseconds(1),  // 초기 지연 시간
+                    interval: TimeSpan.FromMilliseconds(1));    // 주기적 실행 간격
                 Receive<TimerMessageCommand>(_ => FlushAllSessions());
             }
         }

@@ -23,6 +23,9 @@ enum PacketID {
   C_NEW_ROOM_AND_ENTER_SERVER = 7;
 
   C_LEAVE_ROOM = 8;
+
+  C_Multi_Test_ROOM = 9;
+
 }
 message C_EnterServer{
   ClientInfo client =1;
@@ -62,9 +65,9 @@ message C_NewRoomAndEnterServer{
  ClientInfo client =1;
 }
 
-message C_LeaveRoom{
+message C_LeaveRoom { }
 
-}
+message C_MultiTestRoom { }
 
 message ClientInfo{
 	int32 objectId =1;

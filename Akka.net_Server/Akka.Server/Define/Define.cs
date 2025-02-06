@@ -8,7 +8,7 @@ namespace Akka.Server
 {
     public class Define
     {
-        public const int RoomMaxCount = 5;
+        public const int RoomMaxCount = 100;
 
         #region Cluster 
         public enum ClusterType

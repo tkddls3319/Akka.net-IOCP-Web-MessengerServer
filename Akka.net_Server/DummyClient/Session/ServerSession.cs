@@ -12,6 +12,7 @@ namespace DummyClient
 {
     public class ServerSession : PacketSession
     {
+        public int SessionId { get; set; }  
         public void Send(IMessage packet)
         {
             string packetName = packet.Descriptor.Name.Replace("_", string.Empty);
@@ -29,30 +30,33 @@ namespace DummyClient
 
         public void MakeInputThread()
         {
-            Thread t1 = new Thread(() =>
-            {
-                while (true)
-                {
-                    if (Program.RoomEnter)
-                    {
-                        Console.Write(">> ");
-                        string input = Console.ReadLine();
+            if (Program.IsMultitest)
+                return;
 
-                        if (input == "ESC")
+            Thread t1 = new Thread(() =>
+                {
+                    while (true)
+                    {
+                        if (Program.RoomEnter)
                         {
-                            Send(new C_LeaveRoom());
+                            Console.Write(">> ");
+                            string input = Console.ReadLine();
+
+                            if (input == "ESC")
+                            {
+                                Send(new C_LeaveRoom());
+                            }
+                            else
+                            {
+                                Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTime.Now.ToString());
+                                C_Chat packet = new C_Chat();
+                                packet.Chat = input;
+                                Send(packet);
+                            }
                         }
-                        else
-                        {
-                            Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTime.Now.ToString());
-                            C_Chat packet = new C_Chat();
-                            packet.Chat = input;
-                            Send(packet);
-                        }
+                        Thread.Sleep(500);
                     }
-                    Thread.Sleep(500);
-                }
-            });
+                });
 
             t1.Name = "InputThread";
             t1.Start();
@@ -60,6 +64,12 @@ namespace DummyClient
 
         public override void OnConnected(EndPoint endPoint)
         {
+            if (Program.IsMultitest)
+            {
+                Send(new C_MultiTestRoom());
+                return;
+            }
+
             Util.AddOrPrintDisplayMessage("==========Server Connected==========");
             Util.AddOrPrintDisplayMessage($"Server EndPoint - {endPoint}");
 
@@ -67,7 +77,7 @@ namespace DummyClient
             RoomChoice();
         }
         public override void OnDisconnected(EndPoint endPoint)
-        {
+        {   
             Util.AddOrPrintDisplayMessage("[Session] Server Disconnected....");
         }
 

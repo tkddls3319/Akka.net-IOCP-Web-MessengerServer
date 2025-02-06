@@ -14,21 +14,19 @@ namespace Akka.AccountServer
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
 
-            #region ����ȯ�� ���� ������ 
+            #region 로컬환경 실행 때문에 
             builder.Services.AddControllers().AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.PropertyNamingPolicy = null; //���̽����� ���� �� ��ҹ��� ���� (PascalCase)
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;  //제이슨으로 보낼 떄 대소문자 유지 (PascalCase)
             });
 
             builder.WebHost.UseKestrel(options =>
             {
                 options.ListenAnyIP(7022, listenOptions =>
                 {
-                    listenOptions.UseHttps();  // ���ÿ����� HTTPS ���
+                    listenOptions.UseHttps();  // 로컬에서도 HTTPS 허용
                 });
 
                 options.ListenLocalhost(5181, listenOptions =>
@@ -48,10 +46,10 @@ namespace Akka.AccountServer
             builder.Services.AddSwaggerGen();
 
             #region Akka
-            // DI���  Controller.cs���� �����ڷ� ���� �� ����
+            // DI등록  Controller.cs파일 생성자로 받을 수 있음
             builder.Services.AddSingleton<IActorBridge, AkkaService>();
 
-            // AkkaService ���� (Ŭ������ ���� ����)
+            // AkkaService 실행 (클러스터 구성 포함)
             builder.Services.AddHostedService<AkkaService>(sp => (AkkaService)sp.GetRequiredService<IActorBridge>());
             #endregion
 

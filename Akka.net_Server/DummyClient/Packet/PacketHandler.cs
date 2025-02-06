@@ -21,11 +21,13 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_Chat s_chat = (S_Chat)packet;
 
+        if (Program.IsMultitest)
+        {
+            Console.WriteLine($"{s_chat.ObjectId} : {s_chat.Chat.Replace("\n", "")}");
+            return;
+        }
         string message = s_chat.Chat.TrimEnd('\n', ' ');
-
         Util.AddOrPrintDisplayMessage( message, s_chat.AccountName, s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss"));
-        //Console.WriteLine($"\t\t\t[{s_chat.AccountName}]");
-        //Console.WriteLine($"\t\t\t[{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} ▶  {message}]\n");
     }
     public static void S_EnterServerHandler(PacketSession session, IMessage packet)
     {
@@ -33,7 +35,13 @@ public class PacketHandler
         S_EnterServer s_enter = (S_EnterServer)packet;
 
         Program.RoomEnter = true;
+        clientSession.SessionId = s_enter.Client.ObjectId;
 
+        if (Program.IsMultitest)
+        {
+            return;
+        }
+        
         Util.AddDisplayMessage($"> {s_enter.Client.RoomID}번 채팅 방에 참여했습니다.");
         Util.AddDisplayMessage($"> 당신의 아이디는 {s_enter.Client.ObjectId}입니다. 현재 참여인원 {s_enter.Client.ClientCount}명.");
 

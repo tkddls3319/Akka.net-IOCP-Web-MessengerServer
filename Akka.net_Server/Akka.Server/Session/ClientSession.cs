@@ -12,7 +12,7 @@ namespace Akka.Server
     public partial class ClientSession : PacketSession
     {
         public IActorRef Room { get; set; }
-        static IActorRef _roomManager;
+        public IActorRef RoomManager;
         public int SessionID { get; set; }
         public string AccountName { get; set; }
         List<ArraySegment<byte>> _reservSendList = new List<ArraySegment<byte>>();
@@ -22,7 +22,7 @@ namespace Akka.Server
         int _reservedSendBytes = 0;
         public ClientSession(IActorRef roomManager)
         {
-            _roomManager = roomManager;
+            RoomManager = roomManager;
         }
         public void Send(IMessage packet)
         {
