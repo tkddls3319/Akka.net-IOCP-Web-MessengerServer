@@ -23,7 +23,7 @@ public class PacketHandler
 
         if (Program.IsMultitest)
         {
-            Console.WriteLine($"{s_chat.ObjectId} : {s_chat.Chat.Replace("\n", "")}");
+            Console.WriteLine($">{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} [{s_chat.AccountName}{s_chat.ObjectId}] {s_chat.Chat.Trim()}");
             return;
         }
         string message = s_chat.Chat.TrimEnd('\n', ' ');

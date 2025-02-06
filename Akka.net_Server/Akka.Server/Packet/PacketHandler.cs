@@ -61,7 +61,7 @@ public class PacketHandler
     internal static void C_MultiTestRoomHandler(PacketSession session, IMessage packet)
     {
         ClientSession clientSession = (ClientSession)session;
-        clientSession.AccountName = "";
+        clientSession.AccountName = "AI";
         if (clientSession.Room == null)
         {
             clientSession.RoomManager.Tell(new RoomManagerActor.MultiTestRoomCommand(clientSession));

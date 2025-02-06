@@ -1,4 +1,5 @@
 ﻿using Google.Protobuf.Protocol;
+using Google.Protobuf.WellKnownTypes;
 
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace DummyClient.Session
 
 		HashSet<ServerSession> _sessions = new HashSet<ServerSession>();
 		object _lock = new object();
-
-		public ServerSession Generate()
+        private Random _random = new Random();
+        public ServerSession Generate()
 		{
 			lock (_lock)
 			{
@@ -24,7 +25,6 @@ namespace DummyClient.Session
 				return session;
 			}
 		}
-
 		public void Remove(ServerSession session)
 		{
 			lock (_lock)
@@ -33,12 +33,21 @@ namespace DummyClient.Session
 				Console.WriteLine($"Connected ({_sessions.Count}) Players");
 			}
 		}
-
         public void FlushAllSessions()
         {
-            foreach (var session in _sessions)
-            {
-                session.Send(new C_Chat() { Chat= $"{session.SessionId}번 User - TestMessage"});
+			lock (_lock)
+			{
+                int count = _sessions.Count / 3; // 전체 세션의 1/3만큼 선택
+                if (count == 0 && _sessions.Count > 0) count = 1; // 최소 1개는 전송
+
+                List<ServerSession> selectedSessions = _sessions.OrderBy(x => _random.Next()).Take(count).ToList();
+
+                foreach (var session in selectedSessions)
+                {
+                    var time = Timestamp.FromDateTime(DateTime.UtcNow);
+
+                    session.Send(new C_Chat() { Chat = $"{session.SessionId}번 User - TestMessage", Time = time });
+                }
             }
         }
     }

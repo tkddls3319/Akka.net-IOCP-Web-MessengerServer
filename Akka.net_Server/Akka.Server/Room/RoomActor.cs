@@ -125,7 +125,7 @@ namespace Akka.Server
 
                         actorRef.Ask<LS_ChatReadLogResponse>(
                             new SL_ChatReadLogQuery() { RoomId = this.RoomID },
-                            TimeSpan.FromSeconds(3)
+                            TimeSpan.FromSeconds(5)
                         ).ContinueWith(responseTask =>
                         {
                             if (responseTask.Status == TaskStatus.RanToCompletion && responseTask.Result?.Chats != null)
@@ -189,6 +189,10 @@ namespace Akka.Server
             if (disconnected)//사용자가 프로그램을 종료 했을 때 세션제거
                 _sessionManager.Tell(new SessionManagerActor.RemoveSessionCommand(client));
 
+            {
+                Context.Parent.Tell(new RoomManagerActor.ChangeUserCountCommand(RoomID, _clinetCount));
+            }
+
             //룸정보 전달
             {
                 S_LeaveServer leavPacket = new S_LeaveServer();
@@ -226,7 +230,7 @@ namespace Akka.Server
                 ObjectId = id,
                 AccountName = player.AccountName,
                 Chat = chat + "\n",
-                Time = Timestamp.FromDateTime(DateTime.UtcNow)
+                Time = chatPacket.Time,
             };
 
             //LogServer클러스터에 Log 전달

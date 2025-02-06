@@ -21,8 +21,7 @@ namespace Akka.LogServer
         {
             Receive<WriteMessageCommand<SL_ChatReadLogQuery>>(message =>
             {
-                ChatLogLoader log = DataManager.LoadJson<ChatLogLoader>(Util.RoomNameing(message.Message.RoomId));
-
+                ChatLogLoader log = DataManager.LoadJson<ChatLogLoader>(Util.RoomNameing(message.Message.RoomId), maxLines : 30);
                 LS_ChatReadLogResponse sendLog = new LS_ChatReadLogResponse();
 
                 if (log != null)

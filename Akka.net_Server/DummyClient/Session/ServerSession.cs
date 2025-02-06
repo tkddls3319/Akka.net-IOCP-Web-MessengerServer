@@ -1,5 +1,6 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Protocol;
+using Google.Protobuf.WellKnownTypes;
 
 using ServerCore;
 
@@ -16,7 +17,7 @@ namespace DummyClient
         public void Send(IMessage packet)
         {
             string packetName = packet.Descriptor.Name.Replace("_", string.Empty);
-            PacketID packetID = (PacketID)Enum.Parse(typeof(PacketID), packetName);
+            PacketID packetID = (PacketID)System.Enum.Parse(typeof(PacketID), packetName);
 
             ushort size = (ushort)packet.CalculateSize();
             byte[] sendBuffer = new byte[size + 4];
@@ -48,9 +49,11 @@ namespace DummyClient
                             }
                             else
                             {
-                                Util.AddOrPrintDisplayMessage(input, Program.AccountName, DateTime.Now.ToString());
+                               var time = Timestamp.FromDateTime(DateTime.UtcNow);
+                                Util.AddOrPrintDisplayMessage(input, Program.AccountName, time.ToDateTime().ToString("MM-dd HH:mm:ss"));
                                 C_Chat packet = new C_Chat();
                                 packet.Chat = input;
+                                packet.Time = time;
                                 Send(packet);
                             }
                         }

@@ -67,7 +67,7 @@ namespace DummyClient
             if (Program.IsMultitest)
                 return;
 
-            if(_chatLogs.Count > 1000)
+            if(_chatLogs.Count > 100)
                 _chatLogs.Clear();
 
             _chatLogs.Add((sender, message, time));

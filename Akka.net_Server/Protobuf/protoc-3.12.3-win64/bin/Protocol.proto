@@ -6,7 +6,7 @@ option csharp_namespace = "Google.Protobuf.Protocol";
 
 
 /*
-enum ID ¹üÀ§ 0 ~ 100
+enum ID ï¿½ï¿½ï¿½ï¿½ 0 ~ 100
 */
 enum PacketID {
   C_ENTER_SERVER =0;
@@ -52,6 +52,7 @@ message S_Despawn {
 
 message C_Chat{
   string chat = 1;
+   google.protobuf.Timestamp time =2;
 }
 
 message S_Chat{

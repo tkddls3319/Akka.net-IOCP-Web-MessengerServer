@@ -63,7 +63,7 @@ namespace DummyClient
             while (true)
             {
                 SessionManager.Instance.FlushAllSessions();
-                Thread.Sleep(10000);//TODO : 더 빠른 메시지를 원하시면 시간초를 줄여주세요.
+                Thread.Sleep(5000);//TODO : 더 빠른 메시지를 원하시면 시간초를 줄여주세요.
             }
         }
 
