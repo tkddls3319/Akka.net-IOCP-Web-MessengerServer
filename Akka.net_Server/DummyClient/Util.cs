@@ -67,6 +67,9 @@ namespace DummyClient
             if (Program.IsMultitest)
                 return;
 
+            if(_chatLogs.Count > 1000)
+                _chatLogs.Clear();
+
             _chatLogs.Add((sender, message, time));
         }
         public static void AddOrPrintDisplayMessage(string message, string sender = "", string time = "")
@@ -85,7 +88,9 @@ namespace DummyClient
         {
             Console.Clear();
 
-            foreach (var (sender, message, time) in _chatLogs)
+            var chatLots = _chatLogs.ToList();
+
+            foreach (var (sender, message, time) in chatLots)
             {
                 if (sender == Program.AccountName)
                 {
