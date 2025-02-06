@@ -7,10 +7,10 @@
 - [x] IOCP socket통신 라이브러리화 하기
 - [x] 채팅 룸별 로그 JSon으로 Serialize, Deserialize( protobuf.time을 위한 newtonjson 커스텀 )
 - [x] AccountServer 개발 (Web API Server(ASP.NET)) 
-- [ ] AccountServer를 Akka.net Cluster 적용해 채팅 서버와 통신하기
+- [x] AccountServer를 Akka.net Cluster 적용해 채팅 서버와 통신하기
 - [x] Entity framework Mssql으로 DB 개발
-- [ ] Client Unity
-- [ ] ASP.NET Core SignalR WebSocket ( 마지막에 해볼 예정 컨텐츠 구상아직 안됨. )
+- [x] 대규모 클라이언트 테스트 ( 10,000명까지 테스트해봄 )
+- [ ] Client Unity로 개발하기
 
 # Akka.NET + IOCP Server + ASP.NET
 
@@ -30,7 +30,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 4. **IOCP 기반 TCP/IP 소켓 통신 구현.**
 5. **ASP.NET을 사용한 Web API Server 구현**
 6. **Entity Framework를 사용한 DB구현**
-7. **ASP.NET Core에 SignalR을 사용한 WebSocket 구현**
+7. **
 
 ### 주요 사용 기술
 **Akka.net, IOCP, WebAPI, Json, protobuf, EntityFrameWork, Cluster, Serilog, bat파일, MMO, SignalR 등**
@@ -38,19 +38,24 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 ---
 ## 테스트 방법
 #### Visual Studio 빌드로 테스트하기
+**ServerCore안 Connector**
 1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
 2. `Akka.Server`, `Akka.LogServer`, Akka.AccountServer, `DummyClient` 작업 시작으로 설정.
 3. Library->PacketGenerator->빌드 ( **Akka.Server가 빌드되면 빌디 전 이벤트로 GenProto.bat파일이 실행됩니다. 해당 배치 파일은 PacketGenerator.exe를 실행 시키기 때문에 빌드를 해놓지 않으면 오류가 날 수 있습니다.**)
 4. F5 키를 눌러 실행. ( **만약 Akka.Server.csproj안에 <Exec Command="CALL $(SolutionDir)Protobuf\protoc-3.12.3-win64\bin\GenProto.bat" />에서 오류가 난다면 그냥 지우고 빌드 해도 됩니다. Akka.Server 빌드 전 이벤트 경로 문제일 가능성이 큽니다.** )
-5. 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
-6. 로그인 하면 채팅룸 선택창
-7. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
-8. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
+5. 메뉴선택
+   - 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
+   - 대규모 채팅 테스트를 먼저 하고 싶으면 회원가입 안해도됨. ( 998명의 채팅인원 생성되며 방안에 100명씩 존재 )
+   - 대규모 채팅 테스트 진행 후 새로운 DummyClient를 실행하고 원하는 채팅방에 들어가면됨.
+   - 채팅방이 많기 때문에 채팅창 20개 정도만 출력되지만 콘솔창을 늘리고 방향키를 눌르면 채팅창이 콘솔창 크기에 맞게 보여짐
+7. 로그인 하면 채팅룸 선택창
+8. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
+9. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
    - `DummyClient.exe`를 여러 개 실행하면 멀티 채팅 테스트 가능.
-9. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
+10. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
 
 #### 추가 설정
-- 방(Room) 안에는 클라이언트 5명만 입장 가능.
+- 방(Room) 안에는 클라이언트 100명만 입장 가능.
 - `RoomManagerActor`의 `AddClientToRoomHandler`에서 설정 변경 가능.
 
 ---
@@ -68,8 +73,8 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 - **역할**: 채팅 기록 관리 서버.
 - **기능**:
   - `Akka.Server`에서 받은 채팅을 채팅룸 별로 .json으로 기록 저장.
-  - Serilog를 사용해 로그 작성.
-  - 룸별로 채팅을 읽어 Server에 전달.
+  - Serilog를 사용해 로그 작성. ( 바로 바로 로그를 남기는 것 이아닌 로그 모아서 한 번에 쓰는 방식으로 성능 향상 )
+  - 룸별로 채팅을 읽어 Server에 전달. ( message는 12800kb를 넘으면 보낼 수 없음. 너무 많은 채팅 기록이 있다면 전송 안되게 함. ) 
   
 ### 3. Akka.AccountServer
 - **역할**: Client의 회원가입과 로그인 관리
@@ -77,7 +82,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 ### 4. DummyClient
 - **역할**: 채팅 클라이언트.
-- **기능**: `Akka.Server`와 비동기 TCP 통신 수행.
+- **기능**: `Akka.Server`와 비동기 TCP 통신 수행., 로그인, 회원가입, 멀티테스트 
 
 ### 개발한 라이브러리 폴더
 ### 1. Akka.Protocol.Shared
@@ -86,7 +91,7 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 
 ### 2. ServerCore
 - **역할**: `Akka.Server`와 `DummyClient` 간 TCP 통신 지원 라이브러리.
-- **기능**: IOCP 기반의 TCP 통신 로직 구현.
+- **기능**: IOCP 기반의 TCP 통신 로직 구현., Connector클래스 안에 Connect의 파라미터 count를 증가시키면 멀티 테스트 인원 변경 가능함.
 
 ### 3. Akka.ClusterCore
 - **역할**: `Akka를 사용하는 Cluster`간 액터를 관리하며 메세지를 보내기 위한 라이브러리.
@@ -205,5 +210,19 @@ Ask<T>()를 통해 응답을 받아야 하는 경우 비동기 호출이 중첩�
 1. 서로 다른 Protobuf 정의를 사용하는 경우.
 2. 직렬화 포맷이 다른 경우 (예: Protobuf ↔ JSON).
 3. 특정 데이터 타입에 대해 커스텀 직렬화가 필요한 경우 (예: `DateTimeOffset`, `decimal`).
+
+---
+
+## 개발하면서 느낀점.
+
+Actor 모델을 사용하여 멀티스레딩 환경에서 대규모 분산 처리를 구현하고, 비동기 방식으로 병렬 처리를 수행하면서 성능이 매우 뛰어나다는 점을 체감했다. 기존에 IOCP와 Job Queue를 활용하던 방식보다 더 안정적이고 확장성이 뛰어난 구조라는 점에서 큰 장점을 느낄 수 있었다.
+
+특히, 클러스터 간 통신이 마치 하나의 프로그램 내에서 실행되는 것처럼 자연스럽게 동작하는 점이 인상적이었다. 별도의 프로세스 간 복잡한 동기화 없이도 Actor 모델을 활용하면 일관된 메시지 기반 통신을 유지할 수 있었으며, 시스템의 유연성이 크게 향상되었다.
+
+하지만, 모든 프로세스를 Actor 모델로 구현해야 한다는 점과 클러스터를 설정하는 과정에서 여러 가지 고려해야 할 사항이 많았다. 처음부터 Actor 모델을 기반으로 전체 시스템을 설계하면 강력한 장점을 누릴 수 있지만, 기존에 개발된 시스템과 연동해야 하는 경우 적용이 어렵다는 한계를 느꼈다.
+
+이를 해결하기 위한 방법으로, Actor 모델을 사용하여 로직을 구현하고, 프로세스 간 통신은 gRPC를 활용하는 방안을 고민했다. 이렇게 하면 Actor 모델의 장점을 살리면서도 기존 시스템과의 연결성을 확보할 수 있을 것으로 보인다.
+
+**향후에는 Actor 모델과 gRPC를 결합한 서버 아키텍처를 개발하여 보다 확장성과 유연성이 뛰어난 구조를 구축할 계획이다.**
 
 ---
