@@ -1,4 +1,3 @@
-🔥 **프로젝트 진행 중!** 🚀
 ## 개발 체크리스트
 - [x] IOCP + Akka 채팅 서버
 - [x] Cluster LogServer
@@ -10,13 +9,10 @@
 - [x] AccountServer를 Akka.net Cluster 적용해 채팅 서버와 통신하기
 - [x] Entity framework Mssql으로 DB 개발
 - [x] 대규모 클라이언트 테스트 ( 10,000명까지 테스트해봄 )
-- [ ] Client Unity로 개발하기
 
 # Akka.NET + IOCP Server + ASP.NET
 
 Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신저 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
-
-추 후 기회가 된다면 클라이언트는 콘솔이 아닌 Unity나 머 WPF나 다른 걸로 개발해 볼 예정.
 
 채팅 서버를 목표로 하지만 채팅을 일반적인 패킷으로 본다면 해당 서버를 베이스로 다양한 분야에서 사용할 수 있을 것 같음. 
 
@@ -55,8 +51,42 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 11. 채팅방에서 ESC를 입력 후 Entrer key를 누르면 채팅방에서 나옴
 
 #### 추가 설정
-- 방(Room) 안에는 클라이언트 100명만 입장 가능.
+- 방(Room) 안에는 클라이언트 100명만 입장 가능 하지만 아래 소스코드에서 수정가능
 - 클라이언트 입장 최대 인원은 `Akka.Server`의 `Define`에 'RoomMaxCount' 설정 변경 가능.
+
+```csharp
+namespace Akka.Server
+{
+    public class Define
+    {
+        public const int RoomMaxCount = 100;//채팅 룸 인원 변경
+```
+
+- 멀티 테스트의 기본 클라이언트 접속 인원을 998명으로 설정함. 추가적으로 2개의 클라이언트를 수동 실행하여 멀티 테스트를 확인할 수 있도록 함
+
+```csharp
+namespace ServerCore
+{
+    public class Connector
+    {
+        Func<Session> _sessionFactory;
+
+        public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory, bool multiTest = true, int count = 998)
+        {
+            if (multiTest)
+            {
+                //TODO : 멀티 채팅 테스트를 하려면 COUNT 개수를 변경해주세요
+                Parallel.For(0, count, new ParallelOptions { MaxDegreeOfParallelism = 10 }, i =>
+                {
+                    Connect(endPoint, sessionFactory);
+                });
+            }
+            else
+            {
+                Connect(endPoint, sessionFactory);
+            }
+        }
+```
 
 ---
 
