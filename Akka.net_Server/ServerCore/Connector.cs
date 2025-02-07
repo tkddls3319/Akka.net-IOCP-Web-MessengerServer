@@ -12,11 +12,23 @@ namespace ServerCore
 
         public void Connect(IPEndPoint endPoint, Func<Session> sessionFactory, bool multiTest = true, int count = 998)
         {
-            if(multiTest)
+            if (multiTest)
             {
-               //TODO : 멀티 채팅 테스트를 하려면 COUNT 개수를 변경해주세요
-                for (int i = 0; i < count; i++)
-                  Connect(endPoint, sessionFactory);
+                //TODO : 멀티 채팅 테스트를 하려면 COUNT 개수를 변경해주세요
+                Parallel.For(0, count, new ParallelOptions { MaxDegreeOfParallelism = 10 }, i =>
+                {
+                    Connect(endPoint, sessionFactory);
+                });
+
+                //비동기식 방법인데 흠 별차이안나는 것 같음
+                //await Parallel.ForEachAsync(
+                //          Enumerable.Range(0, count),
+                //          new ParallelOptions { MaxDegreeOfParallelism = 10 },
+                //          async (i, _) =>
+                //          {
+                //              await Task.Delay(Random.Shared.Next(0, 100)); // 0~100ms 랜덤 딜레이
+                //              Connect(endPoint, sessionFactory);
+                //          });
             }
             else
             {

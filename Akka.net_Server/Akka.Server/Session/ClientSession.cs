@@ -7,12 +7,15 @@ using Serilog;
 using ServerCore;
 using System.Net;
 
+using static Akka.IO.UdpConnected;
+
 namespace Akka.Server
 {
     public partial class ClientSession : PacketSession
     {
         public IActorRef Room { get; set; }
         public IActorRef RoomManager;
+        public IActorRef SessionManager;
         public int SessionID { get; set; }
         public string AccountName { get; set; }
         List<ArraySegment<byte>> _reservSendList = new List<ArraySegment<byte>>();
@@ -20,8 +23,9 @@ namespace Akka.Server
 
         long _lastSendTick = 0;
         int _reservedSendBytes = 0;
-        public ClientSession(IActorRef roomManager)
+        public ClientSession(IActorRef sessionManager, IActorRef roomManager)
         {
+            SessionManager = sessionManager;
             RoomManager = roomManager;
         }
         public void Send(IMessage packet)
@@ -74,6 +78,8 @@ namespace Akka.Server
                 Room.Tell(new RoomActor.LeaveClientCommand(SessionID, true));
                 Log.Logger.Information($"[ClientSession] Disconnected - IP : {endPoint}, SessionId : {SessionID}");
             }
+
+            SessionManager.Tell(new SessionManagerActor.RemoveSessionCommand(this));
         }
         public override void OnRecvedPacket(ArraySegment<byte> buffer)
         {

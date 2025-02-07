@@ -14,6 +14,7 @@ namespace DummyClient
     public class ServerSession : PacketSession
     {
         public int SessionId { get; set; }  
+        public bool IsRoomEnter { get; set; }
         public void Send(IMessage packet)
         {
             string packetName = packet.Descriptor.Name.Replace("_", string.Empty);
@@ -38,7 +39,7 @@ namespace DummyClient
                 {
                     while (true)
                     {
-                        if (Program.RoomEnter)
+                        if (IsRoomEnter)
                         {
                             Console.Write(">> ");
                             string input = Console.ReadLine();
@@ -57,7 +58,7 @@ namespace DummyClient
                                 Send(packet);
                             }
                         }
-                        Thread.Sleep(500);
+                        Thread.Sleep(100);
                     }
                 });
 

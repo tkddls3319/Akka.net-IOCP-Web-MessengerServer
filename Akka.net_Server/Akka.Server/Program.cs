@@ -45,6 +45,10 @@ namespace Akka.Server
             var roomManager = ServerActorSystem.ActorOf(Props.Create(() => new RoomManagerActor(sessionManager)), Enum.GetName(ActtorType.RoomManagerActor));
 
             sessionManager.Tell(new SessionManagerActor.SetRoomManagerActorCommand(roomManager));
+
+            var deadLetterMonitor = ServerActorSystem.ActorOf(Props.Create(() => new DeadLetterMonitor()), "deadLetterMonitor");
+            // DeadLetter 감지를 위해 이벤트 스트림 구독
+            ServerActorSystem.EventStream.Subscribe(deadLetterMonitor, typeof(DeadLetter));
             #endregion
 
             #region IOCP Server Start

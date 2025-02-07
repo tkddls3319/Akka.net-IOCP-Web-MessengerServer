@@ -23,7 +23,7 @@ public class PacketHandler
 
         if (Program.IsMultitest)
         {
-            Console.WriteLine($">{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} [{s_chat.AccountName}{s_chat.ObjectId}] {s_chat.Chat.Trim()}");
+            Console.WriteLine($">{s_chat.Time.ToDateTime().ToString("MM-dd HH:mm:ss")} [{s_chat.AccountName}{s_chat.ObjectId}번] {s_chat.Chat.Trim()}");
             return;
         }
         string message = s_chat.Chat.TrimEnd('\n', ' ');
@@ -34,7 +34,7 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_EnterServer s_enter = (S_EnterServer)packet;
 
-        Program.RoomEnter = true;
+        clientSession.IsRoomEnter = true;
         clientSession.SessionId = s_enter.Client.ObjectId;
 
         if (Program.IsMultitest)
@@ -61,7 +61,7 @@ public class PacketHandler
         ServerSession clientSession = (ServerSession)session;
         S_LeaveServer s_leave = (S_LeaveServer)packet;
 
-        Program.RoomEnter = false;
+        clientSession.IsRoomEnter = false;
 
         //채팅방 다시 선택
         Task.Run(async () =>

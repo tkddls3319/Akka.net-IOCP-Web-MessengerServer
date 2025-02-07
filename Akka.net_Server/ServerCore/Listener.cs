@@ -24,16 +24,31 @@ public class Listener
 
     public void Init(IPEndPoint endPoint, Action<Socket> sessionFacktory)
     {
+        //_sessionFacktory = sessionFacktory;
+
+        //_listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+        //_listener.Bind(endPoint);
+        //_listener.Listen(1000);
+
+        //SocketAsyncEventArgs acceptArgs = new SocketAsyncEventArgs();
+        //acceptArgs.Completed += AcceptCompleted;
+
+        //RegisterAccept(acceptArgs);
+
         _sessionFacktory = sessionFacktory;
 
         _listener = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
         _listener.Bind(endPoint);
-        _listener.Listen(1000);
+        _listener.Listen(5000); // Listen Queue 크기 증가
 
-        SocketAsyncEventArgs acceptArgs = new SocketAsyncEventArgs();
-        acceptArgs.Completed += AcceptCompleted;
-
-        RegisterAccept(acceptArgs);
+        // 다중 AcceptAsync() 호출 (10개 동시 Accept 처리)
+        for (int i = 0; i < 3; i++)
+        {
+            SocketAsyncEventArgs acceptArgs = new SocketAsyncEventArgs();
+            acceptArgs.Completed += AcceptCompleted;
+            acceptArgs.AcceptSocket = null;
+            RegisterAccept(acceptArgs);
+        }
     }
 
     void RegisterAccept(SocketAsyncEventArgs args)

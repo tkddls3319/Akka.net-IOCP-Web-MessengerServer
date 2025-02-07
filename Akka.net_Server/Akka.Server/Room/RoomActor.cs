@@ -68,24 +68,22 @@ namespace Akka.Server
             }
 
             {
-                S_EnterServer enterPaket = new S_EnterServer()
+                // 신규 유저에게 서버 입장 정보 전송
+                client.Session.Send(new S_EnterServer
                 {
-                    Client = new ClientInfo()
+                    Client = new ClientInfo
                     {
-                        ObjectId = session.SessionID,
+                        ObjectId = client.Session.SessionID,
                         RoomID = RoomID,
                         ClientCount = _clinetCount
                     }
-                };
-
-                client.Session.Send(enterPaket);
+                });
             }
 
             //채팅룸안에 모든 사용자 전달
             {
-                S_Spawn spawnPacket = new S_Spawn();
-                spawnPacket.ClientCount = _clinetCount;
-                foreach (ClientSession p in _clients.Values)
+                var spawnPacket = new S_Spawn { ClientCount = _clinetCount };
+                foreach (var p in _clients.Values)
                 {
                     if (client.Session != p)
                     {
@@ -94,62 +92,63 @@ namespace Akka.Server
                     }
                 }
                 client.Session.Send(spawnPacket);
+
             }
             // 타인한테 정보 전송
             {
-                S_Spawn spawnPacket = new S_Spawn();
-                spawnPacket.ClientCount = _clinetCount;
-                spawnPacket.ObjectIds.Add(session.SessionID);
-                spawnPacket.AccountNames.Add(session.AccountName);
-                foreach (ClientSession p in _clients.Values)
+                var notifyPacket = new S_Spawn
                 {
-                    if (client.Session != p)
-                        p.Send(spawnPacket);
-                }
+                    ClientCount = _clinetCount,
+                    ObjectIds = { client.Session.SessionID },
+                    AccountNames = { client.Session.AccountName }
+                };
+                BroadcastExceptSelf(client.Session.SessionID, notifyPacket);
             }
 
             //이전 모든 채팅을 읽어 새로온 사용자에게 전달
             {
-                GlobalActors.ClusterManager.Ask<IActorRef>(
-                        new GetClusterActorQuery(Define.LogServerActorType.LogManagerActor),
-                        TimeSpan.FromSeconds(3)
-                    ).ContinueWith(task =>
-                    {
-                        if (task.Status != TaskStatus.RanToCompletion || task.Result == ActorRefs.Nobody)
+                if (client.Session.AccountName != "AI")//ai가 아니라면
+                {
+                    GlobalActors.ClusterManager.Ask<IActorRef>(
+                            new GetClusterActorQuery(Define.LogServerActorType.LogManagerActor),
+                            TimeSpan.FromSeconds(3)
+                        ).ContinueWith(task =>
                         {
-                            Console.WriteLine("해당 액터를 찾을 수 없음.");
-                            return;
-                        }
-
-                        var actorRef = task.Result;
-
-                        actorRef.Ask<LS_ChatReadLogResponse>(
-                            new SL_ChatReadLogQuery() { RoomId = this.RoomID },
-                            TimeSpan.FromSeconds(5)
-                        ).ContinueWith(responseTask =>
-                        {
-                            if (responseTask.Status == TaskStatus.RanToCompletion && responseTask.Result?.Chats != null)
+                            if (task.Status != TaskStatus.RanToCompletion || task.Result == ActorRefs.Nobody)
                             {
-                                foreach (var chat in responseTask.Result.Chats)
+                                Console.WriteLine("해당 액터를 찾을 수 없음.");
+                                return;
+                            }
+
+                            var actorRef = task.Result;
+
+                            actorRef.Ask<LS_ChatReadLogResponse>(
+                                new SL_ChatReadLogQuery() { RoomId = this.RoomID },
+                                TimeSpan.FromSeconds(5)
+                            ).ContinueWith(responseTask =>
+                            {
+                                if (responseTask.Status == TaskStatus.RanToCompletion && responseTask.Result?.Chats != null)
                                 {
-                                    S_Chat readChat = new S_Chat()
+                                    foreach (var chat in responseTask.Result.Chats)
                                     {
-                                        Chat = chat.Chat,
-                                        AccountName = chat.AccoutnName,
-                                        ObjectId = chat.ObjectId,
-                                        Time = chat.Time,
-                                    };
+                                        S_Chat readChat = new S_Chat()
+                                        {
+                                            Chat = chat.Chat,
+                                            AccountName = chat.AccoutnName,
+                                            ObjectId = chat.ObjectId,
+                                            Time = chat.Time,
+                                        };
 
-                                    client.Session.Send(readChat);
+                                        client.Session.Send(readChat);
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                Log.Logger.Warning("채팅 데이터를 가져오지 못했습니다.");
-                            }
+                                else
+                                {
+                                    Log.Logger.Warning("채팅 데이터를 가져오지 못했습니다.");
+                                }
+                            }, TaskContinuationOptions.ExecuteSynchronously);
                         }, TaskContinuationOptions.ExecuteSynchronously);
-                    }, TaskContinuationOptions.ExecuteSynchronously);
-
+                }
 
                 //동기적인 방법
                 //LS_ChatReadLog response = ClusterManager.Instance.GetClusterActor(Define.LogServerActorType.LogManagerActor)
@@ -185,9 +184,6 @@ namespace Akka.Server
                 return;
 
             client.Room = null;
-
-            if (disconnected)//사용자가 프로그램을 종료 했을 때 세션제거
-                _sessionManager.Tell(new SessionManagerActor.RemoveSessionCommand(client));
 
             {
                 Context.Parent.Tell(new RoomManagerActor.ChangeUserCountCommand(RoomID, _clinetCount));
@@ -256,24 +252,41 @@ namespace Akka.Server
         #region Util
         public void BroadCast(IMessage packet)
         {
-            foreach (ClientSession client in _clients.Values)
+            var sendLists = _clients.Values.ToList();
+            Parallel.ForEach(sendLists, client =>
             {
                 client.Send(packet);
-            }
-        }
-        public void BroadcastExceptSelf(int clientId, IMessage packet)
-        {
-            var sendLists = _clients.Values.ToList();
-
-            Task.Run(() =>
-            {
-                foreach (ClientSession p in sendLists)
-                {
-                    if (p.SessionID != clientId)
-                        p.Send(packet);
-                }
             });
         }
+
+        public void BroadcastExceptSelf(int clientId, IMessage packet)
+        {
+            var sendLists = _clients.Values.Where(p => p.SessionID != clientId).ToList();
+            Parallel.ForEach(sendLists, client =>
+            {
+                client.Send(packet);
+            });
+        }
+        //public void BroadCast(IMessage packet)
+        //{
+        //    foreach (ClientSession client in _clients.Values)
+        //    {
+        //        client.Send(packet);
+        //    }
+        //}
+        //public void BroadcastExceptSelf(int clientId, IMessage packet)
+        //{
+        //    var sendLists = _clients.Values.ToList();
+
+        //    Task.Run(() =>
+        //    {
+        //        foreach (ClientSession p in sendLists)
+        //        {
+        //            if (p.SessionID != clientId)
+        //                p.Send(packet);
+        //        }
+        //    });
+        //}
         #endregion;
     }
 }

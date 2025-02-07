@@ -15,10 +15,9 @@ namespace DummyClient
         static bool isLoggedIn = false; // 로그인 상태 플래그
         static bool isSigedIn = false; // 회원가입 상태 플래그
 
-        public static bool RoomEnter = false;
         public static List<RoomInfo> RoomInfos = new List<RoomInfo>();
-
-       public static bool IsMultitest = false;
+        static ManualResetEventSlim _resetEvent = new ManualResetEventSlim(false);
+        public static bool IsMultitest = false;
 
         static void Main(string[] args)
         {
@@ -51,22 +50,18 @@ namespace DummyClient
             #endregion
 
             if (IsMultitest)
-                MultiTestSendMessage();
-            else
-            {
-                while (true) { }
-            }
-        }
+                Task.Run(() => MultiTestSendMessageAsync());
 
-        static void MultiTestSendMessage()
+            _resetEvent.Wait();
+        }
+        static async Task MultiTestSendMessageAsync()
         {
             while (true)
             {
                 SessionManager.Instance.FlushAllSessions();
-                Thread.Sleep(5000);//TODO : 더 빠른 메시지를 원하시면 시간초를 줄여주세요.
+                await Task.Delay(1000); // 1초마다 실행 (비동기)
             }
         }
-
         static void ManuChoice()
         {
             List<string> menuOptions = new List<string>() { " Sign Up", " Login", "MultiChatTest(player998명 생성)", " Exit." };

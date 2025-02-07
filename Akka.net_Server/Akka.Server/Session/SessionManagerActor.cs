@@ -54,7 +54,7 @@ namespace Akka.Server
             // 세션 생성
             Receive<GenerateSessionCommand>(msg =>
             {
-                var clientSession = new ClientSession(_roomManager);
+                var clientSession = new ClientSession(Self, _roomManager);
                 clientSession.SessionID = ++_sessionID;
                 _sessions.Add(clientSession.SessionID, clientSession);
 
@@ -100,10 +100,12 @@ namespace Akka.Server
         }
         private void FlushAllSessions()
         {
-            foreach (var session in _sessions.Values)
+           var sessions = _sessions.Values.ToList();
+
+            Parallel.ForEach(sessions, new ParallelOptions { MaxDegreeOfParallelism = 100 }, session =>
             {
                 session.FlushSend();
-            }
+            });
         }
     }
 }
