@@ -1,31 +1,41 @@
-## 개발 체크리스트
-- [x] IOCP + Akka 채팅 서버
-- [x] Cluster LogServer
-- [x] Client 콘솔
-- [x] Protobuf패킷 자동화
-- [x] IOCP socket통신 라이브러리화 하기
-- [x] 채팅 룸별 로그 JSon으로 Serialize, Deserialize( protobuf.time을 위한 newtonjson 커스텀 )
-- [x] AccountServer 개발 (Web API Server(ASP.NET)) 
-- [x] AccountServer를 Akka.net Cluster 적용해 채팅 서버와 통신하기
-- [x] Entity framework Mssql으로 DB 개발
-- [x] 대규모 클라이언트 테스트 ( 10,000명까지 테스트해봄 )
+## Acotr모델을 활용한 프로젝트를 개발하며 느낀점.
 
-# Akka.NET + IOCP Server + ASP.NET
+Actor 모델을 사용하여 멀티스레딩 환경에서 대규모 분산 처리를 구현하고, 비동기 방식으로 병렬 처리를 수행하면서 성능이 매우 뛰어나다는 점을 체감했다. 기존에 IOCP와 Job Queue를 활용하던 방식보다 더 안정적이고 확장성이 뛰어난 구조라는 점에서 큰 장점을 느낄 수 있었다.
 
-Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신저 채팅 서버**를 개발 중입니다. 현재 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
+특히, 클러스터 간 통신이 마치 하나의 프로그램 내에서 실행되는 것처럼 자연스럽게 동작하는 점이 인상적이었다. 별도의 프로세스 간 복잡한 동기화 없이도 Actor 모델을 활용하면 일관된 메시지 기반 통신을 유지할 수 있었으며, 시스템의 유연성이 크게 향상되었다.
 
-채팅 서버를 목표로 하지만 채팅을 일반적인 패킷으로 본다면 해당 서버를 베이스로 다양한 분야에서 사용할 수 있을 것 같음. 
+하지만, 모든 프로세스를 Actor 모델로 구현해야 한다는 점과 클러스터를 설정하는 과정에서 여러 가지 고려해야 할 사항이 많았다. 처음부터 Actor 모델을 기반으로 전체 시스템을 설계하면 강력한 장점을 누릴 수 있지만, 기존에 개발된 시스템과 연동해야 하는 경우 적용이 어렵다는 한계를 느꼈다.
+
+이를 해결하기 위한 방법으로, Actor 모델을 사용하여 로직을 구현하고, 프로세스 간 통신은 gRPC를 활용하는 방안을 고민했다. 이렇게 하면 Actor 모델의 장점을 살리면서도 기존 시스템과의 연결성을 확보할 수 있을 것으로 보인다.
+
+또한, 다중 클라이언트 BoradCasting을 사용하면서 서버의 부하를 줄이는 방법을 고민하였고, IOCP방식이 아닌 Redis의 pub/sub과 WebRTC를 활용한 방식을 고려하였다. 
+
+우선, 클라이언트 간 실시간 데이터 동기화를 위해 WebRTC의 P2P 방식을 사용한다. 이를 통해 클라이언트들은 직접 통신하며 최신 데이터를 유지할 수 있다.
+
+서버 측에서는 P2P 통신을 지원하기 위해 Signal Server를 개발하여 세션을 관리한다. 이 Signal Server는 각 클라이언트의 연결 상태를 추적하며, 특정 클라이언트를 랜덤으로 선정하여 Redis pub/sub의 구독자 역할을 부여한다. 서버는 이 구독자에게만 최신 정보를 전달하며, 해당 클라이언트는 받은 정보를 다른 클라이언트들에게 P2P 방식으로 공유하여 전체 네트워크의 데이터 동기화를 유지한다.
+
+**서버간 통신으로는 향후에는 Actor 모델과 gRPC를 결합한 서버 아키텍처를 개발하여 보다 확장성과 유연성이 뛰어난 구조를 구축할 계획이며, Redis pub/sub과 WebRTC를 활용한 서버-클라이언트 간 실시간 통신을 더욱 발전시켜 구현할 계획이다.**
+
+---
+
+# Akka.NET + IOCP Server + ASP.NET 기반 채팅 서버
+
+Akka.NET의 Actor모델과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메신저 채팅 서버**를 개발 하였습니다. 설계 및 구현 방안을 고민하며, 확장성과 유지보수성을 강화하는 데 중점을 두고 있습니다.
+
+채팅 서버를 목표로 하지만 채팅을 일반적인 패킷으로 본다면 해당 서버를 베이스로 다양한 분야에서 사용할 수 있을 것 같다고 생각합니다.
 
 ![chat](https://github.com/user-attachments/assets/360c1989-9bbb-423a-9c57-e95a4b07c286)
 
 ---
+
 ## 프로젝트 목표
-1. **Akka.NET으로 서버 개발**
-2. **HOCON 설정을 통한 Akka Cluster 구성.**
-3. **Akka.Remote를 사용한 원격 액터 간 통신.**
+1. **Akka.NET의 Actor모델을 활용한 iocp와 로직 분리 개발**
+2. **HOCON 설정을 통한 Akka Cluster 구성 프로세스 간 통신.**
+3. **Akka.Router를 사용한 분산 처리.**
 4. **IOCP 기반 TCP/IP 소켓 통신 구현.**
 5. **ASP.NET을 사용한 Web API Server 구현**
 6. **Entity Framework를 사용한 DB구현**
+7. **Protobuf bat자동화**
 
 ### 주요 사용 기술
 **Akka.net, IOCP, WebAPI, Json, protobuf, EntityFrameWork, Cluster, Serilog, bat파일, MMO 등**
@@ -33,18 +43,17 @@ Akka.NET과 IOCP(Input/Output Completion Port)를 결합하여 **고성능 메�
 ---
 ## 테스트 방법
 #### Visual Studio 빌드로 테스트하기
-**ServerCore안 Connector**
-1. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
+1. 총 4개의 프로그램이 실행되어야 합니다. 솔루션 선택 후 **속성** -> **여러 시작 프로젝트**를 선택.
 2. `Akka.Server`, `Akka.LogServer`, Akka.AccountServer, `DummyClient` 작업 시작으로 설정.
-3. Library->PacketGenerator->빌드 ( **Akka.Server가 빌드되면 빌디 전 이벤트로 GenProto.bat파일이 실행됩니다. 해당 배치 파일은 PacketGenerator.exe를 실행 시키기 때문에 빌드를 해놓지 않으면 오류가 날 수 있습니다.**)
+3. Library->PacketGenerator->빌드 ( **Akka.Server가 빌드되면 빌디 전 이벤트로 GenProto.bat파일이 실행됩니다. 해당 배치 파일은 PacketGenerator.exe를 실행 시키기 때문에 빌드를 해놓지 않으면 오류가 날 수 있어 미리 빌드파일은 넣어 놨습니다.**)
 4. F5 키를 눌러 실행. ( **만약 Akka.Server.csproj안에 <Exec Command="CALL $(SolutionDir)Protobuf\protoc-3.12.3-win64\bin\GenProto.bat" />에서 오류가 난다면 그냥 지우고 빌드 해도 됩니다. Akka.Server 빌드 전 이벤트 경로 문제일 가능성이 큽니다.** )
 5. 메뉴선택
    - 'DummyClient'가 켜지면 회원가입 및 로그인 먼저 진행
-   - 대규모 채팅 테스트를 먼저 하고 싶으면 회원가입 안해도됨. ( 998명의 채팅인원 생성되며 방안에 100명씩 존재 )
-   - 대규모 채팅 테스트 진행 후 새로운 DummyClient를 실행하고 원하는 채팅방에 들어가면됨.
-   - 채팅방이 많기 때문에 채팅창 20개 정도만 출력되지만 콘솔창을 늘리고 방향키를 눌르면 채팅창이 콘솔창 크기에 맞게 보여짐
+   - 대규모 채팅 테스트를 먼저 하고 싶으면 회원가입 안해도됨. ( 998명의 채팅인원 생성되며 Room안에는 100명의 AI 존재 )
+   - 대규모 채팅 테스트 진행 후 새로운 DummyClient를 실행하고 원하는 채팅방에 들어가면됩니다.
+   - 채팅방이 많아지면 콘솔창을 늘리고 방향키를 눌르면 채팅창이 콘솔창 크기에 맞게 보여집니다.
 7. 로그인 하면 채팅룸 선택창
-8. 채팅룸 선택하면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 뜸
+8. 채팅룸 선택 후 들어가면 그동안 채팅 룸 에서 채팅 했던 기록이 먼저 사용자에게 보여집니다.
 9. `DummyClient`에서 키보드 입력으로 채팅 메시지 전송.
    - `DummyClient.exe`를 여러 개 실행하면 멀티 채팅 테스트 가능.
 10. `Akka.LogServer`의 Debug or Release 폴더에서 채팅 룸 별 로그 확인.
@@ -102,9 +111,9 @@ namespace ServerCore
 ### 2. Akka.LogServer
 - **역할**: 채팅 기록 관리 서버.
 - **기능**:
-  - `Akka.Server`에서 받은 채팅을 채팅룸 별로 .json으로 기록 저장.
-  - Serilog를 사용해 로그 작성. ( 바로 바로 로그를 남기는 것 이아닌 로그 모아서 한 번에 쓰는 방식으로 성능 향상 )
-  - 룸별로 채팅을 읽어 Server에 전달. ( message는 12800kb를 넘으면 보낼 수 없음. 너무 많은 채팅 기록이 있다면 전송 안되게 함. ) 
+  - `Akka.Server`에서 받은 채팅을 채팅룸 별로 .json으로 기록 저장. 
+  - Serilog를 사용해 로그 작성. ( 바로 로그를 남기는 것 이 아닌 로그를 모아서 한 번에 쓰는 방식으로 성능 향상. )
+  - 룸별로 채팅을 읽어 Server에 전달. ( message는 12800kb를 넘으면 보낼 수 없음. 30개의 최신 채팅만 읽어 전송. ) 
   
 ### 3. Akka.AccountServer
 - **역할**: Client의 회원가입과 로그인 관리
@@ -112,7 +121,7 @@ namespace ServerCore
 
 ### 4. DummyClient
 - **역할**: 채팅 클라이언트.
-- **기능**: `Akka.Server`와 비동기 TCP 통신 수행., 로그인, 회원가입, 멀티테스트 
+- **기능**: `Akka.Server`와 비동기 TCP 통신 수행., 로그인, 회원가입, 멀티채팅 테스트 
 
 ### 개발한 라이브러리 폴더
 ### 1. Akka.Protocol.Shared
@@ -162,7 +171,7 @@ namespace ServerCore
 - [Akka.NET 기본 설명 4](https://usingsystem.tistory.com/549)
 
 ---
-## 사용한 Message 네이밍 컨벤션
+## 사용한 Actor Message 네이밍 컨벤션
 
 | 메시지 유형 | 예제 | 설명 |
 |------------|--------------------|------------------------------|
@@ -182,13 +191,13 @@ namespace ServerCore
   - `protobuf.proto`: 서버와 클라이언트 간 송수신 패킷 정의.
   - `ClusterProtocol.proto`: 클러스터 간 송수신 패킷 정의.
 
-### 자동화 설명
+### 자동화 과정 설명
 - 기본적으로 Akka.Server를 빌드를 하면 자동으로 GenProto.bat를 실행시키게 만들어놈. ( 빌드 전 이벤트 적용 )
-- `GenProto.bat` 실행:
-  1. `protobuf.proto`와 `ClusterProtocol.proto`를 읽어 .cs 파일 생성.
-  2. 생성된 파일을 아래와 같이 복사:
-     - `protobuf.cs`: `DummyClient`와 `Akka.Server` 프로젝트의 `Packet` 폴더.
-     - `ClusterProtocol.cs`: `Akka.Protocol.Shared` 폴더.
+1. **빌드 시 `GenProto.bat` 자동 실행**
+2. **Protobuf 정의를 기반으로 .cs 파일 자동 생성**
+3. **자동 생성된 파일을 각 프로젝트로 복사**
+   - `protobuf.cs` → `DummyClient`, `Akka.Server`
+   - `ClusterProtocol.cs` → `Akka.Protocol.Shared`
      
 ### PacketGenerator 프로젝트
 - 역할: `Protocol.proto`를 기반으로 `ClientPacketManager.cs`와 `ServerPacketManager.cs` 생성.
@@ -243,16 +252,16 @@ Ask<T>()를 통해 응답을 받아야 하는 경우 비동기 호출이 중첩�
 
 ---
 
-## 개발하면서 느낀점.
-
-Actor 모델을 사용하여 멀티스레딩 환경에서 대규모 분산 처리를 구현하고, 비동기 방식으로 병렬 처리를 수행하면서 성능이 매우 뛰어나다는 점을 체감했다. 기존에 IOCP와 Job Queue를 활용하던 방식보다 더 안정적이고 확장성이 뛰어난 구조라는 점에서 큰 장점을 느낄 수 있었다.
-
-특히, 클러스터 간 통신이 마치 하나의 프로그램 내에서 실행되는 것처럼 자연스럽게 동작하는 점이 인상적이었다. 별도의 프로세스 간 복잡한 동기화 없이도 Actor 모델을 활용하면 일관된 메시지 기반 통신을 유지할 수 있었으며, 시스템의 유연성이 크게 향상되었다.
-
-하지만, 모든 프로세스를 Actor 모델로 구현해야 한다는 점과 클러스터를 설정하는 과정에서 여러 가지 고려해야 할 사항이 많았다. 처음부터 Actor 모델을 기반으로 전체 시스템을 설계하면 강력한 장점을 누릴 수 있지만, 기존에 개발된 시스템과 연동해야 하는 경우 적용이 어렵다는 한계를 느꼈다.
-
-이를 해결하기 위한 방법으로, Actor 모델을 사용하여 로직을 구현하고, 프로세스 간 통신은 gRPC를 활용하는 방안을 고민했다. 이렇게 하면 Actor 모델의 장점을 살리면서도 기존 시스템과의 연결성을 확보할 수 있을 것으로 보인다.
-
-**향후에는 Actor 모델과 gRPC를 결합한 서버 아키텍처를 개발하여 보다 확장성과 유연성이 뛰어난 구조를 구축할 계획이다.**
+## 개발 체크리스트
+- [x] IOCP + Akka 채팅 서버
+- [x] Cluster LogServer
+- [x] Client 콘솔
+- [x] Protobuf패킷 자동화
+- [x] IOCP socket통신 라이브러리화 하기
+- [x] 채팅 룸별 로그 JSon으로 Serialize, Deserialize( protobuf.time을 위한 newtonjson 커스텀 )
+- [x] AccountServer 개발 (Web API Server(ASP.NET)) 
+- [x] AccountServer를 Akka.net Cluster 적용해 채팅 서버와 통신하기
+- [x] Entity framework Mssql으로 DB 개발
+- [x] 대규모 클라이언트 테스트 ( 10,000명까지 테스트해봄 )
 
 ---
