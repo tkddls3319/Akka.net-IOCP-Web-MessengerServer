@@ -89,4 +89,5 @@ namespace Akka.ClusterCore
     /// </summary>
     public record ClusterActorResolvedCommand(Enum ActorType, IActorRef ActorRef);
     #endregion
+}
 
