@@ -1,7 +1,4 @@
-﻿// Improved version of the user's Session_pipline and PacketSession_pipline
-// Includes: bounded send queue (optional drop or disconnect), channel completion on close,
-// larger default receive buffer, and safer packet parsing.
-
+﻿
 using System;
 using System.Buffers;
 using System.Buffers.Binary;
@@ -250,3 +247,4 @@ namespace ServerCore
         }
     }
 }
+
