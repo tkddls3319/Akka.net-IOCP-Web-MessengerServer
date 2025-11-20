@@ -1,6 +1,4 @@
 ﻿using Akka.Actor;
-using Akka.Cluster.Hosting;
-using Akka.DependencyInjection;
 using Akka.Configuration;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -13,6 +11,7 @@ using Microsoft.AspNetCore.SignalR;
 using Akka.AccountServer.Controllers;
 using Akka.AccountServer.Actor;
 using Akka.AccountServer.Define;
+using Akka.DependencyInjection;
 
 namespace Akka.AccountServer.AkkaDefine
 {
@@ -39,44 +38,40 @@ namespace Akka.AccountServer.AkkaDefine
         {
             var config = ConfigurationFactory.ParseString(File.ReadAllText("hocon.conf"));
 
-            // Akka.NET 시스템 설정 부트스트랩
-            var bootstrap = BootstrapSetup.Create()
-                .WithConfig(config)  // HOCON 설정을 적용하고 환경 변수를 주입
-                .WithActorRefProvider(ProviderSelection.Cluster.Instance); // Akka.Cluster를 활성화 (클러스터 모드 설정)
+            // Akka 부트스트랩 구성
+            var bootstrap = BootstrapSetup
+                .Create()
+                .WithConfig(config)
+                .WithActorRefProvider(ProviderSelection.Cluster.Instance);
 
-            // ASP.NET Core의 의존성 주입(DI)을 Akka.NET 액터 시스템과 통합
-            //var diSetup = ServiceProviderSetup.Create(_serviceProvider);//.net6 버전에서 유효 .net8에서 사용 x
-            var diSetup = DependencyResolverSetup.Create(_serviceProvider);
+            // !!! 여기만 변경 !!!
+            var diSetup = ServiceProviderSetup.Create(_serviceProvider);
 
-            // 모든 설정을 하나로 병합 (부트스트랩 + DI 설정)
+            // Setup 병합
             var actorSystemSetup = bootstrap.And(diSetup);
 
-            _serverActorSystem = ActorSystem.Create(Enum.GetName(ActtorType.ClusterSystem), actorSystemSetup);
+            _serverActorSystem = ActorSystem.Create(
+                Enum.GetName(ActtorType.ClusterSystem),
+                actorSystemSetup
+            );
 
-            //actor 정의
+            // 액터 등록
+            _actorRefs.Add(
+                ActtorType.AccountActor,
+                _serverActorSystem.ActorOf(
+                    Props.Create(() => new AccountActor(_serverActorSystem)),
+                    Enum.GetName(ActtorType.AccountActor)
+                )
+            );
+
+            _serverActorSystem.WhenTerminated.ContinueWith(_ =>
             {
-                // HOCON 설정 기반 라우터 생성 (tasker 라우터는 HOCON에서 정의됨)
-                /*
-                var router = _serverActorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "tasker");
-
-                // router 액터를 CommandProcessor 액터의 생성자에서 주입받아 생성
-                var processor = _serverActorSystem.ActorOf(
-                    Props.Create(() => new CommandProcessor(router)),
-                    "commands"
-
-                 _actorRef = _actorSystem.ActorOf(Worker.Prop(), "heavy-weight-word");
-                
-                );
-                */
-                _actorRefs.Add(ActtorType.AccountActor, _serverActorSystem.ActorOf(Props.Create(() => new AccountActor(_serverActorSystem)), Enum.GetName(ActtorType.AccountActor)));
-            }
-
-            _serverActorSystem.WhenTerminated.ContinueWith(tr => {
-                _applicationLifetime.StopApplication();  // ActorSystem이 종료되면 애플리케이션도 종료하도록 보장, 종료 시 애플리케이션 종료
+                _applicationLifetime.StopApplication();
             });
 
             return Task.CompletedTask;
         }
+
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             await CoordinatedShutdown.Get(_serverActorSystem).Run(CoordinatedShutdown.ClrExitReason.Instance);

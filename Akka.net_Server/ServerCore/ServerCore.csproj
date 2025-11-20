@@ -2,9 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka" Version="1.5.55" />
+    <PackageReference Include="Akka.Cluster" Version="1.5.55" />
+    <PackageReference Include="Akka.DependencyInjection" Version="1.5.55" />
+    <PackageReference Include="Akka.Remote" Version="1.5.55" />
+  </ItemGroup>
 
 </Project>

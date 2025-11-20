@@ -1,17 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka" Version="1.5.37" />
-    <PackageReference Include="Akka.Cluster" Version="1.5.37" />
-    <PackageReference Include="Akka.Cluster.Hosting" Version="1.5.37" />
-    <PackageReference Include="Akka.DependencyInjection" Version="1.5.37" />
-    <PackageReference Include="Akka.Remote" Version="1.5.37" />
+    <PackageReference Include="Akka" Version="1.5.55" />
+    <PackageReference Include="Akka.Cluster" Version="1.5.55" />
+    <PackageReference Include="Akka.DependencyInjection" Version="1.5.55" />
+    <PackageReference Include="Akka.Remote" Version="1.5.55" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

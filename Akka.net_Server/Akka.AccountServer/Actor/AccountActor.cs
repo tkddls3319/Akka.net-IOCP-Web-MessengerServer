@@ -2,7 +2,6 @@
 using Akka.AccountServer.Define;
 using Akka.Actor;
 using Akka.ClusterCore;
-using Akka.Streams.Stage;
 
 using Google.Protobuf.ClusterProtocol;
 
@@ -55,13 +54,13 @@ namespace Akka.AccountServer.Actor
             });
 
             //로그인
-            Receive<AccountCommand<LoginAccountPacketReq>>(async (message) =>
+            ReceiveAsync<AccountCommand<LoginAccountPacketReq>>(async (message) =>
             {
                 var task = HandleLogin(message);
                 task.PipeTo(Sender, Self);
             });
 
-            Receive<AccountCommand<GetRoomsAccountPacketReq>>(async (message) =>
+            ReceiveAsync<AccountCommand<GetRoomsAccountPacketReq>>(async (message) =>
             {
                 var task = HandleRoomInfos(message);
                 task.PipeTo(Sender, Self);
