@@ -12,6 +12,7 @@
     <PackageReference Include="Akka.Cluster" Version="1.5.55" />
     <PackageReference Include="Akka.DependencyInjection" Version="1.5.55" />
     <PackageReference Include="Akka.Remote" Version="1.5.55" />
+    <PackageReference Include="Azure.Identity" Version="1.17.1" />
     <PackageReference Include="Google.Protobuf" Version="3.33.1" />
     <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
